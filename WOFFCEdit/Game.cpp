@@ -153,22 +153,35 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		m_camOrientation.y += m_camRotRate;
 	}
+	if (m_InputCommands.rotUp)
+	{
+		m_camOrientation.x -= m_camRotRate;
+	}
+	if (m_InputCommands.rotDown)
+	{
+		m_camOrientation.x += m_camRotRate;
+	}
+
 
 	//create look direction from Euler angles in m_camOrientation
 	//m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
 	//m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
 	
 	//What is Φ!
-	
+	//Is is a seperate variable for controliing the roation around X?
+
 	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180)* cos((3.1415/180));
-	m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos(1.618);
+	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos(1.618);
+	m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos((m_camOrientation.x)*3.1415/180);
 
 	//m_camLookDirection.y = sin((m_camOrientation.y) * 3.1415 / 180);
 	//Is it meant to be Sin X where X dictates the angle
-	m_camLookDirection.y = sin(1.618);
+	//m_camLookDirection.y = sin(1.618);
+	m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
 	
 	//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((3.1415 / 180));
-	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos(1.618);
+	//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos(1.618);
+	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
 	m_camLookDirection.Normalize();
 
