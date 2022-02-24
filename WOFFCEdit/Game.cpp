@@ -155,8 +155,18 @@ void Game::Update(DX::StepTimer const& timer)
 	}
 
 	//create look direction from Euler angles in m_camOrientation
-	m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
-	m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
+	//m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
+	//m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
+
+	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180)* cos((3.1415/180));
+	m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos(m_camOrientation.y * 1.618);
+
+	//m_camLookDirection.y = sin((m_camOrientation.y) * 3.1415 / 180);
+	m_camLookDirection.y = sin(m_camOrientation.y * 1.618);
+	// 
+	//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((3.1415 / 180));
+	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos(m_camOrientation.y * 1.618);
+
 	m_camLookDirection.Normalize();
 
 	//create right vector from look Direction
