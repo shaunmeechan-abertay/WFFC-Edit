@@ -33,6 +33,7 @@ private:
 	//Interface funtions for menu and toolbar etc requires
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuFileSaveTerrain();
+	afx_msg void MenuConvertTextures();
 	afx_msg void MenuEditSelect();
 	afx_msg	void ToolBarButton1();
 
