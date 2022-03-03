@@ -159,14 +159,14 @@ void Game::Update(DX::StepTimer const& timer)
 	//m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
 	
 	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180)* cos((3.1415/180));
-	m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos(1.618);
+	m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
 	//m_camLookDirection.y = sin((m_camOrientation.y) * 3.1415 / 180);
 	//Is it meant to be Sin X where X dictates the angle
-	m_camLookDirection.y = sin(1.618);
-	
+	m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
+
 	//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((3.1415 / 180));
-	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos(1.618);
+	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
 	m_camLookDirection.Normalize();
 
@@ -189,6 +189,13 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.left)
 	{
 		m_camPosition -= m_camRight*m_movespeed;
+	}
+
+	//This might not work if held
+	if (m_InputCommands.deleteObject)
+	{
+		DeleteCommand deleteCommand;
+		deleteCommand.performAction(m_displayList);
 	}
 
 	//update lookat point

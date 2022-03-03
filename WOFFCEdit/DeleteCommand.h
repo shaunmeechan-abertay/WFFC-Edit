@@ -6,7 +6,7 @@ private:
 	CommandType type;
 public:
 	DeleteCommand();
-	void performAction(DisplayObject);
+	void performAction(std::vector<DisplayObject>&);
 	Commands::CommandType getType();
 };
 

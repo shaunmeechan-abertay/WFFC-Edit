@@ -343,11 +343,19 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.rotRight = true;
 	}
 	else m_toolInputCommands.rotRight = false;
+
 	if (m_keyArray['Q'])
 	{
 		m_toolInputCommands.rotLeft = true;
 	}
 	else m_toolInputCommands.rotLeft = false;
+
+	//This might break the delete command if this is held?
+	if (m_keyArray['Z'])
+	{
+		m_toolInputCommands.deleteObject = true;
+	}
+	else m_toolInputCommands.deleteObject = false;
 
 	//WASD
 }
