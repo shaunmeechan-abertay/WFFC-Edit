@@ -5,7 +5,7 @@ DeleteCommand::DeleteCommand()
 	type = CommandType::Delete;
 }
 
-void DeleteCommand::performAction(std::vector<DisplayObject> &objects)
+void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 {
 	//This has to remove an object from m_displayList in Game.cpp
 	//That is private

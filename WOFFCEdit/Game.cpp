@@ -189,7 +189,7 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.deleteObject)
 	{
 		DeleteCommand deleteCommand;
-		deleteCommand.performAction(m_displayList);
+		deleteCommand.performAction(m_displayList, ID);
 		commandList.push_back(deleteCommand);
 	}
 
@@ -502,6 +502,11 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
+void Game::setID(int newID)
+{
+	ID = newID;
+}
+
 #ifdef DXTK_AUDIO
 void Game::NewAudioDevice()
 {
@@ -604,7 +609,8 @@ void Game::undoAction()
 	if (commandToUndo.getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand deleteCommand;
-		deleteCommand.performAction(m_displayList);
+		//This actually needs to be the ID of the object created
+		deleteCommand.performAction(m_displayList, ID);
 		commandList.push_back(deleteCommand);
 	}
 	else if (commandToUndo.getType() == Commands::CommandType::Delete)

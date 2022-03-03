@@ -54,6 +54,8 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
+	void setID(int newID);
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
@@ -91,7 +93,8 @@ private:
 	std::list<Commands> commandList;
 	//This should emulate press
 	bool inputDown = false;
-
+	//ID from MFC
+	int ID = 0;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
