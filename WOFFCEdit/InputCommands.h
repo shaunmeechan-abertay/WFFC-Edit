@@ -9,4 +9,5 @@ struct InputCommands
 	bool rotRight;
 	bool rotLeft;
 	bool deleteObject;
+	bool createObject;
 };

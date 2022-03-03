@@ -357,5 +357,11 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.deleteObject = false;
 
+	if (m_keyArray['X'])
+	{
+		m_toolInputCommands.createObject = true;
+	}
+	else m_toolInputCommands.createObject = false;
+
 	//WASD
 }

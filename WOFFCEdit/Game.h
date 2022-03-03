@@ -12,7 +12,9 @@
 #include "ChunkObject.h"
 #include "InputCommands.h"
 #include "DeleteCommand.h"
+#include "CreateCommand.h"
 #include <vector>
+#include <list>
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -62,6 +64,7 @@ private:
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
+	void undoAction();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 
@@ -83,6 +86,12 @@ private:
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
+
+	//Command variables
+	std::list<Commands> commandList;
+	//This should emulate press
+	bool inputDown = false;
+
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 

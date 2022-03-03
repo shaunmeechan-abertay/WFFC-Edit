@@ -155,17 +155,11 @@ void Game::Update(DX::StepTimer const& timer)
 	}
 
 	//create look direction from Euler angles in m_camOrientation
-	//m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
-	//m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
 	
-	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180)* cos((3.1415/180));
 	m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
-	//m_camLookDirection.y = sin((m_camOrientation.y) * 3.1415 / 180);
-	//Is it meant to be Sin X where X dictates the angle
 	m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
 
-	//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((3.1415 / 180));
 	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
 	m_camLookDirection.Normalize();
@@ -196,7 +190,15 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		DeleteCommand deleteCommand;
 		deleteCommand.performAction(m_displayList);
+		commandList.push_back(deleteCommand);
 	}
+
+	if (m_InputCommands.createObject && inputDown == false)
+	{
+		inputDown = true;
+		undoAction();
+	}
+	inputDown = false;
 
 	//update lookat point
 	m_camLookAt = m_camPosition + m_camLookDirection;
@@ -592,6 +594,26 @@ void Game::CreateWindowSizeDependentResources()
 
     m_batchEffect->SetProjection(m_projection);
 	
+}
+
+void Game::undoAction()
+{
+	Commands commandToUndo = commandList.front();
+	//CreateCommand del;
+	//del.setType(commandToUndo.type);
+	if (commandToUndo.getType() == Commands::CommandType::Create)
+	{
+		DeleteCommand deleteCommand;
+		deleteCommand.performAction(m_displayList);
+		commandList.push_back(deleteCommand);
+	}
+	else if (commandToUndo.getType() == Commands::CommandType::Delete)
+	{
+		CreateCommand createCommand;
+		createCommand.performAction(m_displayList);
+		commandList.push_back(createCommand);
+	}
+
 }
 
 void Game::OnDeviceLost()
