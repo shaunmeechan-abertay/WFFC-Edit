@@ -59,6 +59,8 @@
     <ClCompile Include="SelectDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="DeleteCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -108,6 +110,8 @@
     <ClInclude Include="SelectDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
+    <ClInclude Include="Commands.h" />
+    <ClInclude Include="DeleteCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

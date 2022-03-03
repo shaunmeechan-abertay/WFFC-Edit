@@ -158,8 +158,6 @@ void Game::Update(DX::StepTimer const& timer)
 	//m_camLookDirection.x = sin((m_camOrientation.y)*3.1415 / 180);
 	//m_camLookDirection.z = cos((m_camOrientation.y)*3.1415 / 180);
 	
-	//What is Φ!
-	
 	//m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180)* cos((3.1415/180));
 	m_camLookDirection.x = cos((m_camOrientation.y)*3.1415/180) * cos(1.618);
 
