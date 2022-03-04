@@ -178,6 +178,7 @@
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
+    <ClCompile Include="TextureSelectDialogue.cpp" />
     <ClCompile Include="ToolMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +198,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="MFCMain.h" />
+    <ClInclude Include="TextureSelectDialogue.h" />
     <ClInclude Include="ToolMain.h" />
   </ItemGroup>
   <ItemGroup>

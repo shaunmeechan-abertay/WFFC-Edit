@@ -96,7 +96,9 @@ void MFCMain::MenuFileSaveTerrain()
 
 void MFCMain::MenuConvertTextures()
 {
-	system("cmd.exe /k texconv -r C:/Textures/*.png");
+	//system("cmd.exe /k texconv -r C:/Textures/*.png");
+	m_ToolTextureSelectDialogue.Create(IDD_DIALOG2);
+	m_ToolTextureSelectDialogue.ShowWindow(SW_SHOW);
 }
 
 void MFCMain::MenuConvertModel()
