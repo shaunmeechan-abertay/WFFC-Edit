@@ -34,6 +34,7 @@ private:
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuFileSaveTerrain();
 	afx_msg void MenuConvertTextures();
+	afx_msg void MenuConvertModel();
 	afx_msg void MenuEditSelect();
 	afx_msg	void ToolBarButton1();
 
