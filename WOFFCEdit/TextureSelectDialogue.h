@@ -1,9 +1,8 @@
 #pragma once
 #include "resource.h"
 #include "afxwin.h"
-//#include "shlobj.h"
-//#include "afxeditbrowsectrl.h"
 #include <vector>
+#include <string>
 
 class TextureSelectDialogue: public CDialogEx
 {
@@ -23,7 +22,6 @@ protected:
 	afx_msg void End();		//kill the dialogue
 
 	std::vector<CString>all_sel_files;
-
 	DECLARE_MESSAGE_MAP()
 public:
 	// Control variable for more efficient access of the listbox

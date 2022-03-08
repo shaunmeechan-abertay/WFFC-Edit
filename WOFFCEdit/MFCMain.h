@@ -10,6 +10,7 @@
 #include "MFCFrame.h"
 #include "SelectDialogue.h"
 #include "TextureSelectDialogue.h"
+#include "ModelSelectDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -28,6 +29,7 @@ private:
 	CRect WindowRECT;	//Window area rectangle. 
 	SelectDialogue m_ToolSelectDialogue;			//for modeless dialogue, declare it here
 	TextureSelectDialogue m_ToolTextureSelectDialogue;
+	ModelSelectDialogue m_ToolModelSelectDialogue;
 
 	int m_width;		
 	int m_height;

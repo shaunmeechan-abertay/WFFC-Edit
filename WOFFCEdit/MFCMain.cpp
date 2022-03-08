@@ -103,7 +103,9 @@ void MFCMain::MenuConvertTextures()
 
 void MFCMain::MenuConvertModel()
 {
-	system("cmd.exe /k meshconvert cup._obj -cmo -flipz -y");
+	m_ToolModelSelectDialogue.Create(IDD_DIALOG3);
+	m_ToolModelSelectDialogue.ShowWindow(SW_SHOW);
+	//system("cmd.exe /k meshconvert cup._obj -cmo -flipz -y");
 }
 
 void MFCMain::MenuEditSelect()

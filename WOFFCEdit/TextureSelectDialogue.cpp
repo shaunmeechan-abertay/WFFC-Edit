@@ -61,12 +61,8 @@ void TextureSelectDialogue::OnBnClickedOk()
 
 void TextureSelectDialogue::OnBnClickedConvert()
 {
-	//This assumes the max path is 282
-	//Max windows path is 260
-	//Command is 22
-	//Added is 282 (technically paths can be longer if user mods registry in Win 10 but assume not)
-	char command[282];
-	const char* baseCommand = "cmd.exe /k texconv -r ";
+	std::string stringCommand = "cmd.exe /k texconv -r ";
+
 	//Load all the paths into a string
 	CString string;
 	//Have to clear array this way as calling .clear at the end was casusing a crash
@@ -85,18 +81,11 @@ void TextureSelectDialogue::OnBnClickedConvert()
 			all_sel_files.erase(all_sel_files.begin());
 		}
 	}
-		//Annoying conversion stuff
-		//Really a CString should just convert into a char* but it isn't
-		//Possibly because of some compiler stuff
-		//Copy the path into this since this works with MBCS (pressumably what the compiler is set to)
-		CStringA s2(string);
-		//Since it's in MBCS it can now go into a char*!
-		const char* commandChar = s2;
-
-		//Copy the base command into the command and conncatante the file path
-		strcpy(command, baseCommand);
-		strcat(command, commandChar);
-		//Run the command
-		system(command);
+	//Convert the CString to a string and conncatenate
+	CT2CA cStringToString(string);
+	stringCommand += cStringToString;
+	//Conver the string to a char* as that is what system needs
+	const char* charCommand = stringCommand.c_str();
+	system(charCommand);
 	//system("cmd.exe /k texconv -r C: / Textures/*.png");
 }
