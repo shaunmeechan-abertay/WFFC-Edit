@@ -44,7 +44,7 @@ void TextureSelectDialogue::PostNcDestroy()
 void TextureSelectDialogue::OnBnClickedOk()
 {
 	//Credit: https://www.programmerall.com/article/50391274688/ 
-	//Issue, this only deal with jpg but texture could be any image, should at least handle png
+	//Issue, this only deals with jpg but texture could be any image, should at least handle png
 	CFileDialog dlg(TRUE, _T("*.jpg"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Image Files(*.jpg)|*.jpg|"), NULL);
 	dlg.m_ofn.lpstrTitle = _T("Select Image");
 	CString filename;
@@ -67,25 +67,36 @@ void TextureSelectDialogue::OnBnClickedConvert()
 	//Added is 282 (technically paths can be longer if user mods registry in Win 10 but assume not)
 	char command[282];
 	const char* baseCommand = "cmd.exe /k texconv -r ";
-	for (int i = 0; i < all_sel_files.size(); i++)
+	//Load all the paths into a string
+	CString string;
+	//Have to clear array this way as calling .clear at the end was casusing a crash
+	int sizeOfArray = all_sel_files.size();
+	for (int i = 0; i < sizeOfArray; i++)
 	{
+		if (i == 0)
+		{
+			string = all_sel_files.front().GetString();
+			all_sel_files.erase(all_sel_files.begin());
+		}
+		else
+		{
+			string += " ";
+			string += all_sel_files.front().GetString();
+			all_sel_files.erase(all_sel_files.begin());
+		}
+	}
 		//Annoying conversion stuff
 		//Really a CString should just convert into a char* but it isn't
 		//Possibly because of some compiler stuff
-		CString string = all_sel_files.front().GetString();
 		//Copy the path into this since this works with MBCS (pressumably what the compiler is set to)
 		CStringA s2(string);
 		//Since it's in MBCS it can now go into a char*!
-		const char* c = s2;
+		const char* commandChar = s2;
 
 		//Copy the base command into the command and conncatante the file path
 		strcpy(command, baseCommand);
-		strcat(command, c);
+		strcat(command, commandChar);
 		//Run the command
 		system(command);
-		//Clear command array
-		memset(command, '*', 100);
-	}
-
 	//system("cmd.exe /k texconv -r C: / Textures/*.png");
 }
