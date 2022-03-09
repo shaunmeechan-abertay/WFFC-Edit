@@ -517,6 +517,9 @@ int Game::MousePicking()
 {
 	int selectedID = -1;
 	float pickedDistance = 0;
+	//Set the float to the max possible distance as we will reduce this to the closes object
+	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
+	float closestDistance = std::numeric_limits<float>::max();
 
 	//setup near and far planes of frustum with mouse X and mouse Y passed
 	//down from Toolmain.
@@ -549,11 +552,11 @@ int Game::MousePicking()
 		//Loop through mesh list for object
 		for (int y = 0; y < m_displayList[i].m_model.get()->meshes.size(); y++)
 		{
-			//Checking for ray intersection (THIS IS BROKEN, IT'S SETTING SELECTED ID TO I NOT THE ID!)
-			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
+			//Checking for ray intersection
+			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
 				selectedID = m_displayList[i].m_ID;
-				//selectedID = i;
+				closestDistance = pickedDistance;
 			}
 		}
 	}

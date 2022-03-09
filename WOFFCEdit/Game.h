@@ -15,6 +15,7 @@
 #include "CreateCommand.h"
 #include <vector>
 #include <list>
+#include <limits>
 
 
 // A basic game implementation that creates a D3D11 device and
