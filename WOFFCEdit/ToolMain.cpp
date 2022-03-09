@@ -16,8 +16,15 @@ ToolMain::ToolMain()
 	//zero input commands
 	m_toolInputCommands.forward		= false;
 	m_toolInputCommands.back		= false;
-	m_toolInputCommands.left		= false;
 	m_toolInputCommands.right		= false;
+	m_toolInputCommands.left		= false;
+	m_toolInputCommands.rotRight	= false;
+	m_toolInputCommands.rotLeft		= false;
+	m_toolInputCommands.deleteObject		= false;
+	m_toolInputCommands.createObject		= false;
+	m_toolInputCommands.mouse_X		= 0;
+	m_toolInputCommands.mouse_Y		= 0;
+	m_toolInputCommands.mouse_LB_Down		= false;
 	
 }
 
@@ -289,6 +296,12 @@ void ToolMain::Tick(MSG *msg)
 
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
+
+	if (m_toolInputCommands.mouse_LB_Down)
+	{
+		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_toolInputCommands.mouse_LB_Down = false;
+	}
 }
 
 void ToolMain::UpdateInput(MSG * msg)
@@ -306,10 +319,15 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_MOUSEMOVE:
+		//Update the mouse X and Y which will be sent through to the Renderer.
+		m_toolInputCommands.mouse_X = GET_X_LPARAM(msg->lParam);
+		m_toolInputCommands.mouse_Y = GET_Y_LPARAM(msg->lParam);
 		break;
 
 	case WM_LBUTTONDOWN:	//mouse button down,  you will probably need to check when its up too
 		//set some flag for the mouse button in inputcommands
+		//mouse left pressed
+		m_toolInputCommands.mouse_LB_Down = true;
 		break;
 
 	}

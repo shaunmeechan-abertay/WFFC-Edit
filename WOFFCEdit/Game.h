@@ -54,6 +54,8 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
+	int MousePicking();
+
 	void setID(int newID);
 
 #ifdef DXTK_AUDIO
@@ -74,7 +76,7 @@ private:
 	std::vector<DisplayObject>			m_displayList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
-
+	RECT								m_ScreenDimensions;
 	//functionality
 	float								m_movespeed;
 
