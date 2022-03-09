@@ -11,10 +11,6 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 	//That is private
 	//So we can take in the vector<DisplayObject> and the object to delete
 	//And work on it that way
-	//for (unsigned int i = 0; i < (unsigned)objects.size(); i++)
-	//{
-	//	objects.erase(objects.begin());
-	//}
 
 	for (unsigned int i = 0; i < (unsigned)objects.size(); i++)
 	{
@@ -24,6 +20,23 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 			return;
 		}
 	}
+}
+
+void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<int>& IDs)
+{
+
+	for (unsigned int  i = 0; i < (unsigned)IDs.size(); i++)
+	{
+		for (unsigned int j = 0; j < (unsigned)objects.size(); j++)
+		{
+			if (objects[j].m_ID == IDs.at(i))
+			{
+				objects.erase(objects.begin() + j);
+				break;
+			}
+		}
+	}
+
 }
 
 Commands::CommandType DeleteCommand::getType()

@@ -192,7 +192,15 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		inputDown = true;
 		DeleteCommand deleteCommand;
-		deleteCommand.performAction(m_displayList, ID);
+		if (selectedObjects.empty() == false)
+		{
+			deleteCommand.performAction(m_displayList, selectedObjects);
+			selectedObjects.clear();
+		}
+		else
+		{
+			deleteCommand.performAction(m_displayList, ID);
+		}
 		commandList.push_back(deleteCommand);
 	}
 
@@ -555,7 +563,16 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				selectedID = m_displayList[i].m_ID;
+				//We really should highlight the object that was picked
+				if (m_InputCommands.multipick)
+				{
+					selectedObjects.push_back(m_displayList[i].m_ID);
+				}
+				else
+				{
+					selectedID = m_displayList[i].m_ID;
+				}
+
 				closestDistance = pickedDistance;
 			}
 		}
@@ -678,7 +695,16 @@ void Game::undoAction()
 	{
 		DeleteCommand deleteCommand;
 		//This actually needs to be the ID of the object created
-		deleteCommand.performAction(m_displayList, ID);
+		if (selectedObjects.empty() == false)
+		{
+			deleteCommand.performAction(m_displayList, selectedObjects);
+		}
+		else
+		{
+			deleteCommand.performAction(m_displayList, ID);
+		}
+		//Maybe change this, just means after an action there are no selected objects
+		selectedObjects.clear();
 		commandList.push_back(deleteCommand);
 	}
 	else if (commandToUndo.getType() == Commands::CommandType::Delete)

@@ -98,6 +98,8 @@ private:
 	bool inputDown = false;
 	//ID from MFC
 	int ID = 0;
+	//Vector of selected objects
+	std::vector<int> selectedObjects;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 

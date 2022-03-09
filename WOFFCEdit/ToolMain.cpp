@@ -25,6 +25,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_X		= 0;
 	m_toolInputCommands.mouse_Y		= 0;
 	m_toolInputCommands.mouse_LB_Down		= false;
+	m_toolInputCommands.multipick = false;
 	
 }
 
@@ -368,18 +369,24 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.rotLeft = false;
 
-	//This might break the delete command if this is held?
+	//Delete
 	if (m_keyArray['Z'])
 	{
 		m_toolInputCommands.deleteObject = true;
 	}
 	else m_toolInputCommands.deleteObject = false;
 
+	//Undo 
 	if (m_keyArray['X'])
 	{
 		m_toolInputCommands.createObject = true;
 	}
 	else m_toolInputCommands.createObject = false;
+	//Multipick
+	if (m_keyArray['M'])
+	{
+		m_toolInputCommands.multipick = true;
+	}
+	else m_toolInputCommands.multipick = false;
 
-	//WASD
 }
