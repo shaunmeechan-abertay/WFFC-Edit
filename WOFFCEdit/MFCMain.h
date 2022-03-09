@@ -9,6 +9,8 @@
 #include "resource.h"
 #include "MFCFrame.h"
 #include "SelectDialogue.h"
+#include "TextureSelectDialogue.h"
+#include "ModelSelectDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -26,6 +28,8 @@ private:
 	ToolMain m_ToolSystem;	//Instance of Tool System that we interface to. 
 	CRect WindowRECT;	//Window area rectangle. 
 	SelectDialogue m_ToolSelectDialogue;			//for modeless dialogue, declare it here
+	TextureSelectDialogue m_ToolTextureSelectDialogue;
+	ModelSelectDialogue m_ToolModelSelectDialogue;
 
 	int m_width;		
 	int m_height;
@@ -33,6 +37,8 @@ private:
 	//Interface funtions for menu and toolbar etc requires
 	afx_msg void MenuFileQuit();
 	afx_msg void MenuFileSaveTerrain();
+	afx_msg void MenuConvertTextures();
+	afx_msg void MenuConvertModel();
 	afx_msg void MenuEditSelect();
 	afx_msg	void ToolBarButton1();
 

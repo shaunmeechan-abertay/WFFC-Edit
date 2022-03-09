@@ -1,10 +1,12 @@
 #include "MFCMain.h"
-#include "resource.h"
+//#include "resource.h"
 
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_QUIT,	&MFCMain::MenuFileQuit)
 	ON_COMMAND(ID_FILE_SAVETERRAIN, &MFCMain::MenuFileSaveTerrain)
+	ON_COMMAND(ID_FILE_CONVERTTEXTURES, &MFCMain::MenuConvertTextures)
+	ON_COMMAND(ID_FILE_CONVERTMODEL, &MFCMain::MenuConvertModel)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
@@ -90,6 +92,20 @@ void MFCMain::MenuFileQuit()
 void MFCMain::MenuFileSaveTerrain()
 {
 	m_ToolSystem.onActionSaveTerrain();
+}
+
+void MFCMain::MenuConvertTextures()
+{
+	//system("cmd.exe /k texconv -r C:/Textures/*.png");
+	m_ToolTextureSelectDialogue.Create(IDD_DIALOG2);
+	m_ToolTextureSelectDialogue.ShowWindow(SW_SHOW);
+}
+
+void MFCMain::MenuConvertModel()
+{
+	m_ToolModelSelectDialogue.Create(IDD_DIALOG3);
+	m_ToolModelSelectDialogue.ShowWindow(SW_SHOW);
+	//system("cmd.exe /k meshconvert cup._obj -cmo -flipz -y");
 }
 
 void MFCMain::MenuEditSelect()
