@@ -16,6 +16,7 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 	{
 		if (objects[i].m_ID == ID)
 		{
+			deletedObject = objects.at(i);
 			objects.erase(objects.begin() + i);
 			return;
 		}
@@ -42,4 +43,9 @@ void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vecto
 Commands::CommandType DeleteCommand::getType()
 {
 	return type;
+}
+
+DisplayObject DeleteCommand::getDeletedObject()
+{
+	return deletedObject;
 }

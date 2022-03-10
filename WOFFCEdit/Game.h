@@ -16,6 +16,7 @@
 #include <vector>
 #include <list>
 #include <limits>
+#include <memory>
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -93,7 +94,7 @@ private:
 	bool m_grid;							//grid rendering on / off
 
 	//Command variables
-	std::list<Commands> commandList;
+	std::list<Commands*> commandList;
 	//This should emulate press
 	bool inputDown = false;
 	//ID from MFC

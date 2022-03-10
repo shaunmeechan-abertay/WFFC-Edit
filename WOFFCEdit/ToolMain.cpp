@@ -370,7 +370,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	else m_toolInputCommands.rotLeft = false;
 
 	//Delete
-	if (m_keyArray['Z'])
+	if (m_keyArray[VK_DELETE])
 	{
 		m_toolInputCommands.deleteObject = true;
 	}
@@ -383,7 +383,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.createObject = false;
 	//Multipick
-	if (m_keyArray['M'])
+	if (m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.multipick = true;
 	}

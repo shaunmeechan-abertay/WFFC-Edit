@@ -2,14 +2,11 @@
 
 CreateCommand::CreateCommand()
 {
-	type = CommandType::Create;
+	type = Commands::CommandType::Create;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shared_ptr<DX::DeviceResources> &m_deviceResources, std::vector<SceneObject> &SceneGraph, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shared_ptr<DX::DeviceResources> &m_deviceResources, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
 {
-	//objects.pushBack(object);
-	std::cout << "Create called!";
-
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
@@ -17,19 +14,10 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 	DisplayObject newDisplayObject;
 
 	//load model
-	std::wstring modelwstr = StringToWCHART(SceneGraph.at(0).model_path);							//convect string to Wchar
-	newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	newDisplayObject.m_model = deletedObject.m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 	//Load Texture
-	std::wstring texturewstr = StringToWCHART(SceneGraph.at(0).tex_diffuse_path);								//convect string to Wchar
-	HRESULT rs;
-	rs = DirectX::CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-
-	//if texture fails.  load error default
-	if (rs)
-	{
-		DirectX::CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
-	}
+	newDisplayObject.m_texture_diffuse = deletedObject.m_texture_diffuse;
 
 	//apply new texture to models effect
 	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
@@ -42,37 +30,37 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 		});
 
 	//set position
-	newDisplayObject.m_position.x = SceneGraph.at(0).posX;
-	newDisplayObject.m_position.y = SceneGraph.at(0).posY;
-	newDisplayObject.m_position.z = SceneGraph.at(0).posZ;
+	newDisplayObject.m_position.x = deletedObject.m_position.x;
+	newDisplayObject.m_position.y = deletedObject.m_position.y;
+	newDisplayObject.m_position.z = deletedObject.m_position.z;
 
 	//setorientation
-	newDisplayObject.m_orientation.x = SceneGraph.at(0).rotX;
-	newDisplayObject.m_orientation.y = SceneGraph.at(0).rotY;
-	newDisplayObject.m_orientation.z = SceneGraph.at(0).rotZ;
+	newDisplayObject.m_orientation.x = deletedObject.m_orientation.x;
+	newDisplayObject.m_orientation.y = deletedObject.m_orientation.y;
+	newDisplayObject.m_orientation.z = deletedObject.m_orientation.z;
 
 	//set scale
-	newDisplayObject.m_scale.x = SceneGraph.at(0).scaX;
-	newDisplayObject.m_scale.y = SceneGraph.at(0).scaY;
-	newDisplayObject.m_scale.z = SceneGraph.at(0).scaZ;
+	newDisplayObject.m_scale.x = deletedObject.m_scale.x;
+	newDisplayObject.m_scale.y = deletedObject.m_scale.y;
+	newDisplayObject.m_scale.z = deletedObject.m_scale.z;
 
 	//set wireframe / render flags
-	newDisplayObject.m_render = SceneGraph.at(0).editor_render;
-	newDisplayObject.m_wireframe = SceneGraph.at(0).editor_wireframe;
+	newDisplayObject.m_render = deletedObject.m_render;
+	newDisplayObject.m_wireframe = deletedObject.m_wireframe;
 
-	newDisplayObject.m_light_type = SceneGraph.at(0).light_type;
-	newDisplayObject.m_light_diffuse_r = SceneGraph.at(0).light_diffuse_r;
-	newDisplayObject.m_light_diffuse_g = SceneGraph.at(0).light_diffuse_g;
-	newDisplayObject.m_light_diffuse_b = SceneGraph.at(0).light_diffuse_b;
-	newDisplayObject.m_light_specular_r = SceneGraph.at(0).light_specular_r;
-	newDisplayObject.m_light_specular_g = SceneGraph.at(0).light_specular_g;
-	newDisplayObject.m_light_specular_b = SceneGraph.at(0).light_specular_b;
-	newDisplayObject.m_light_spot_cutoff = SceneGraph.at(0).light_spot_cutoff;
-	newDisplayObject.m_light_constant = SceneGraph.at(0).light_constant;
-	newDisplayObject.m_light_linear = SceneGraph.at(0).light_linear;
-	newDisplayObject.m_light_quadratic = SceneGraph.at(0).light_quadratic;
+	newDisplayObject.m_light_type = deletedObject.m_light_type;
+	newDisplayObject.m_light_diffuse_r = deletedObject.m_light_diffuse_r;
+	newDisplayObject.m_light_diffuse_g = deletedObject.m_light_diffuse_g;
+	newDisplayObject.m_light_diffuse_b = deletedObject.m_light_diffuse_b;
+	newDisplayObject.m_light_specular_r = deletedObject.m_light_specular_r;
+	newDisplayObject.m_light_specular_g = deletedObject.m_light_specular_g;
+	newDisplayObject.m_light_specular_b = deletedObject.m_light_specular_b;
+	newDisplayObject.m_light_spot_cutoff = deletedObject.m_light_spot_cutoff;
+	newDisplayObject.m_light_constant = deletedObject.m_light_constant;
+	newDisplayObject.m_light_linear = deletedObject.m_light_linear;
+	newDisplayObject.m_light_quadratic = deletedObject.m_light_quadratic;
 	//Assign ID
-	newDisplayObject.m_ID = SceneGraph.at(0).ID;
+	newDisplayObject.m_ID = deletedObject.m_ID;
 
 	objects.push_back(newDisplayObject);
 }

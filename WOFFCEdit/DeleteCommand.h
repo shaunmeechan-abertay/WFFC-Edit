@@ -1,5 +1,6 @@
 #pragma once
 #include "Commands.h"
+#include "DisplayObject.h"
 #include <vector>
 
 class DeleteCommand: public Commands
@@ -9,7 +10,8 @@ public:
 	void performAction(std::vector<DisplayObject>&objects, std::vector<int>& IDs);
 	void performAction(std::vector<DisplayObject>&objects, int ID);
 	Commands::CommandType getType();
+	DisplayObject getDeletedObject();
 private:
-	//ToolMain m_ToolSystem;	//Instance of Tool System that we interface to. 
+	DisplayObject deletedObject;
 };
 

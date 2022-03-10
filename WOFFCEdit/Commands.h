@@ -17,7 +17,8 @@ public:
 
 	//Can't think of an action that wouldn't involve an object.
 	//Maybe terrain based actions?
-	void performAction(DisplayObject);
-	CommandType getType();
+	virtual void performAction(DisplayObject);
+	virtual DisplayObject getDeletedObject();
+	virtual CommandType getType();
 };
 

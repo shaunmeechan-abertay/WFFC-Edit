@@ -191,17 +191,20 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
-		DeleteCommand deleteCommand;
+		DeleteCommand* deleteCommand =  new DeleteCommand;
 		if (selectedObjects.empty() == false)
 		{
-			deleteCommand.performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
 		}
 		else
 		{
-			deleteCommand.performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, ID);
 		}
-		commandList.push_back(deleteCommand);
+		//This won't work
+		//Delete command is destoryed once out of scope
+		Commands *command = deleteCommand;
+		commandList.push_back(command);
 	}
 
 	if (m_InputCommands.createObject && inputDown == false)
@@ -684,35 +687,44 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::undoAction()
 {
+	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
+	//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
+	//CREATE THE OBJECT
+	//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
+	//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
+	//SO HAVE AN UNDO THEN A REDO LIST
 	if (commandList.size() <= 0)
 	{
 		return;
 	}
 
-	Commands commandToUndo = commandList.front();
+	Commands* commandToUndo = commandList.front();
 	//CreateCommand del;
 	//del.setType(commandToUndo.type);
-	if (commandToUndo.getType() == Commands::CommandType::Create)
+	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
-		DeleteCommand deleteCommand;
+		DeleteCommand* deleteCommand = new DeleteCommand;
 		//This actually needs to be the ID of the object created
 		if (selectedObjects.empty() == false)
 		{
-			deleteCommand.performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, selectedObjects);
 		}
 		else
 		{
-			deleteCommand.performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, ID);
 		}
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
-		commandList.push_back(deleteCommand);
+		Commands* command = deleteCommand;
+		commandList.push_back(command);
 	}
-	else if (commandToUndo.getType() == Commands::CommandType::Delete)
+	else if (commandToUndo->getType() == Commands::CommandType::Delete)
 	{
-		CreateCommand createCommand;
-		createCommand.performAction(m_displayList,m_deviceResources,*tempSceneGraph, m_fxFactory);
-		commandList.push_back(createCommand);
+		CreateCommand* createCommand = new CreateCommand;
+		//This will need to deal with deletion of multiple deleted object
+		createCommand->performAction(m_displayList,m_deviceResources,commandToUndo->getDeletedObject(), m_fxFactory);
+		Commands* command = createCommand;
+		commandList.push_back(command);
 	}
 
 }
