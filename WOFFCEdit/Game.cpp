@@ -423,6 +423,7 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 {
+	tempSceneGraph = SceneGraph;
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
@@ -710,7 +711,7 @@ void Game::undoAction()
 	else if (commandToUndo.getType() == Commands::CommandType::Delete)
 	{
 		CreateCommand createCommand;
-		createCommand.performAction(m_displayList);
+		createCommand.performAction(m_displayList,m_deviceResources,*tempSceneGraph, m_fxFactory);
 		commandList.push_back(createCommand);
 	}
 

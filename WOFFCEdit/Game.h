@@ -111,6 +111,9 @@ private:
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
     std::unique_ptr<DirectX::Mouse>         m_mouse;
 
+	//DELETE ME!
+	std::vector<SceneObject>* tempSceneGraph;
+
     // DirectXTK objects.
     std::unique_ptr<DirectX::CommonStates>                                  m_states;
     std::unique_ptr<DirectX::BasicEffect>                                   m_batchEffect;
