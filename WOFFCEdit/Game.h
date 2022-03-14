@@ -70,7 +70,10 @@ private:
 
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
+
+	//Command functions
 	void undoAction();
+	void RedoAction();
 
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 
@@ -95,6 +98,7 @@ private:
 
 	//Command variables
 	std::list<Commands*> commandList;
+	std::list<Commands*> UndonecommandList;
 	//This should emulate press
 	bool inputDown = false;
 	//ID from MFC

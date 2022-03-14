@@ -21,7 +21,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.rotRight	= false;
 	m_toolInputCommands.rotLeft		= false;
 	m_toolInputCommands.deleteObject		= false;
-	m_toolInputCommands.createObject		= false;
+	m_toolInputCommands.UndoCommand		= false;
+	m_toolInputCommands.RedoCommand		= false;
 	m_toolInputCommands.mouse_X		= 0;
 	m_toolInputCommands.mouse_Y		= 0;
 	m_toolInputCommands.mouse_LB_Down		= false;
@@ -379,9 +380,15 @@ void ToolMain::UpdateInput(MSG * msg)
 	//Undo 
 	if (m_keyArray['X'])
 	{
-		m_toolInputCommands.createObject = true;
+		m_toolInputCommands.UndoCommand = true;
 	}
-	else m_toolInputCommands.createObject = false;
+	else m_toolInputCommands.UndoCommand = false;
+	//Redo
+	if (m_keyArray['Z'])
+	{
+		m_toolInputCommands.RedoCommand = true;
+	}
+	else m_toolInputCommands.RedoCommand = false;
 	//Multipick
 	if (m_keyArray[VK_CONTROL])
 	{

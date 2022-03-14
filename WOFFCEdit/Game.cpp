@@ -201,20 +201,24 @@ void Game::Update(DX::StepTimer const& timer)
 		{
 			deleteCommand->performAction(m_displayList, ID);
 		}
-		//This won't work
-		//Delete command is destoryed once out of scope
 		Commands *command = deleteCommand;
 		commandList.push_back(command);
 	}
 
-	if (m_InputCommands.createObject && inputDown == false)
+	if (m_InputCommands.UndoCommand && inputDown == false)
 	{
 		inputDown = true;
 		undoAction();
 	}
 
+	if (m_InputCommands.RedoCommand && inputDown == false)
+	{
+		inputDown = true;
+		RedoAction();
+	}
+
 	//This might not work long term
-	if (m_InputCommands.createObject == false && m_InputCommands.deleteObject == false)
+	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false)
 	{
 		inputDown = false;
 	}
@@ -716,7 +720,7 @@ void Game::undoAction()
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
 		Commands* command = deleteCommand;
-		commandList.push_back(command);
+		UndonecommandList.push_back(command);
 	}
 	else if (commandToUndo->getType() == Commands::CommandType::Delete)
 	{
@@ -724,9 +728,50 @@ void Game::undoAction()
 		//This will need to deal with deletion of multiple deleted object
 		createCommand->performAction(m_displayList,m_deviceResources,commandToUndo->getDeletedObject(), m_fxFactory);
 		Commands* command = createCommand;
-		commandList.push_back(command);
+		UndonecommandList.push_back(command);
 	}
 
+}
+
+void Game::RedoAction()
+{
+	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
+//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
+//CREATE THE OBJECT
+//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
+//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
+//SO HAVE AN UNDO THEN A REDO LIST
+	if (UndonecommandList.size() <= 0)
+	{
+		return;
+	}
+
+	Commands* commandToDo = UndonecommandList.front();
+	if (commandToDo->getType() == Commands::CommandType::Create)
+	{
+		DeleteCommand* deleteCommand = new DeleteCommand;
+		//This actually needs to be the ID of the object created
+		if (selectedObjects.empty() == false)
+		{
+			deleteCommand->performAction(m_displayList, selectedObjects);
+		}
+		else
+		{
+			deleteCommand->performAction(m_displayList, ID);
+		}
+		//Maybe change this, just means after an action there are no selected objects
+		selectedObjects.clear();
+		Commands* command = deleteCommand;
+		commandList.push_back(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::Delete)
+	{
+		CreateCommand* createCommand = new CreateCommand;
+		//This will need to deal with deletion of multiple deleted object
+		createCommand->performAction(m_displayList, m_deviceResources, commandToDo->getDeletedObject(), m_fxFactory);
+		Commands* command = createCommand;
+		commandList.push_back(command);
+	}
 }
 
 void Game::OnDeviceLost()
