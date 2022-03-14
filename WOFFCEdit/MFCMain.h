@@ -31,6 +31,7 @@ private:
 	TextureSelectDialogue m_ToolTextureSelectDialogue;
 	ModelSelectDialogue m_ToolModelSelectDialogue;
 
+	Game m_GameSystem; //Instance of Tool System that we interface to.
 	int m_width;		
 	int m_height;
 	

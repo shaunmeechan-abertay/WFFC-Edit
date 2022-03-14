@@ -11,7 +11,12 @@
 #include "DisplayChunk.h"
 #include "ChunkObject.h"
 #include "InputCommands.h"
+#include "DeleteCommand.h"
+#include "CreateCommand.h"
 #include <vector>
+#include <list>
+#include <limits>
+#include <memory>
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -51,6 +56,10 @@ public:
 	void SaveDisplayChunk(ChunkObject *SceneChunk);	//saves geometry et al
 	void ClearDisplayList();
 
+	int MousePicking();
+
+	void setID(int newID);
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
@@ -62,13 +71,17 @@ private:
 	void CreateDeviceDependentResources();
 	void CreateWindowSizeDependentResources();
 
+	//Command functions
+	void undoAction();
+	void RedoAction();
+
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 
 	//tool specific
 	std::vector<DisplayObject>			m_displayList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
-
+	RECT								m_ScreenDimensions;
 	//functionality
 	float								m_movespeed;
 
@@ -82,6 +95,16 @@ private:
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
+
+	//Command variables
+	std::list<Commands*> commandList;
+	std::list<Commands*> UndonecommandList;
+	//This should emulate press
+	bool inputDown = false;
+	//ID from MFC
+	int ID = 0;
+	//Vector of selected objects
+	std::vector<int> selectedObjects;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -92,6 +115,9 @@ private:
     std::unique_ptr<DirectX::GamePad>       m_gamePad;
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
     std::unique_ptr<DirectX::Mouse>         m_mouse;
+
+	//DELETE ME!
+	std::vector<SceneObject>* tempSceneGraph;
 
     // DirectXTK objects.
     std::unique_ptr<DirectX::CommonStates>                                  m_states;

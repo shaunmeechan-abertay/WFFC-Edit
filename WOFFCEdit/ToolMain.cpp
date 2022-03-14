@@ -16,10 +16,19 @@ ToolMain::ToolMain()
 	//zero input commands
 	m_toolInputCommands.forward		= false;
 	m_toolInputCommands.back		= false;
-	m_toolInputCommands.left		= false;
 	m_toolInputCommands.right		= false;
 	m_toolInputCommands.rotUp		= false;
 	m_toolInputCommands.rotDown		= false;
+	m_toolInputCommands.left		= false;
+	m_toolInputCommands.rotRight	= false;
+	m_toolInputCommands.rotLeft		= false;
+	m_toolInputCommands.deleteObject		= false;
+	m_toolInputCommands.UndoCommand		= false;
+	m_toolInputCommands.RedoCommand		= false;
+	m_toolInputCommands.mouse_X		= 0;
+	m_toolInputCommands.mouse_Y		= 0;
+	m_toolInputCommands.mouse_LB_Down		= false;
+	m_toolInputCommands.multipick = false;
 	
 }
 
@@ -291,6 +300,12 @@ void ToolMain::Tick(MSG *msg)
 
 	//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
+
+	if (m_toolInputCommands.mouse_LB_Down)
+	{
+		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_toolInputCommands.mouse_LB_Down = false;
+	}
 }
 
 void ToolMain::UpdateInput(MSG * msg)
@@ -308,10 +323,15 @@ void ToolMain::UpdateInput(MSG * msg)
 		break;
 
 	case WM_MOUSEMOVE:
+		//Update the mouse X and Y which will be sent through to the Renderer.
+		m_toolInputCommands.mouse_X = GET_X_LPARAM(msg->lParam);
+		m_toolInputCommands.mouse_Y = GET_Y_LPARAM(msg->lParam);
 		break;
 
 	case WM_LBUTTONDOWN:	//mouse button down,  you will probably need to check when its up too
 		//set some flag for the mouse button in inputcommands
+		//mouse left pressed
+		m_toolInputCommands.mouse_LB_Down = true;
 		break;
 
 	}
@@ -345,6 +365,7 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.rotRight = true;
 	}
 	else m_toolInputCommands.rotRight = false;
+
 	if (m_keyArray['Q'])
 	{
 		m_toolInputCommands.rotLeft = true;
@@ -361,5 +382,30 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.rotDown = false;
 
-	//WASD
+	//Delete
+	if (m_keyArray[VK_DELETE])
+	{
+		m_toolInputCommands.deleteObject = true;
+	}
+	else m_toolInputCommands.deleteObject = false;
+
+	//Undo 
+	if (m_keyArray['X'])
+	{
+		m_toolInputCommands.UndoCommand = true;
+	}
+	else m_toolInputCommands.UndoCommand = false;
+	//Redo
+	if (m_keyArray['Z'])
+	{
+		m_toolInputCommands.RedoCommand = true;
+	}
+	else m_toolInputCommands.RedoCommand = false;
+	//Multipick
+	if (m_keyArray[VK_CONTROL])
+	{
+		m_toolInputCommands.multipick = true;
+	}
+	else m_toolInputCommands.multipick = false;
+
 }

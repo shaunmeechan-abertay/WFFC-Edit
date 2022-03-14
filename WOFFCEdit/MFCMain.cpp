@@ -74,6 +74,7 @@ int MFCMain::Run()
 			int ID = m_ToolSystem.getCurrentSelectionID();
 			std::wstring statusString = L"Selected Object: " + std::to_wstring(ID);
 			m_ToolSystem.Tick(&msg);
+			m_GameSystem.setID(ID);
 
 			//send current object ID to status bar in The main frame
 			m_frame->m_wndStatusBar.SetPaneText(1, statusString.c_str(), 1);	
@@ -96,7 +97,6 @@ void MFCMain::MenuFileSaveTerrain()
 
 void MFCMain::MenuConvertTextures()
 {
-	//system("cmd.exe /k texconv -r C:/Textures/*.png");
 	m_ToolTextureSelectDialogue.Create(IDD_DIALOG2);
 	m_ToolTextureSelectDialogue.ShowWindow(SW_SHOW);
 }
