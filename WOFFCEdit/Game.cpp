@@ -581,16 +581,17 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				if (selectedObject != NULL)
-				{
-					selectedObject->m_wireframe = false;
-				}
-
 				m_displayList[i].m_wireframe = true;
 
 				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
 				{
 					m_displayList[i].m_selected = true;
+					if (selectedObject != NULL)
+					{
+						selectedObjects.push_back(selectedObject->m_ID);
+						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
+						selectedObject = NULL;
+					}
 					selectedObjects.push_back(m_displayList[i].m_ID);
 				}
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
@@ -611,7 +612,17 @@ int Game::MousePicking()
 				else
 				{
 					selectedID = m_displayList[i].m_ID;
-					selectedObject = &m_displayList[i];
+					if (selectedObject == NULL)
+					{
+						selectedObject = &m_displayList[i];
+					}
+
+					//If we have a selected object and the user didn't click it
+					if (selectedObject != NULL && selectedID != selectedObject->m_ID)
+					{
+						selectedObject->m_wireframe = false;
+						selectedObject = &m_displayList[i];
+					}
 				}
 
 				closestDistance = pickedDistance;

@@ -21,5 +21,5 @@ D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(571,85): warning C42
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(572,109): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(572,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(579,21): warning C4018: '<': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(600,24): warning C4018: '<': signed/unsigned mismatch
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(601,24): warning C4018: '<': signed/unsigned mismatch
   Win32SimpleSample.vcxproj -> D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
