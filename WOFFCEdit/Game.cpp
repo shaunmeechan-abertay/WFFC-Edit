@@ -316,7 +316,7 @@ void Game::Render()
 
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
-		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, m_displayList[i].m_wireframe);	//last variable in draw,  make TRUE for wireframe
 
 		m_deviceResources->PIXEndEvent();
 	}
@@ -499,6 +499,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		//set wireframe / render flags
 		newDisplayObject.m_render		= SceneGraph->at(i).editor_render;
 		newDisplayObject.m_wireframe	= SceneGraph->at(i).editor_wireframe;
+		//newDisplayObject.m_wireframe	= true;
 
 		newDisplayObject.m_light_type		= SceneGraph->at(i).light_type;
 		newDisplayObject.m_light_diffuse_r	= SceneGraph->at(i).light_diffuse_r;
@@ -584,6 +585,7 @@ int Game::MousePicking()
 				if (m_InputCommands.multipick)
 				{
 					selectedObjects.push_back(m_displayList[i].m_ID);
+					m_displayList[i].m_wireframe = true;
 				}
 				else
 				{
@@ -700,12 +702,6 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::undoAction()
 {
-	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
-	//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
-	//CREATE THE OBJECT
-	//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
-	//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
-	//SO HAVE AN UNDO THEN A REDO LIST
 	if (commandList.size() <= 0)
 	{
 		return;
@@ -744,12 +740,6 @@ void Game::undoAction()
 
 void Game::RedoAction()
 {
-	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
-//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
-//CREATE THE OBJECT
-//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
-//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
-//SO HAVE AN UNDO THEN A REDO LIST
 	if (UndonecommandList.size() <= 0)
 	{
 		return;
