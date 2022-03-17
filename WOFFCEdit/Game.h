@@ -103,6 +103,7 @@ private:
 	bool inputDown = false;
 	//ID from MFC
 	int ID = 0;
+	DisplayObject* selectedObject;
 	//Vector of selected objects
 	std::vector<int> selectedObjects;
 	// Device resources.

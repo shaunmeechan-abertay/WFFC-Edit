@@ -581,24 +581,46 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				//We really should highlight the object that was picked
-				if (m_InputCommands.multipick)
+				if (selectedObject != NULL)
 				{
+					selectedObject->m_wireframe = false;
+				}
+
+				m_displayList[i].m_wireframe = true;
+
+				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
+				{
+					m_displayList[i].m_selected = true;
 					selectedObjects.push_back(m_displayList[i].m_ID);
-					m_displayList[i].m_wireframe = true;
+				}
+				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
+				{
+					m_displayList[i].m_selected = false;
+					//Got to find object in selected objects list
+					for (int j = 0; j < selectedObjects.size(); j++)
+					{
+						if (m_displayList[i].m_ID == selectedObjects.at(j))
+						{
+							//Found object, remove
+							selectedObjects.erase(selectedObjects.begin() + j);
+							break;
+						}
+					}
+					m_displayList[i].m_wireframe = false;
 				}
 				else
 				{
 					selectedID = m_displayList[i].m_ID;
+					selectedObject = &m_displayList[i];
 				}
 
 				closestDistance = pickedDistance;
 			}
 		}
 	}
-		//If we got a hit. Return it.
+	//If we got a hit. Return it.
 	setID(selectedID);
-		return selectedID;
+	return selectedID;
 }
 
 void Game::setID(int newID)
