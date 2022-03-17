@@ -316,7 +316,7 @@ void Game::Render()
 
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
-		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, m_displayList[i].m_wireframe);	//last variable in draw,  make TRUE for wireframe
 
 		m_deviceResources->PIXEndEvent();
 	}
@@ -499,6 +499,7 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		//set wireframe / render flags
 		newDisplayObject.m_render		= SceneGraph->at(i).editor_render;
 		newDisplayObject.m_wireframe	= SceneGraph->at(i).editor_wireframe;
+		//newDisplayObject.m_wireframe	= true;
 
 		newDisplayObject.m_light_type		= SceneGraph->at(i).light_type;
 		newDisplayObject.m_light_diffuse_r	= SceneGraph->at(i).light_diffuse_r;
@@ -580,23 +581,57 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				//We really should highlight the object that was picked
-				if (m_InputCommands.multipick)
+				m_displayList[i].m_wireframe = true;
+
+				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
 				{
+					m_displayList[i].m_selected = true;
+					if (selectedObject != NULL)
+					{
+						selectedObjects.push_back(selectedObject->m_ID);
+						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
+						selectedObject = NULL;
+					}
 					selectedObjects.push_back(m_displayList[i].m_ID);
+				}
+				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
+				{
+					m_displayList[i].m_selected = false;
+					//Got to find object in selected objects list
+					for (int j = 0; j < selectedObjects.size(); j++)
+					{
+						if (m_displayList[i].m_ID == selectedObjects.at(j))
+						{
+							//Found object, remove
+							selectedObjects.erase(selectedObjects.begin() + j);
+							break;
+						}
+					}
+					m_displayList[i].m_wireframe = false;
 				}
 				else
 				{
 					selectedID = m_displayList[i].m_ID;
+					if (selectedObject == NULL)
+					{
+						selectedObject = &m_displayList[i];
+					}
+
+					//If we have a selected object and the user didn't click it
+					if (selectedObject != NULL && selectedID != selectedObject->m_ID)
+					{
+						selectedObject->m_wireframe = false;
+						selectedObject = &m_displayList[i];
+					}
 				}
 
 				closestDistance = pickedDistance;
 			}
 		}
 	}
-		//If we got a hit. Return it.
+	//If we got a hit. Return it.
 	setID(selectedID);
-		return selectedID;
+	return selectedID;
 }
 
 void Game::setID(int newID)
@@ -700,12 +735,6 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::undoAction()
 {
-	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
-	//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
-	//CREATE THE OBJECT
-	//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
-	//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
-	//SO HAVE AN UNDO THEN A REDO LIST
 	if (commandList.size() <= 0)
 	{
 		return;
@@ -744,12 +773,6 @@ void Game::undoAction()
 
 void Game::RedoAction()
 {
-	//DESIGN ISSUE: THIS EVENTUALLY ENDS UP AS AN INFINITE LOOP
-//IF WE DELETE AND OBJECT AND UNDO THEN WE REMOVE THAT COMMAND
-//CREATE THE OBJECT
-//THEN PUSH THAT CREATE COMMAND BACK ITNO THE COMMAND LIST AT THE BACK
-//IF WE UNDO THAT WE DELETE THAT OBJECT THEN PUSH THE DELETE COMMAND (HENCE THE LOOP)
-//SO HAVE AN UNDO THEN A REDO LIST
 	if (UndonecommandList.size() <= 0)
 	{
 		return;
