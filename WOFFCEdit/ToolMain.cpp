@@ -29,6 +29,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_Y		= 0;
 	m_toolInputCommands.mouse_LB_Down		= false;
 	m_toolInputCommands.multipick = false;
+	m_toolInputCommands.copy = false;
+	m_toolInputCommands.paste = false;
 	
 }
 
@@ -407,5 +409,17 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.multipick = true;
 	}
 	else m_toolInputCommands.multipick = false;
+	//Copy
+	if (m_keyArray['C'])
+	{
+		m_toolInputCommands.copy = true;
+	}
+	else m_toolInputCommands.copy = false;
+	//Paste
+	if (m_keyArray['V'])
+	{
+		m_toolInputCommands.paste = true;
+	}
+	else m_toolInputCommands.paste = false;
 
 }

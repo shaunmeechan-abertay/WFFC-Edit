@@ -13,6 +13,7 @@
 #include "InputCommands.h"
 #include "DeleteCommand.h"
 #include "CreateCommand.h"
+#include "CopyCommand.h"
 #include <vector>
 #include <list>
 #include <limits>
@@ -60,6 +61,11 @@ public:
 
 	void setID(int newID);
 
+	void copyObject();
+	//We only want one of these as you can only "store" one object/objects at a time
+	CopyCommand copyCommand;
+	void pasteObject();
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
@@ -105,7 +111,7 @@ private:
 	int ID = 0;
 	DisplayObject* selectedObject;
 	//Vector of selected objects
-	std::vector<int> selectedObjects;
+	std::vector<DisplayObject> selectedObjects;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 

@@ -196,7 +196,6 @@ void Game::Update(DX::StepTimer const& timer)
 		m_camPosition -= m_camRight*m_movespeed;
 	}
 
-	//This might not work if held
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
@@ -226,8 +225,18 @@ void Game::Update(DX::StepTimer const& timer)
 		RedoAction();
 	}
 
-	//This might not work long term
-	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false)
+	if (m_InputCommands.copy && inputDown == false)
+	{
+		copyObject();
+	}	
+	
+	if (m_InputCommands.paste && inputDown == false)
+	{
+		pasteObject();
+	}
+
+	//This might not work long term (this really is getting bad now)
+	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false)
 	{
 		inputDown = false;
 	}
@@ -322,7 +331,7 @@ void Game::Render()
 	}
     m_deviceResources->PIXEndEvent();
 
-	//RENDER TERRAIN
+	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
@@ -588,11 +597,11 @@ int Game::MousePicking()
 					m_displayList[i].m_selected = true;
 					if (selectedObject != NULL)
 					{
-						selectedObjects.push_back(selectedObject->m_ID);
+						selectedObjects.push_back(*selectedObject);
 						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
 						selectedObject = NULL;
 					}
-					selectedObjects.push_back(m_displayList[i].m_ID);
+					selectedObjects.push_back(m_displayList[i]);
 				}
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
 				{
@@ -600,7 +609,7 @@ int Game::MousePicking()
 					//Got to find object in selected objects list
 					for (int j = 0; j < selectedObjects.size(); j++)
 					{
-						if (m_displayList[i].m_ID == selectedObjects.at(j))
+						if (m_displayList[i].m_ID == selectedObjects.at(j).m_ID)
 						{
 							//Found object, remove
 							selectedObjects.erase(selectedObjects.begin() + j);
@@ -611,6 +620,15 @@ int Game::MousePicking()
 				}
 				else
 				{
+					//If we have selected objects - deselect them
+					if (selectedObjects.empty() == false)
+					{
+						for (int j = 0; j < m_displayList.size(); j++)
+						{
+							m_displayList[j].m_wireframe = false;
+						}
+						selectedObjects.clear();
+					}
 					selectedID = m_displayList[i].m_ID;
 					if (selectedObject == NULL)
 					{
@@ -637,6 +655,34 @@ int Game::MousePicking()
 void Game::setID(int newID)
 {
 	ID = newID;
+}
+
+void Game::copyObject()
+{
+	if (selectedObjects.size() > 0)
+	{
+		copyCommand.performAction(selectedObjects);
+	}
+	else
+	{
+		if (selectedObject != NULL)
+		{
+			copyCommand.performAction(selectedObject);
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+void Game::pasteObject()
+{
+	CreateCommand* createCommand = new CreateCommand;
+	//This will need to deal with creation of multiple objects (could loop this?)
+	createCommand->performAction(m_displayList, m_deviceResources, copyCommand.getCopiedObject(), m_fxFactory);
+	Commands* command = createCommand;
+	commandList.push_back(command);
 }
 
 #ifdef DXTK_AUDIO
@@ -735,14 +781,14 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::undoAction()
 {
+	//ISSUE: The objects reappear as wireframe - minor bug, it's because when they were deleted they were selected
 	if (commandList.size() <= 0)
 	{
 		return;
 	}
 
 	Commands* commandToUndo = commandList.front();
-	//CreateCommand del;
-	//del.setType(commandToUndo.type);
+	commandList.pop_front();
 	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -779,6 +825,7 @@ void Game::RedoAction()
 	}
 
 	Commands* commandToDo = UndonecommandList.front();
+	UndonecommandList.pop_front();
 	if (commandToDo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
