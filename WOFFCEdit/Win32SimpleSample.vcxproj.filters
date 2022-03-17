@@ -61,6 +61,10 @@
     </ClCompile>
     <ClCompile Include="TextureSelectDialogue.cpp" />
     <ClCompile Include="ModelSelectDialogue.cpp" />
+    <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="CreateCommand.cpp" />
+    <ClCompile Include="DeleteCommand.cpp" />
+    <ClCompile Include="CopyCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -112,6 +116,10 @@
     </ClInclude>
     <ClInclude Include="TextureSelectDialogue.h" />
     <ClInclude Include="ModelSelectDialogue.h" />
+    <ClInclude Include="Commands.h" />
+    <ClInclude Include="CreateCommand.h" />
+    <ClInclude Include="DeleteCommand.h" />
+    <ClInclude Include="CopyCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

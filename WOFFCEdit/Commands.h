@@ -10,7 +10,9 @@ public:
 	{
 		Default,
 		Delete,
-		Create
+		Create,
+		Copy,
+		Pase
 	};
 
 	CommandType type = CommandType::Default;

@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="ChunkObject.cpp" />
     <ClCompile Include="Commands.cpp" />
+    <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="CreateCommand.cpp" />
     <ClCompile Include="DeleteCommand.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
@@ -188,6 +189,7 @@
   <ItemGroup>
     <ClInclude Include="ChunkObject.h" />
     <ClInclude Include="Commands.h" />
+    <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="CreateCommand.h" />
     <ClInclude Include="DeleteCommand.h" />
     <ClInclude Include="DeviceResources.h" />
