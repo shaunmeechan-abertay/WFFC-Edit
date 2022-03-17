@@ -44,7 +44,7 @@ void CopyCommand::performAction(std::vector<DisplayObject>& objects)
 
 		//set wireframe / render flags
 		newObject.m_render = objects[i].m_render;
-		newObject.m_wireframe = objects[i].m_wireframe;
+		newObject.m_wireframe = false;
 
 		newObject.m_light_type = objects[i].m_light_type;
 		newObject.m_light_diffuse_r = objects[i].m_light_diffuse_r;

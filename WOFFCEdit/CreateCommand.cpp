@@ -46,7 +46,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 
 	//set wireframe / render flags
 	newDisplayObject.m_render = deletedObject.m_render;
-	newDisplayObject.m_wireframe = deletedObject.m_wireframe;
+	newDisplayObject.m_wireframe = false;
 
 	newDisplayObject.m_light_type = deletedObject.m_light_type;
 	newDisplayObject.m_light_diffuse_r = deletedObject.m_light_diffuse_r;

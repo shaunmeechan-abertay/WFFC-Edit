@@ -17,6 +17,7 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 		if (objects[i].m_ID == ID)
 		{
 			deletedObject = objects.at(i);
+			deletedObject.m_wireframe = false;
 			objects.erase(objects.begin() + i);
 			return;
 		}
