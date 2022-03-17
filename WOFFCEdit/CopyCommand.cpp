@@ -2,7 +2,7 @@
 
 CopyCommand::CopyCommand()
 {
-	type == Commands::CommandType::Copy;
+	type = Commands::CommandType::Copy;
 }
 
 void CopyCommand::performAction(std::vector<DisplayObject>& objects)
@@ -29,7 +29,7 @@ void CopyCommand::performAction(std::vector<DisplayObject>& objects)
 
 		//set position
 		newObject.m_position.x = objects[i].m_position.x;
-		newObject.m_position.y = objects[i].m_position.y;
+		newObject.m_position.y = objects[i].m_position.y + 5;
 		newObject.m_position.z = objects[i].m_position.z;
 
 		//setorientation
@@ -84,7 +84,7 @@ void CopyCommand::performAction(DisplayObject* object)
 
 	//set position
 	copiedObject.m_position.x = object->m_position.x;
-	copiedObject.m_position.y = object->m_position.y;
+	copiedObject.m_position.y = object->m_position.y + 5;
 	copiedObject.m_position.z = object->m_position.z;
 
 	//setorientation
@@ -129,4 +129,9 @@ void CopyCommand::setType(Commands::CommandType newType)
 DisplayObject CopyCommand::getCopiedObject()
 {
 	return copiedObject;
+}
+
+std::vector<DisplayObject> CopyCommand::getCopiedObjects()
+{
+	return copiedObjects;
 }

@@ -21,6 +21,7 @@ public:
 	//Maybe terrain based actions?
 	virtual void performAction(DisplayObject);
 	virtual DisplayObject getDeletedObject();
+	virtual std::vector<DisplayObject> getDeletedObjects();
 	virtual CommandType getType();
 };
 

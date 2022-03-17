@@ -680,7 +680,14 @@ void Game::pasteObject()
 {
 	CreateCommand* createCommand = new CreateCommand;
 	//This will need to deal with creation of multiple objects (could loop this?)
-	createCommand->performAction(m_displayList, m_deviceResources, copyCommand.getCopiedObject(), m_fxFactory);
+	if (copyCommand.getCopiedObjects().empty() == false)
+	{
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObjects(), m_fxFactory);
+	}
+	else
+	{
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObject(), m_fxFactory);
+	}
 	Commands* command = createCommand;
 	commandList.push_back(command);
 }
@@ -810,7 +817,14 @@ void Game::undoAction()
 	{
 		CreateCommand* createCommand = new CreateCommand;
 		//This will need to deal with deletion of multiple deleted object
-		createCommand->performAction(m_displayList,m_deviceResources,commandToUndo->getDeletedObject(), m_fxFactory);
+		if (commandToUndo->getDeletedObjects().size() > 0)
+		{
+			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory);
+		}
+		else
+		{
+			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory);
+		}
 		Commands* command = createCommand;
 		UndonecommandList.push_back(command);
 	}
@@ -847,7 +861,7 @@ void Game::RedoAction()
 	{
 		CreateCommand* createCommand = new CreateCommand;
 		//This will need to deal with deletion of multiple deleted object
-		createCommand->performAction(m_displayList, m_deviceResources, commandToDo->getDeletedObject(), m_fxFactory);
+		createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
 		Commands* command = createCommand;
 		commandList.push_back(command);
 	}

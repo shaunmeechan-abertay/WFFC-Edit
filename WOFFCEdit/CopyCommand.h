@@ -10,6 +10,7 @@ public:
 	//Does this need to exist?
 	void setType(Commands::CommandType newType);
 	DisplayObject getCopiedObject();
+	std::vector<DisplayObject> getCopiedObjects();
 
 private:
 	//These will be copies of the input data
