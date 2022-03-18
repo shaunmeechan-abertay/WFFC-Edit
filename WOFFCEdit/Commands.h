@@ -10,7 +10,9 @@ public:
 	{
 		Default,
 		Delete,
-		Create
+		Create,
+		Copy,
+		Pase
 	};
 
 	CommandType type = CommandType::Default;
@@ -19,6 +21,9 @@ public:
 	//Maybe terrain based actions?
 	virtual void performAction(DisplayObject);
 	virtual DisplayObject getDeletedObject();
+	virtual std::vector<DisplayObject> getDeletedObjects();
+	virtual DisplayObject getCreatedObject();
+	virtual std::vector<DisplayObject> getCreatedObjects();
 	virtual CommandType getType();
 };
 

@@ -5,11 +5,8 @@ CreateCommand::CreateCommand()
 	type = Commands::CommandType::Create;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shared_ptr<DX::DeviceResources> &m_deviceResources, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
 {
-	auto device = m_deviceResources->GetD3DDevice();
-	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
-
 	//create a temp display object that we will populate then append to the display list.
 	DisplayObject newDisplayObject;
 
@@ -21,13 +18,13 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 
 	//apply new texture to models effect
 	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	{
+		auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+		if (lights)
 		{
-			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);
-			}
-		});
+			lights->SetTexture(newDisplayObject.m_texture_diffuse);
+		}
+	});
 
 	//set position
 	newDisplayObject.m_position.x = deletedObject.m_position.x;
@@ -46,7 +43,16 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 
 	//set wireframe / render flags
 	newDisplayObject.m_render = deletedObject.m_render;
-	newDisplayObject.m_wireframe = deletedObject.m_wireframe;
+	if (isPaste == true)
+	{
+		newDisplayObject.m_wireframe = true;
+		newDisplayObject.m_selected = true;
+	}
+	else
+	{
+		newDisplayObject.m_wireframe = false;
+		newDisplayObject.m_selected = false;
+	}
 
 	newDisplayObject.m_light_type = deletedObject.m_light_type;
 	newDisplayObject.m_light_diffuse_r = deletedObject.m_light_diffuse_r;
@@ -60,9 +66,97 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::shar
 	newDisplayObject.m_light_linear = deletedObject.m_light_linear;
 	newDisplayObject.m_light_quadratic = deletedObject.m_light_quadratic;
 	//Assign ID
-	newDisplayObject.m_ID = deletedObject.m_ID;
+	unsigned int maxID = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
 
 	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
+}
+
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
+{
+	unsigned int maxID = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+
+	for (int i = 0; i < objectsToCreate.size(); i++)
+	{
+		DisplayObject newObject;
+
+		//load model
+		newObject.m_model = objectsToCreate[i].m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+		//Load Texture
+		newObject.m_texture_diffuse = objectsToCreate[i].m_texture_diffuse;
+
+		//apply new texture to models effect
+		newObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+			{
+				auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+				if (lights)
+				{
+					lights->SetTexture(newObject.m_texture_diffuse);
+				}
+			});
+
+		//set position
+		newObject.m_position.x = objectsToCreate[i].m_position.x;
+		newObject.m_position.y = objectsToCreate[i].m_position.y;
+		newObject.m_position.z = objectsToCreate[i].m_position.z;
+
+		//setorientation
+		newObject.m_orientation.x = objectsToCreate[i].m_orientation.x;
+		newObject.m_orientation.y = objectsToCreate[i].m_orientation.y;
+		newObject.m_orientation.z = objectsToCreate[i].m_orientation.z;
+
+		//set scale
+		newObject.m_scale.x = objectsToCreate[i].m_scale.x;
+		newObject.m_scale.y = objectsToCreate[i].m_scale.y;
+		newObject.m_scale.z = objectsToCreate[i].m_scale.z;
+
+		//set wireframe / render flags
+		newObject.m_render = objectsToCreate[i].m_render;
+		if (isPaste == true)
+		{
+			newObject.m_wireframe = true;
+			newObject.m_selected = true;
+		}
+		else
+		{
+			newObject.m_wireframe = false;
+			newObject.m_selected = false;
+		}
+
+		newObject.m_light_type = objectsToCreate[i].m_light_type;
+		newObject.m_light_diffuse_r = objectsToCreate[i].m_light_diffuse_r;
+		newObject.m_light_diffuse_g = objectsToCreate[i].m_light_diffuse_g;
+		newObject.m_light_diffuse_b = objectsToCreate[i].m_light_diffuse_b;
+		newObject.m_light_specular_r = objectsToCreate[i].m_light_specular_r;
+		newObject.m_light_specular_g = objectsToCreate[i].m_light_specular_g;
+		newObject.m_light_specular_b = objectsToCreate[i].m_light_specular_b;
+		newObject.m_light_spot_cutoff = objectsToCreate[i].m_light_spot_cutoff;
+		newObject.m_light_constant = objectsToCreate[i].m_light_constant;
+		newObject.m_light_linear = objectsToCreate[i].m_light_linear;
+		newObject.m_light_quadratic = objectsToCreate[i].m_light_quadratic;
+		//Assign ID
+		newObject.m_ID = maxID + 1;
+		maxID++;
+
+		objects.push_back(newObject);
+		createdObjects.push_back(newObject);
+	}
 }
 
 Commands::CommandType CreateCommand::getType()
@@ -70,9 +164,14 @@ Commands::CommandType CreateCommand::getType()
 	return type;
 }
 
-void CreateCommand::setType(Commands::CommandType newType)
+DisplayObject CreateCommand::getCreatedObject()
 {
-	type = newType;
+	return createdObject;
+}
+
+std::vector<DisplayObject> CreateCommand::getCreatedObjects()
+{
+	return createdObjects;
 }
 
 std::wstring CreateCommand::StringToWCHART(std::string s)

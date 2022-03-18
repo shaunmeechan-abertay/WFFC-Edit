@@ -17,21 +17,24 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 		if (objects[i].m_ID == ID)
 		{
 			deletedObject = objects.at(i);
+			deletedObject.m_wireframe = false;
 			objects.erase(objects.begin() + i);
 			return;
 		}
 	}
 }
 
-void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<int>& IDs)
+void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject>& ObjectsToDelete)
 {
 
-	for (unsigned int  i = 0; i < (unsigned)IDs.size(); i++)
+	for (unsigned int  i = 0; i < (unsigned)ObjectsToDelete.size(); i++)
 	{
 		for (unsigned int j = 0; j < (unsigned)objects.size(); j++)
 		{
-			if (objects[j].m_ID == IDs.at(i))
+			if (objects[j].m_ID == ObjectsToDelete.at(i).m_ID)
 			{
+				objects.at(j).m_wireframe = false;
+				deletedObjects.push_back(objects.at(j));
 				objects.erase(objects.begin() + j);
 				break;
 			}
@@ -48,4 +51,9 @@ Commands::CommandType DeleteCommand::getType()
 DisplayObject DeleteCommand::getDeletedObject()
 {
 	return deletedObject;
+}
+
+std::vector<DisplayObject> DeleteCommand::getDeletedObjects()
+{
+	return deletedObjects;
 }

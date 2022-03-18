@@ -196,7 +196,6 @@ void Game::Update(DX::StepTimer const& timer)
 		m_camPosition -= m_camRight*m_movespeed;
 	}
 
-	//This might not work if held
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
@@ -208,7 +207,7 @@ void Game::Update(DX::StepTimer const& timer)
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+ 			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
 		}
 		Commands *command = deleteCommand;
 		commandList.push_back(command);
@@ -226,8 +225,20 @@ void Game::Update(DX::StepTimer const& timer)
 		RedoAction();
 	}
 
-	//This might not work long term
-	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false)
+	if (m_InputCommands.copy && inputDown == false)
+	{
+		inputDown = true;
+		copyObject();
+	}	
+	
+	if (m_InputCommands.paste && inputDown == false)
+	{
+		inputDown = true;
+		pasteObject();
+	}
+
+	//This might not work long term (this really is getting bad now)
+	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false && m_InputCommands.paste == false)
 	{
 		inputDown = false;
 	}
@@ -322,7 +333,7 @@ void Game::Render()
 	}
     m_deviceResources->PIXEndEvent();
 
-	//RENDER TERRAIN
+	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
@@ -401,6 +412,45 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
+void Game::setSelectedObject(DisplayObject* newObject)
+{
+	if (selectedObject != NULL)
+	{
+		selectedObject->m_wireframe = false;
+		selectedObject->m_selected = false;
+	}
+	selectedObject = newObject;
+}
+void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
+{
+	if (newObjects.empty() == true)
+	{
+		//If we are sent nothing, do nothing
+		return;
+	}
+	if (selectedObjects.empty() == false)
+	{
+		for (int i = 0; i < selectedObjects.size(); i++)
+		{
+			//Find the object in the display list
+			for (int j = 0; j < m_displayList.size(); j++)
+			{
+				if (selectedObjects[i].m_ID == m_displayList[j].m_ID)
+				{
+					m_displayList[j].m_wireframe = false;
+					m_displayList[j].m_selected = false;
+				}
+			}
+		}
+		selectedObjects.clear();
+	}
+		for (int i = 0; i < newObjects.size(); i++)
+		{
+			newObjects[i].m_wireframe = true;
+			newObjects[i].m_selected = true;
+			selectedObjects.push_back(newObjects[i]);
+		}
+}
 #pragma endregion
 
 #pragma region Message Handlers
@@ -439,7 +489,6 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 {
-	tempSceneGraph = SceneGraph;
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
@@ -588,11 +637,11 @@ int Game::MousePicking()
 					m_displayList[i].m_selected = true;
 					if (selectedObject != NULL)
 					{
-						selectedObjects.push_back(selectedObject->m_ID);
+						selectedObjects.push_back(*selectedObject);
 						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
-						selectedObject = NULL;
+						//setSelectedObject(NULL);
 					}
-					selectedObjects.push_back(m_displayList[i].m_ID);
+					selectedObjects.push_back(m_displayList[i]);
 				}
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
 				{
@@ -600,7 +649,7 @@ int Game::MousePicking()
 					//Got to find object in selected objects list
 					for (int j = 0; j < selectedObjects.size(); j++)
 					{
-						if (m_displayList[i].m_ID == selectedObjects.at(j))
+						if (m_displayList[i].m_ID == selectedObjects.at(j).m_ID)
 						{
 							//Found object, remove
 							selectedObjects.erase(selectedObjects.begin() + j);
@@ -611,17 +660,25 @@ int Game::MousePicking()
 				}
 				else
 				{
+					//If we have selected objects - deselect them
+					if (selectedObjects.empty() == false)
+					{
+						for (int j = 0; j < m_displayList.size(); j++)
+						{
+							m_displayList[j].m_wireframe = false;
+						}
+						selectedObjects.clear();
+					}
 					selectedID = m_displayList[i].m_ID;
 					if (selectedObject == NULL)
 					{
-						selectedObject = &m_displayList[i];
+						setSelectedObject(&m_displayList[i]);
 					}
 
 					//If we have a selected object and the user didn't click it
 					if (selectedObject != NULL && selectedID != selectedObject->m_ID)
 					{
-						selectedObject->m_wireframe = false;
-						selectedObject = &m_displayList[i];
+						setSelectedObject(&m_displayList[i]);
 					}
 				}
 
@@ -637,6 +694,42 @@ int Game::MousePicking()
 void Game::setID(int newID)
 {
 	ID = newID;
+}
+
+void Game::copyObject()
+{
+	if (selectedObjects.size() > 0)
+	{
+		copyCommand.performAction(selectedObjects);
+	}
+	else
+	{
+		if (selectedObject != NULL)
+		{
+			copyCommand.performAction(selectedObject);
+		}
+		else
+		{
+			return;
+		}
+	}
+}
+
+void Game::pasteObject()
+{
+	CreateCommand* createCommand = new CreateCommand;
+	if (copyCommand.getCopiedObjects().empty() == false)
+	{
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObjects(), m_fxFactory, true);
+		setSelectedObjects(createCommand->getCreatedObjects());
+	}
+	else
+	{
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObject(), m_fxFactory, true);
+		setSelectedObject(&m_displayList.at(createCommand->getCreatedObject().m_ID - 1));
+	}
+	Commands* command = createCommand;
+	commandList.push_back(command);
 }
 
 #ifdef DXTK_AUDIO
@@ -741,19 +834,18 @@ void Game::undoAction()
 	}
 
 	Commands* commandToUndo = commandList.front();
-	//CreateCommand del;
-	//del.setType(commandToUndo.type);
+	commandList.pop_front();
 	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
 		//This actually needs to be the ID of the object created
-		if (selectedObjects.empty() == false)
+		if (commandToUndo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObjects());
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObject().m_ID);
 		}
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
@@ -764,7 +856,14 @@ void Game::undoAction()
 	{
 		CreateCommand* createCommand = new CreateCommand;
 		//This will need to deal with deletion of multiple deleted object
-		createCommand->performAction(m_displayList,m_deviceResources,commandToUndo->getDeletedObject(), m_fxFactory);
+		if (commandToUndo->getDeletedObjects().size() > 0)
+		{
+			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory);
+		}
+		else
+		{
+			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory);
+		}
 		Commands* command = createCommand;
 		UndonecommandList.push_back(command);
 	}
@@ -779,17 +878,18 @@ void Game::RedoAction()
 	}
 
 	Commands* commandToDo = UndonecommandList.front();
+	UndonecommandList.pop_front();
 	if (commandToDo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
 		//This actually needs to be the ID of the object created
-		if (selectedObjects.empty() == false)
+		if (commandToDo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObjects());
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObject().m_ID);
 		}
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
@@ -800,9 +900,16 @@ void Game::RedoAction()
 	{
 		CreateCommand* createCommand = new CreateCommand;
 		//This will need to deal with deletion of multiple deleted object
-		createCommand->performAction(m_displayList, m_deviceResources, commandToDo->getDeletedObject(), m_fxFactory);
+		if (commandToDo->getDeletedObjects().size() > 0)
+		{
+			createCommand->performAction(m_displayList, commandToDo->getDeletedObjects(), m_fxFactory);
+		}
+		else
+		{
+			createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
+		}
 		Commands* command = createCommand;
-		commandList.push_back(command);
+		UndonecommandList.push_back(command);
 	}
 }
 
