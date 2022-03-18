@@ -10,8 +10,11 @@ public:
 	void performAction(std::vector<DisplayObject>&objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory> &m_fxFactory);
 	void performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory> &m_fxFactory);
 	Commands::CommandType getType();
-	void setType(Commands::CommandType);
+	DisplayObject getCreatedObject();
+	std::vector<DisplayObject> getCreatedObjects();
 private:
 	std::wstring StringToWCHART(std::string s);
+	DisplayObject createdObject;
+	std::vector<DisplayObject> createdObjects;
 };
 

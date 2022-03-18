@@ -788,7 +788,6 @@ void Game::CreateWindowSizeDependentResources()
 
 void Game::undoAction()
 {
-	//ISSUE: The objects reappear as wireframe - minor bug, it's because when they were deleted they were selected
 	if (commandList.size() <= 0)
 	{
 		return;
@@ -800,13 +799,13 @@ void Game::undoAction()
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
 		//This actually needs to be the ID of the object created
-		if (selectedObjects.empty() == false)
+		if (commandToUndo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObjects());
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObject().m_ID);
 		}
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();

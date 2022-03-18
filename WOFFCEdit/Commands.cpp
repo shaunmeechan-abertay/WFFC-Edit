@@ -15,6 +15,16 @@ std::vector<DisplayObject> Commands::getDeletedObjects()
 	return std::vector<DisplayObject>();
 }
 
+DisplayObject Commands::getCreatedObject()
+{
+	return DisplayObject();
+}
+
+std::vector<DisplayObject> Commands::getCreatedObjects()
+{
+	return std::vector<DisplayObject>();
+}
+
 Commands::CommandType Commands::getType()
 {
 	return type;

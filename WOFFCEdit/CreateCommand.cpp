@@ -60,6 +60,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 	newDisplayObject.m_ID = deletedObject.m_ID;
 
 	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
 }
 
 void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
@@ -118,6 +119,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 		newObject.m_ID = objectsToCreate[i].m_ID;
 
 		objects.push_back(newObject);
+		createdObjects.push_back(newObject);
 	}
 }
 
@@ -126,9 +128,14 @@ Commands::CommandType CreateCommand::getType()
 	return type;
 }
 
-void CreateCommand::setType(Commands::CommandType newType)
+DisplayObject CreateCommand::getCreatedObject()
 {
-	type = newType;
+	return createdObject;
+}
+
+std::vector<DisplayObject> CreateCommand::getCreatedObjects()
+{
+	return createdObjects;
 }
 
 std::wstring CreateCommand::StringToWCHART(std::string s)
