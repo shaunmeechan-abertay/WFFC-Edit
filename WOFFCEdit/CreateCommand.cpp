@@ -5,7 +5,7 @@ CreateCommand::CreateCommand()
 	type = Commands::CommandType::Create;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
 {
 	//create a temp display object that we will populate then append to the display list.
 	DisplayObject newDisplayObject;
@@ -43,7 +43,16 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 
 	//set wireframe / render flags
 	newDisplayObject.m_render = deletedObject.m_render;
-	newDisplayObject.m_wireframe = false;
+	if (isPaste == true)
+	{
+		newDisplayObject.m_wireframe = true;
+		newDisplayObject.m_selected = true;
+	}
+	else
+	{
+		newDisplayObject.m_wireframe = false;
+		newDisplayObject.m_selected = false;
+	}
 
 	newDisplayObject.m_light_type = deletedObject.m_light_type;
 	newDisplayObject.m_light_diffuse_r = deletedObject.m_light_diffuse_r;
@@ -71,7 +80,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 	createdObject = newDisplayObject;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
 {
 	unsigned int maxID = 0;
 	for (int i = 0; i < objects.size(); i++)
@@ -119,7 +128,16 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 
 		//set wireframe / render flags
 		newObject.m_render = objectsToCreate[i].m_render;
-		newObject.m_wireframe = false;
+		if (isPaste == true)
+		{
+			newObject.m_wireframe = true;
+			newObject.m_selected = true;
+		}
+		else
+		{
+			newObject.m_wireframe = false;
+			newObject.m_selected = false;
+		}
 
 		newObject.m_light_type = objectsToCreate[i].m_light_type;
 		newObject.m_light_diffuse_r = objectsToCreate[i].m_light_diffuse_r;

@@ -58,8 +58,6 @@ void CopyCommand::performAction(std::vector<DisplayObject>& objects)
 		newObject.m_light_linear = objects[i].m_light_linear;
 		newObject.m_light_quadratic = objects[i].m_light_quadratic;
 		//Assign ID
-		//BUG: This copies the ID, means ID isn't unique so deletion doesn't work correctly
-		//Solution? Loop through objects to get higest ID then plus 1?
 		newObject.m_ID = objects[i].m_ID;
 		
 		copiedObjects.push_back(newObject);

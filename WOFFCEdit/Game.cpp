@@ -207,7 +207,7 @@ void Game::Update(DX::StepTimer const& timer)
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+ 			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
 		}
 		Commands *command = deleteCommand;
 		commandList.push_back(command);
@@ -227,16 +227,18 @@ void Game::Update(DX::StepTimer const& timer)
 
 	if (m_InputCommands.copy && inputDown == false)
 	{
+		inputDown = true;
 		copyObject();
 	}	
 	
 	if (m_InputCommands.paste && inputDown == false)
 	{
+		inputDown = true;
 		pasteObject();
 	}
 
 	//This might not work long term (this really is getting bad now)
-	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false)
+	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false && m_InputCommands.paste == false)
 	{
 		inputDown = false;
 	}
@@ -410,6 +412,45 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
+void Game::setSelectedObject(DisplayObject* newObject)
+{
+	if (selectedObject != NULL)
+	{
+		selectedObject->m_wireframe = false;
+		selectedObject->m_selected = false;
+	}
+	selectedObject = newObject;
+}
+void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
+{
+	if (newObjects.empty() == true)
+	{
+		//If we are sent nothing, do nothing
+		return;
+	}
+	if (selectedObjects.empty() == false)
+	{
+		for (int i = 0; i < selectedObjects.size(); i++)
+		{
+			//Find the object in the display list
+			for (int j = 0; j < m_displayList.size(); j++)
+			{
+				if (selectedObjects[i].m_ID == m_displayList[j].m_ID)
+				{
+					m_displayList[j].m_wireframe = false;
+					m_displayList[j].m_selected = false;
+				}
+			}
+		}
+		selectedObjects.clear();
+	}
+		for (int i = 0; i < newObjects.size(); i++)
+		{
+			newObjects[i].m_wireframe = true;
+			newObjects[i].m_selected = true;
+			selectedObjects.push_back(newObjects[i]);
+		}
+}
 #pragma endregion
 
 #pragma region Message Handlers
@@ -448,7 +489,6 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 {
-	tempSceneGraph = SceneGraph;
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
@@ -599,7 +639,7 @@ int Game::MousePicking()
 					{
 						selectedObjects.push_back(*selectedObject);
 						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
-						selectedObject = NULL;
+						//setSelectedObject(NULL);
 					}
 					selectedObjects.push_back(m_displayList[i]);
 				}
@@ -632,14 +672,13 @@ int Game::MousePicking()
 					selectedID = m_displayList[i].m_ID;
 					if (selectedObject == NULL)
 					{
-						selectedObject = &m_displayList[i];
+						setSelectedObject(&m_displayList[i]);
 					}
 
 					//If we have a selected object and the user didn't click it
 					if (selectedObject != NULL && selectedID != selectedObject->m_ID)
 					{
-						selectedObject->m_wireframe = false;
-						selectedObject = &m_displayList[i];
+						setSelectedObject(&m_displayList[i]);
 					}
 				}
 
@@ -679,14 +718,15 @@ void Game::copyObject()
 void Game::pasteObject()
 {
 	CreateCommand* createCommand = new CreateCommand;
-	//This will need to deal with creation of multiple objects (could loop this?)
 	if (copyCommand.getCopiedObjects().empty() == false)
 	{
-		createCommand->performAction(m_displayList, copyCommand.getCopiedObjects(), m_fxFactory);
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObjects(), m_fxFactory, true);
+		setSelectedObjects(createCommand->getCreatedObjects());
 	}
 	else
 	{
-		createCommand->performAction(m_displayList, copyCommand.getCopiedObject(), m_fxFactory);
+		createCommand->performAction(m_displayList, copyCommand.getCopiedObject(), m_fxFactory, true);
+		setSelectedObject(&m_displayList.at(createCommand->getCreatedObject().m_ID - 1));
 	}
 	Commands* command = createCommand;
 	commandList.push_back(command);
