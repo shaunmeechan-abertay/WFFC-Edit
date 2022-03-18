@@ -18,13 +18,13 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 
 	//apply new texture to models effect
 	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	{
+		auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+		if (lights)
 		{
-			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);
-			}
-		});
+			lights->SetTexture(newDisplayObject.m_texture_diffuse);
+		}
+	});
 
 	//set position
 	newDisplayObject.m_position.x = deletedObject.m_position.x;

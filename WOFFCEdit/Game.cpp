@@ -843,13 +843,13 @@ void Game::RedoAction()
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
 		//This actually needs to be the ID of the object created
-		if (selectedObjects.empty() == false)
+		if (commandToDo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, selectedObjects);
+			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObjects());
 		}
 		else
 		{
-			deleteCommand->performAction(m_displayList, ID);
+			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObject().m_ID);
 		}
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
@@ -860,9 +860,16 @@ void Game::RedoAction()
 	{
 		CreateCommand* createCommand = new CreateCommand;
 		//This will need to deal with deletion of multiple deleted object
-		createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
+		if (commandToDo->getDeletedObjects().size() > 0)
+		{
+			createCommand->performAction(m_displayList, commandToDo->getDeletedObjects(), m_fxFactory);
+		}
+		else
+		{
+			createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
+		}
 		Commands* command = createCommand;
-		commandList.push_back(command);
+		UndonecommandList.push_back(command);
 	}
 }
 
