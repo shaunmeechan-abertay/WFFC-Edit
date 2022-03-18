@@ -57,7 +57,15 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 	newDisplayObject.m_light_linear = deletedObject.m_light_linear;
 	newDisplayObject.m_light_quadratic = deletedObject.m_light_quadratic;
 	//Assign ID
-	newDisplayObject.m_ID = deletedObject.m_ID;
+	unsigned int maxID = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
 
 	objects.push_back(newDisplayObject);
 	createdObject = newDisplayObject;
@@ -65,6 +73,15 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 
 void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory)
 {
+	unsigned int maxID = 0;
+	for (int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+
 	for (int i = 0; i < objectsToCreate.size(); i++)
 	{
 		DisplayObject newObject;
@@ -116,7 +133,8 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 		newObject.m_light_linear = objectsToCreate[i].m_light_linear;
 		newObject.m_light_quadratic = objectsToCreate[i].m_light_quadratic;
 		//Assign ID
-		newObject.m_ID = objectsToCreate[i].m_ID;
+		newObject.m_ID = maxID + 1;
+		maxID++;
 
 		objects.push_back(newObject);
 		createdObjects.push_back(newObject);
