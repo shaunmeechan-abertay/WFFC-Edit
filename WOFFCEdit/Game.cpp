@@ -176,15 +176,6 @@ void Game::Update(DX::StepTimer const& timer)
 	}
 	else
 	{
-
-
-		//m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
-
-		//m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
-
-		//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
-
-
 		shouldResetOrientation = false;
 	}
 
@@ -757,13 +748,25 @@ void Game::focusOnItem()
 	//For now focus on a single item
 	if (selectedObject == NULL)
 	{
-		return;
+	}
+	else
+	{
+		//Move camera to object position
+		shouldResetOrientation = true;
+		m_camPosition = selectedObject->m_position + Vector3(-5, 0, 5);
+
+		//Calculate angle between the camera and the object
+		//Create a direction vector
+		Vector3 dir = selectedObject->m_position - m_camPosition;
+		//Get arctan of the vector
+		float angle = atan2f(dir.z, dir.x);
+		//Convert the result into degress as above is in radians
+		angle = XMConvertToDegrees(angle);
+		m_camOrientation.y = angle;
 	}
 
 	if (selectedObjects.empty() == false)
 	{
-		return;
-	}
 
 	//Move camera to object position
 	shouldResetOrientation = true;
@@ -777,7 +780,53 @@ void Game::focusOnItem()
 	//Convert the result into degress as above is in radians
 	angle = XMConvertToDegrees(angle);
 	m_camOrientation.y = angle;
+		//We want to show all objects that were selected
+		//We need to put the objects in acessending order using bubble sort
+		std::vector<DisplayObject> orderedObjects = selectedObjects;
+		bool shouldOrder = true;
+		bool reordered = false;
+		while (shouldOrder == true)
+		{
+			reordered = false;
+			for (unsigned int i = 0; i < selectedObjects.size(); i++)
+			{
+				//Have to make sure I isn't greater than the size of the vector
+				if (i < selectedObjects.size() - 1)
+				{
+					if (orderedObjects[i].m_position.x > orderedObjects[i + 1].m_position.x)
+					{
+						DisplayObject temp = orderedObjects[i];
+						orderedObjects[i] = orderedObjects[i + 1];
+						orderedObjects[i + 1] = temp;
+						reordered = true;
+					}
+				}
+			}
+			if (reordered == false)
+			{
+				shouldOrder = false;
+			}
+		}
+		//Now they have been get distance between max and min
+		//Calculate angle between the camera and the object
+		//Create a direction vector
+		Vector3 midPoint = (orderedObjects.back().m_position + orderedObjects.front().m_position)/2;
+		//If you are multi selecting you will probably be in mid air so don't change this
+		midPoint.y = m_camPosition.y;
+		m_camPosition = midPoint + Vector3(-10, 0, 10);
 
+		Vector3 dir = midPoint - m_camPosition;
+		//Get arctan of the vector
+		float angle = atan2f(dir.z, dir.x);
+		//Convert the result into degress as above is in radians
+		angle = XMConvertToDegrees(angle);
+		m_camOrientation.y = angle;
+
+	}
+	else
+	{
+		return;
+	}
 }
 
 #ifdef DXTK_AUDIO
