@@ -392,13 +392,13 @@ void ToolMain::UpdateInput(MSG * msg)
 	else m_toolInputCommands.deleteObject = false;
 
 	//Undo 
-	if (m_keyArray['X'])
+	if (m_keyArray['X'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.UndoCommand = true;
 	}
 	else m_toolInputCommands.UndoCommand = false;
 	//Redo
-	if (m_keyArray['Z'])
+	if (m_keyArray['Z'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.RedoCommand = true;
 	}
@@ -410,16 +410,15 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.multipick = false;
 	//Copy
-	if (m_keyArray['C'])
+	if (m_keyArray['C'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.copy = true;
 	}
 	else m_toolInputCommands.copy = false;
 	//Paste
-	if (m_keyArray['V'])
+	if (m_keyArray['V'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.paste = true;
 	}
-	else m_toolInputCommands.paste = false;
-
+	else m_toolInputCommands.paste = false;	
 }
