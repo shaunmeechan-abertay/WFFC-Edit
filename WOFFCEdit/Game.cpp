@@ -176,28 +176,14 @@ void Game::Update(DX::StepTimer const& timer)
 	}
 	else
 	{
-		//0.807919204
-		//m_camLookDirection.x = 0.81f;
-		//-0.0523344129
-		//m_camLookDirection.y = -0.1;
-		//-0.586964786
-		//m_camLookDirection.z = -0.59f;
-
-		m_camOrientation.y = -39.0f;
-		m_camOrientation.x = 0.0f;
 
 
-		m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+		//m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
-		m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
+		//m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
 
-		m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+		//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
-		//m_camLookDirection.x = cos((-39.0f) * 3.1415 / 180) * cos((0.0f) * 3.1415 / 180);
-
-		//m_camLookDirection.y = sin((0.0f) * 3.1415 / 180);
-
-		//m_camLookDirection.z = sin((-39.0f) * 3.1415 / 180) * cos((0.0f) * 3.1415 / 180);
 
 		shouldResetOrientation = false;
 	}
@@ -778,104 +764,20 @@ void Game::focusOnItem()
 	{
 		return;
 	}
-	//We need to move the camera to near the object then possibly rotate to actually see it
-	//So move near, raycast to see if we see it (this is kinda similar to mouse picking)
-	//Checking for ray intersection
-	//if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
 
 	//Move camera to object position
-	m_camPosition = selectedObject->m_position + Vector3(-5,0,5);
-	//create look direction from Euler angles in m_camOrientation
 	shouldResetOrientation = true;
-	//m_camLookDirection.x = 0.0f;
+	m_camPosition = selectedObject->m_position + Vector3(-5, 0, 5);
 
-	//m_camLookDirection.y = 0;
+	//Calculate angle between the camera and the object
+	//Create a direction vector
+	Vector3 dir = selectedObject->m_position - m_camPosition;
+	//Get arctan of the vector
+	float angle = atan2f(dir.z,dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camOrientation.y = angle;
 
-	//m_camLookDirection.z = 0;
-
-	//m_camLookDirection.Normalize();
-
-	////create right vector from look Direction
-	//m_camLookDirection.Cross(Vector3::UnitY, m_camRight);
-
-	////update lookat point
-	//m_camLookAt = m_camPosition + m_camLookDirection;
-
-	////apply camera vectors
-	//m_view = Matrix::CreateLookAt(m_camPosition, m_camLookAt, Vector3::UnitY);
-
-	//m_batchEffect->SetView(m_view);
-	//m_displayChunk.m_terrainEffect->SetView(m_view);
-
-
-	//Setup for raycast
-	//setup near and far planes of frustum with cam X and cam Y passed
-	//They may look the same but note the difference in Z
-	const XMVECTOR nearSource = XMVectorSet(m_camPosition.x,m_camPosition.y, 0.0f, 1.0f);
-	const XMVECTOR farSource = XMVectorSet(m_camPosition.x, m_camPosition.y, 1.0f, 1.0f);
-	//Get the scale factor and translation of the object
-	const XMVECTORF32 scale = { selectedObject->m_scale.x,
-		selectedObject->m_scale.y, selectedObject->m_scale.z };
-	const XMVECTORF32 translate = { selectedObject->m_position.x,
-		selectedObject->m_position.y, selectedObject->m_position.z };
-	//Convert eular angles into a quaterion for the rotation of the object
-	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(selectedObject->m_orientation.y * 3.1415 / 180,
-		selectedObject->m_orientation.x * 3.1415 / 180,
-		selectedObject->m_orientation.z * 3.1415 / 180);
-	//Create set the matrix of the selected object in the world based on the translation,scale and roation
-	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-	//Unproject the points on the near and far plane, with respect to the matrix we just created
-	XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-	XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-	//Turn the transformed points into our picking vector
-	XMVECTOR pickingVector = farPoint - nearPoint;
-	pickingVector = XMVector3Normalize(pickingVector);
-	float pickedDistance = 0;
-
-	//Now we need to rotate to actually line it up in the centre
-	for (unsigned int i = 0; i < selectedObject->m_model.get()->meshes.size(); i++)
-	{
-		if (selectedObject->m_model.get()->meshes[i]->boundingBox.Intersects(nearPoint, pickingVector,pickedDistance))
-		{
-			//In theory this will confirm if we hit the object.
-			int TEST = 0;
-		}
-	}
-
-	/*
-	for (int i = 0; i < m_displayList.size(); i++)
-	{
-		//Get the scale factor and translation of the object
-		const XMVECTORF32 scale = { m_displayList[i].m_scale.x,
-			m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
-		const XMVECTORF32 translate = { m_displayList[i].m_position.x,
-			m_displayList[i].m_position.y, m_displayList[i].m_position.z };
-		//Convert eular angles into a quaterion for the rotation of the object
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * 3.1415 / 180,
-			m_displayList[i].m_orientation.x * 3.1415 / 180,
-			m_displayList[i].m_orientation.z * 3.1415 / 180);
-		//Create set the matrix of the selected object in the world based on the translation,scale and roation
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-		//Unproject the points on the near and far plane, with respect to the matrix we just created
-		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
-
-		//Turn the transformed points into our picking vector
-		XMVECTOR pickingVector = farPoint - nearPoint;
-		pickingVector = XMVector3Normalize(pickingVector);
-
-		//Loop through mesh list for object
-		for (int y = 0; y < m_displayList[i].m_model.get()->meshes.size(); y++)
-		{
-			//Checking for ray intersection
-			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-			{
-				int TEST2 = 0;
-			}
-		}
-	}
-	*/
 }
 
 #ifdef DXTK_AUDIO
