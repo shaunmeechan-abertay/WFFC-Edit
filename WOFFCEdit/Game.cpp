@@ -767,19 +767,6 @@ void Game::focusOnItem()
 
 	if (selectedObjects.empty() == false)
 	{
-
-	//Move camera to object position
-	shouldResetOrientation = true;
-	m_camPosition = selectedObject->m_position + Vector3(-5, 0, 5);
-
-	//Calculate angle between the camera and the object
-	//Create a direction vector
-	Vector3 dir = selectedObject->m_position - m_camPosition;
-	//Get arctan of the vector
-	float angle = atan2f(dir.z,dir.x);
-	//Convert the result into degress as above is in radians
-	angle = XMConvertToDegrees(angle);
-	m_camOrientation.y = angle;
 		//We want to show all objects that were selected
 		//We need to put the objects in acessending order using bubble sort
 		std::vector<DisplayObject> orderedObjects = selectedObjects;
