@@ -65,6 +65,9 @@ public:
 	//We only want one of these as you can only "store" one object/objects at a time
 	CopyCommand copyCommand;
 	void pasteObject();
+	//Focus function
+	void focusOnItem();
+	bool shouldResetOrientation = false;
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

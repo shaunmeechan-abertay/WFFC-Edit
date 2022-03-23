@@ -19,4 +19,5 @@ struct InputCommands
 	bool multipick;
 	bool copy;
 	bool paste;
+	bool focusOnObject;
 };

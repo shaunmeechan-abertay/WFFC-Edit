@@ -31,6 +31,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.multipick = false;
 	m_toolInputCommands.copy = false;
 	m_toolInputCommands.paste = false;
+	m_toolInputCommands.focusOnObject = false;
 	
 }
 
@@ -421,4 +422,10 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.paste = true;
 	}
 	else m_toolInputCommands.paste = false;	
+	//Focus on an object
+	if (m_keyArray['F'])
+	{
+		m_toolInputCommands.focusOnObject = true;
+	}
+	else m_toolInputCommands.focusOnObject = false;	
 }
