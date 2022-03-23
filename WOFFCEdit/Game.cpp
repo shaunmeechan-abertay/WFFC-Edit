@@ -166,12 +166,27 @@ void Game::Update(DX::StepTimer const& timer)
 
 
 	//create look direction from Euler angles in m_camOrientation
+	if (shouldResetOrientation == false)
+	{
+		m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
 
-	m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+		m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
 
-	m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
+		m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+	}
+	else
+	{
 
-	m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+
+		//m_camLookDirection.x = cos((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+
+		//m_camLookDirection.y = sin((m_camOrientation.x) * 3.1415 / 180);
+
+		//m_camLookDirection.z = sin((m_camOrientation.y) * 3.1415 / 180) * cos((m_camOrientation.x) * 3.1415 / 180);
+
+
+		shouldResetOrientation = false;
+	}
 
 	m_camLookDirection.Normalize();
 
@@ -195,7 +210,6 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		m_camPosition -= m_camRight*m_movespeed;
 	}
-
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
@@ -237,8 +251,14 @@ void Game::Update(DX::StepTimer const& timer)
 		pasteObject();
 	}
 
+	if (m_InputCommands.focusOnObject && inputDown == false)
+	{
+		inputDown = true;
+		focusOnItem();
+	}
+
 	//This might not work long term (this really is getting bad now)
-	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false && m_InputCommands.paste == false)
+	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false && m_InputCommands.paste == false && m_InputCommands.focusOnObject == false)
 	{
 		inputDown = false;
 	}
@@ -607,7 +627,7 @@ int Game::MousePicking()
 	{
 		//Get the scale factor and translation of the object
 		const XMVECTORF32 scale = { m_displayList[i].m_scale.x,
-			m_displayList[i].m_scale.y, m_displayList[i].m_scale.x };
+			m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
 		const XMVECTORF32 translate = { m_displayList[i].m_position.x,
 			m_displayList[i].m_position.y, m_displayList[i].m_position.z };
 		//Convert eular angles into a quaterion for the rotation of the object
@@ -730,6 +750,34 @@ void Game::pasteObject()
 	}
 	Commands* command = createCommand;
 	commandList.push_back(command);
+}
+
+void Game::focusOnItem()
+{
+	//For now focus on a single item
+	if (selectedObject == NULL)
+	{
+		return;
+	}
+
+	if (selectedObjects.empty() == false)
+	{
+		return;
+	}
+
+	//Move camera to object position
+	shouldResetOrientation = true;
+	m_camPosition = selectedObject->m_position + Vector3(-5, 0, 5);
+
+	//Calculate angle between the camera and the object
+	//Create a direction vector
+	Vector3 dir = selectedObject->m_position - m_camPosition;
+	//Get arctan of the vector
+	float angle = atan2f(dir.z,dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camOrientation.y = angle;
+
 }
 
 #ifdef DXTK_AUDIO
