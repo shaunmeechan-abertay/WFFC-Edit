@@ -123,7 +123,7 @@ void MFCMain::MenuEditSelect()
 void MFCMain::MenuEditCreate()
 {
 	//From here we need to tell the game file to call the create command - basic version of this is copy and paste an object
-	m_GameSystem.CreateNewObject();
+	m_ToolSystem.CreateNewGameObject();
 }
 
 void MFCMain::ToolBarButton1()

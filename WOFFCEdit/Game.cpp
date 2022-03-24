@@ -819,9 +819,18 @@ void Game::focusOnItem()
 
 void Game::CreateNewObject()
 {
+	if (m_displayList.empty() == true)
+	{
+		return;
+	}
 	//Something isn't right here, m_displayList become empty when we get here
 	//Try a data breakpoint or something here or 
 	//create a function in CreateCommand that creates a default object <- this might be better
+	CreateCommand* createCommand = new CreateCommand;
+	//This will need to deal with deletion of multiple deleted object
+	createCommand->performAction(m_displayList);
+	Commands* command = createCommand;
+	commandList.push_back(command);
 }
 
 #ifdef DXTK_AUDIO

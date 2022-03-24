@@ -174,6 +174,71 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 	}
 }
 
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
+{
+	//create a temp display object that we will populate then append to the display list.
+	DisplayObject newDisplayObject;
+
+	//load model
+	newDisplayObject.m_model = objects[ID].m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+	//Load Texture
+	newDisplayObject.m_texture_diffuse = objects[ID].m_texture_diffuse;
+
+	//apply new texture to models effect
+	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			}
+		});
+
+	//set position
+	newDisplayObject.m_position.x = objects[ID].m_position.x;
+	newDisplayObject.m_position.y = objects[ID].m_position.y + 10;
+	newDisplayObject.m_position.z = objects[ID].m_position.z;
+
+	//setorientation
+	newDisplayObject.m_orientation.x = objects[ID].m_orientation.x;
+	newDisplayObject.m_orientation.y = objects[ID].m_orientation.y;
+	newDisplayObject.m_orientation.z = objects[ID].m_orientation.z;
+
+	//set scale
+	newDisplayObject.m_scale.x = objects[ID].m_scale.x;
+	newDisplayObject.m_scale.y = objects[ID].m_scale.y;
+	newDisplayObject.m_scale.z = objects[ID].m_scale.z;
+
+	//set wireframe / render flags
+	newDisplayObject.m_render = objects[ID].m_render;
+	newDisplayObject.m_wireframe = false;
+	newDisplayObject.m_selected = false;
+	newDisplayObject.m_light_type = objects[ID].m_light_type;
+	newDisplayObject.m_light_diffuse_r = objects[ID].m_light_diffuse_r;
+	newDisplayObject.m_light_diffuse_g = objects[ID].m_light_diffuse_g;
+	newDisplayObject.m_light_diffuse_b = objects[ID].m_light_diffuse_b;
+	newDisplayObject.m_light_specular_r = objects[ID].m_light_specular_r;
+	newDisplayObject.m_light_specular_g = objects[ID].m_light_specular_g;
+	newDisplayObject.m_light_specular_b = objects[ID].m_light_specular_b;
+	newDisplayObject.m_light_spot_cutoff = objects[ID].m_light_spot_cutoff;
+	newDisplayObject.m_light_constant = objects[ID].m_light_constant;
+	newDisplayObject.m_light_linear = objects[ID].m_light_linear;
+	newDisplayObject.m_light_quadratic = objects[ID].m_light_quadratic;
+	//Assign ID
+	unsigned int maxID = 0;
+	for (unsigned int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
+	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
+}
+
 Commands::CommandType CreateCommand::getType()
 {
 	return type;

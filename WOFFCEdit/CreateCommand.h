@@ -12,6 +12,8 @@ public:
 	void performAction(std::vector<DisplayObject>&objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory> &m_fxFactory, bool isPaste = false, bool isUndo = false);
 	//This is a copy action that recreates deleted objects
 	void performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory> &m_fxFactory, bool isPaste = false, bool isUndo = false);
+	//This will make a brand new object using just the display list, it will create an object at a specified ID, if one is not provided it uses the first one in the list
+	void performAction(std::vector<DisplayObject>&objects, int ID = 0);
 	Commands::CommandType getType();
 	DisplayObject getCreatedObject();
 	std::vector<DisplayObject> getCreatedObjects();

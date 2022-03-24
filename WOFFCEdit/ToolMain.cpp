@@ -429,3 +429,8 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 	else m_toolInputCommands.focusOnObject = false;	
 }
+
+void ToolMain::CreateNewGameObject()
+{
+	m_d3dRenderer.CreateNewObject();
+}
