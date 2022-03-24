@@ -423,6 +423,7 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
+
 void Game::setSelectedObject(DisplayObject* newObject)
 {
 	if (selectedObject != NULL)
@@ -709,7 +710,7 @@ void Game::setID(int newID)
 
 void Game::copyObject()
 {
-	if (selectedObjects.size() > 0)
+	if (selectedObjects.empty() == false)
 	{
 		copyCommand.performAction(selectedObjects);
 	}
@@ -814,6 +815,13 @@ void Game::focusOnItem()
 	{
 		return;
 	}
+}
+
+void Game::CreateNewObject()
+{
+	//Something isn't right here, m_displayList become empty when we get here
+	//Try a data breakpoint or something here or 
+	//create a function in CreateCommand that creates a default object <- this might be better
 }
 
 #ifdef DXTK_AUDIO

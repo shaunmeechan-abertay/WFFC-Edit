@@ -68,6 +68,8 @@ public:
 	//Focus function
 	void focusOnItem();
 	bool shouldResetOrientation = false;
+	
+	void CreateNewObject();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
