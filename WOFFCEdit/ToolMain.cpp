@@ -434,3 +434,22 @@ void ToolMain::CreateNewGameObject()
 {
 	m_d3dRenderer.CreateNewObject();
 }
+
+void ToolMain::CreateNewGameObject2(std::vector<CString> textures, CString models)
+{
+	//Convert the CStrings to a strings
+	//This get's around a weird LINK2019 error that happens if this sends a CString and game take that in
+	CT2CA convert(models);
+	std::string s(convert);
+
+	std::vector<std::string>textureFiles;
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		CT2CA convert(textures[i]);
+		std::string s(convert);
+		textureFiles.push_back(s);
+	}
+	m_d3dRenderer.CreateNewObject2(textureFiles,s);
+	//m_d3dRenderer.CreateNewObject();
+
+}

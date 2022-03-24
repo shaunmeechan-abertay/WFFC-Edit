@@ -833,6 +833,11 @@ void Game::CreateNewObject()
 	commandList.push_back(command);
 }
 
+void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath)
+{
+	return;
+}
+
 #ifdef DXTK_AUDIO
 void Game::NewAudioDevice()
 {

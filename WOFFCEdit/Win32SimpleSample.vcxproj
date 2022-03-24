@@ -178,6 +178,7 @@
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
     <ClCompile Include="ModelSelectDialogue.cpp" />
+    <ClCompile Include="ObjectCreateDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="ModelSelectDialogue.h" />
+    <ClInclude Include="ObjectCreateDialogue.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />

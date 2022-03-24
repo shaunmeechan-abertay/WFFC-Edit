@@ -18,7 +18,7 @@
 #include <list>
 #include <limits>
 #include <memory>
-
+#include <string>
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -70,6 +70,7 @@ public:
 	bool shouldResetOrientation = false;
 	
 	void CreateNewObject();
+	void CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

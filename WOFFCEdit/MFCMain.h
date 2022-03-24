@@ -11,6 +11,7 @@
 #include "SelectDialogue.h"
 #include "TextureSelectDialogue.h"
 #include "ModelSelectDialogue.h"
+#include "ObjectCreateDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -30,6 +31,7 @@ private:
 	SelectDialogue m_ToolSelectDialogue;			//for modeless dialogue, declare it here
 	TextureSelectDialogue m_ToolTextureSelectDialogue;
 	ModelSelectDialogue m_ToolModelSelectDialogue;
+	ObjectCreateDialogue m_ToolObjectCreateDialogue;
 
 	Game m_GameSystem; //Instance of game System that we interface to.
 	int m_width;		
