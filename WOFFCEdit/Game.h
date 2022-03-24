@@ -69,6 +69,7 @@ public:
 	void focusOnItem();
 	bool shouldResetOrientation = false;
 	
+	//CLEAN THESE UP!
 	void CreateNewObject();
 	void CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath);
 

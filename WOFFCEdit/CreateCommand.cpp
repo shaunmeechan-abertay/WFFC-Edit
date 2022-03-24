@@ -239,6 +239,81 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
 	createdObject = newDisplayObject;
 }
 
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
+{
+	//create a temp display object that we will populate then append to the display list.
+	DisplayObject newDisplayObject;
+
+	//load model
+	std::wstring modelwstr = StringToWCHART(modelFile);					//convect string to Wchar
+	//If this fails it crashes, Handle that!
+	newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+		//Load Texture
+	std::wstring texturewstr = StringToWCHART(textureFile);								//convect string to Wchar
+	HRESULT rs;
+	rs = DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+	
+	//if texture fails.  load error default
+	if (rs)
+	{
+		DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+	}
+
+	//apply new texture to models effect
+	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			}
+		});
+
+	//set position
+	newDisplayObject.m_position.x = 0;
+	newDisplayObject.m_position.y = 10;
+	newDisplayObject.m_position.z = 0;
+
+	//setorientation
+	newDisplayObject.m_orientation.x = 0;
+	newDisplayObject.m_orientation.y = 0;
+	newDisplayObject.m_orientation.z = 0;
+
+	//set scale
+	newDisplayObject.m_scale.x = 1;
+	newDisplayObject.m_scale.y = 1;
+	newDisplayObject.m_scale.z = 1;
+
+	//set wireframe / render flags
+	newDisplayObject.m_render = true;
+	newDisplayObject.m_wireframe = false;
+	newDisplayObject.m_selected = false;
+	newDisplayObject.m_light_type = objects[0].m_light_type;
+	newDisplayObject.m_light_diffuse_r = 1;
+	newDisplayObject.m_light_diffuse_g = 1;
+	newDisplayObject.m_light_diffuse_b = 1;
+	newDisplayObject.m_light_specular_r = 1;
+	newDisplayObject.m_light_specular_g = 1;
+	newDisplayObject.m_light_specular_b = 1;
+	newDisplayObject.m_light_spot_cutoff = objects[0].m_light_spot_cutoff;
+	newDisplayObject.m_light_constant = objects[0].m_light_constant;
+	newDisplayObject.m_light_linear = objects[0].m_light_linear;
+	newDisplayObject.m_light_quadratic = objects[0].m_light_quadratic;
+	//Assign ID
+	unsigned int maxID = 0;
+	for (unsigned int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
+	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
+}
+
 Commands::CommandType CreateCommand::getType()
 {
 	return type;

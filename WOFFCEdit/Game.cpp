@@ -835,7 +835,16 @@ void Game::CreateNewObject()
 
 void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath)
 {
-	return;
+	if (m_displayList.empty() == true)
+	{
+		return;
+	}
+	CreateCommand* createCommand = new CreateCommand;
+	//This will need to deal with deletion of multiple deleted object
+	createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
+	Commands* command = createCommand;
+	commandList.push_back(command);
+	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
 }
 
 #ifdef DXTK_AUDIO
