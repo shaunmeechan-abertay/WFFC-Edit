@@ -72,6 +72,7 @@ public:
 	//CLEAN THESE UP!
 	void CreateNewObject();
 	void CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath);
+	std::vector<SceneObject> getDisplayList();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

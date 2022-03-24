@@ -26,6 +26,11 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 		}
 	});
 
+	//Set texture and model path
+	newDisplayObject.m_texturePath = deletedObject.m_texturePath;
+	newDisplayObject.m_modelPath = deletedObject.m_modelPath;
+
+
 	//set position
 	newDisplayObject.m_position.x = deletedObject.m_position.x;
 	newDisplayObject.m_position.y = deletedObject.m_position.y;
@@ -118,6 +123,11 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 				}
 			});
 
+		//Set texture and model path
+		newObject.m_texturePath = objectsToCreate[i].m_texturePath;
+		newObject.m_modelPath = objectsToCreate[i].m_modelPath;
+
+
 		//set position
 		newObject.m_position.x = objectsToCreate[i].m_position.x;
 		newObject.m_position.y = objectsToCreate[i].m_position.y;
@@ -195,6 +205,11 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
 			}
 		});
 
+	//Set texture and model path
+	newDisplayObject.m_texturePath = objects[ID].m_texturePath;
+	newDisplayObject.m_modelPath = objects[ID].m_modelPath;
+
+
 	//set position
 	newDisplayObject.m_position.x = objects[ID].m_position.x;
 	newDisplayObject.m_position.y = objects[ID].m_position.y + 10;
@@ -246,9 +261,9 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 
 	//load model
 	std::wstring modelwstr = StringToWCHART(modelFile);					//convect string to Wchar
-	//If this fails it crashes, Handle that!
 	try
 	{
+		//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
 		newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
 	}
 	catch (const std::exception& ex)
@@ -277,6 +292,12 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 				lights->SetTexture(newDisplayObject.m_texture_diffuse);
 			}
 		});
+
+	//Set texture and model path
+	//ISSUE: This path needs to be relative not the whole path (e.g. database/x not C://../../../database/x)
+	newDisplayObject.m_texturePath = textureFile;
+	newDisplayObject.m_modelPath = modelFile;
+
 
 	//set position
 	newDisplayObject.m_position.x = 0;

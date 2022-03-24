@@ -199,6 +199,9 @@ void ToolMain::onActionLoad()
 
 void ToolMain::onActionSave()
 {
+	//Get the display list from the game incase it changed
+	m_sceneGraph = m_d3dRenderer.getDisplayList();
+
 	//SQL
 	int rc;
 	char *sqlCommand;
@@ -208,7 +211,8 @@ void ToolMain::onActionSave()
 
 	//OBJECTS IN THE WORLD Delete them all
 	//prepare SQL Text
-	sqlCommand = "DELETE FROM Objects";	 //will delete the whole object table.   Slightly risky but hey.
+	//Maybe best to backup table before deleting the whole thing
+	sqlCommand = "DELETE FROM Objects";	 //will delete the whole object table.   Slightly risky but hey. (Could this be improved with an ACID test?)
 	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
 	sqlite3_step(pResults);
 
