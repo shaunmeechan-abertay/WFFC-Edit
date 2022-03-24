@@ -247,7 +247,15 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 	//load model
 	std::wstring modelwstr = StringToWCHART(modelFile);					//convect string to Wchar
 	//If this fails it crashes, Handle that!
-	newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	try
+	{
+		newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	}
+	catch (const std::exception& ex)
+	{
+		//SOMETHING WENT WRONG
+		std::printf(ex.what());
+	}
 
 		//Load Texture
 	std::wstring texturewstr = StringToWCHART(textureFile);								//convect string to Wchar

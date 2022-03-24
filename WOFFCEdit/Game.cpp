@@ -841,7 +841,8 @@ void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string 
 	}
 	CreateCommand* createCommand = new CreateCommand;
 	//This will need to deal with deletion of multiple deleted object
-	createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
+	//createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
+	createCommand->performAction(m_displayList,texturespaths.at(0),modelspath,m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
 	commandList.push_back(command);
 	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
