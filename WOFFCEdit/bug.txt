@@ -1,0 +1,8 @@
+bug:
+Delete object
+Undo <- this is probably the broken part
+Copy and paste a new object
+
+Issue:
+Paste get's the createCommands created objects' ID then subtracts 1. This lines up with the size of the displayList but not the elements, it's 1 too high.
+This works if an object wasn't deleted an remade before.

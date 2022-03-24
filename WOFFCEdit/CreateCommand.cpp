@@ -5,7 +5,7 @@ CreateCommand::CreateCommand()
 	type = Commands::CommandType::Create;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayObject deletedObject, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste, bool isUndo)
 {
 	//create a temp display object that we will populate then append to the display list.
 	DisplayObject newDisplayObject;
@@ -66,21 +66,28 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 	newDisplayObject.m_light_linear = deletedObject.m_light_linear;
 	newDisplayObject.m_light_quadratic = deletedObject.m_light_quadratic;
 	//Assign ID
-	unsigned int maxID = 0;
-	for (int i = 0; i < objects.size(); i++)
+	if (isUndo == true)
 	{
-		if (objects[i].m_ID > maxID)
-		{
-			maxID = objects[i].m_ID;
-		}
+		newDisplayObject.m_ID = deletedObject.m_ID;
 	}
-	newDisplayObject.m_ID = maxID + 1;
+	else
+	{
+		unsigned int maxID = 0;
+		for (unsigned int i = 0; i < objects.size(); i++)
+		{
+			if (objects[i].m_ID > maxID)
+			{
+				maxID = objects[i].m_ID;
+			}
+		}
+		newDisplayObject.m_ID = maxID + 1;
+	}
 
 	objects.push_back(newDisplayObject);
 	createdObject = newDisplayObject;
 }
 
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vector<DisplayObject>& objectsToCreate, std::unique_ptr<DirectX::EffectFactory>& m_fxFactory, bool isPaste, bool isUndo)
 {
 	unsigned int maxID = 0;
 	for (int i = 0; i < objects.size(); i++)
@@ -151,8 +158,16 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 		newObject.m_light_linear = objectsToCreate[i].m_light_linear;
 		newObject.m_light_quadratic = objectsToCreate[i].m_light_quadratic;
 		//Assign ID
-		newObject.m_ID = maxID + 1;
-		maxID++;
+		if (isUndo == true)
+		{
+			//If it is an undo we need to match the IDs
+			newObject.m_ID = objectsToCreate[i].m_ID;
+		}
+		else
+		{
+			newObject.m_ID = maxID + 1;
+			maxID++;
+		}
 
 		objects.push_back(newObject);
 		createdObjects.push_back(newObject);

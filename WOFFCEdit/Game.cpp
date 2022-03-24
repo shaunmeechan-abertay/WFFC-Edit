@@ -942,11 +942,11 @@ void Game::undoAction()
 		//This will need to deal with deletion of multiple deleted object
 		if (commandToUndo->getDeletedObjects().size() > 0)
 		{
-			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory);
+			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory,false,true);
 		}
 		else
 		{
-			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory);
+			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory,false,true);
 		}
 		Commands* command = createCommand;
 		UndonecommandList.push_back(command);
