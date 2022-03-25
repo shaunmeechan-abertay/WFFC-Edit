@@ -345,6 +345,26 @@ void Game::Render()
 
 		m_deviceResources->PIXEndEvent();
 	}
+
+	numRenderObjects = m_dragArrowList.size();
+	for(int i = 0; i < numRenderObjects; i++)
+	{
+		m_deviceResources->PIXBeginEvent(L"Draw model");
+		const XMVECTORF32 scale = { m_dragArrowList[i].m_scale.x, m_dragArrowList[i].m_scale.y, m_dragArrowList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_dragArrowList[i].m_position.x, m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
+
+		//convert degrees into radians for rotation matrix
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
+
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+
+		m_dragArrowList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, m_dragArrowList[i].m_wireframe);	//last variable in draw,  make TRUE for wireframe
+
+		m_deviceResources->PIXEndEvent();
+	}
+
     m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
@@ -433,8 +453,51 @@ void Game::setSelectedObject(DisplayObject* newObject)
 	{
 		selectedObject->m_wireframe = false;
 		selectedObject->m_selected = false;
+		//Clear all arrows
+		m_dragArrowList.clear();
 	}
 	selectedObject = newObject;
+
+	//Now we need to spawn the selection arrows around the object in 6 places
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		DragArrow newArrow;
+		switch (i)
+		{
+		case 0:
+			//Up
+			newArrow.setup(selectedObject->m_position.x, 1, selectedObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		case 1:
+			//Down (should also rotate this to face down once actual model is in)
+			newArrow.setup(selectedObject->m_position.x, -1, selectedObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		case 2:
+			//Left 
+			newArrow.setup(selectedObject->m_position.x - 1, selectedObject->m_position.y, selectedObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		case 3:
+			//Right
+			newArrow.setup(selectedObject->m_position.x + 1, selectedObject->m_position.y, selectedObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		case 4:
+			//back
+			newArrow.setup(selectedObject->m_position.x, selectedObject->m_position.y, selectedObject->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		case 5:
+			//forward
+			newArrow.setup(selectedObject->m_position.x, selectedObject->m_position.y, selectedObject->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory);
+			m_dragArrowList.push_back(newArrow);
+			break;
+		default:
+			break;
+		}
+	}
 }
 void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 {
@@ -677,11 +740,13 @@ int Game::MousePicking()
 					}
 					m_displayList[i].m_wireframe = false;
 				}
+				//Single object pick
 				else
 				{
 					//If we have selected objects - deselect them
 					if (selectedObjects.empty() == false)
 					{
+						//This seems inefficient, why not find the ones we need and unwireframe them?
 						for (int j = 0; j < m_displayList.size(); j++)
 						{
 							m_displayList[j].m_wireframe = false;

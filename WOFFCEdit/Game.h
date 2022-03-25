@@ -14,6 +14,7 @@
 #include "DeleteCommand.h"
 #include "CreateCommand.h"
 #include "CopyCommand.h"
+#include "DragArrow.h"
 #include <vector>
 #include <list>
 #include <limits>
@@ -91,6 +92,7 @@ private:
 
 	//tool specific
 	std::vector<DisplayObject>			m_displayList;
+	std::vector<DragArrow>			m_dragArrowList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
 	RECT								m_ScreenDimensions;
