@@ -1,9 +1,29 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  CreateCommand.cpp
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(83,24): warning C4018: '>': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(98,20): warning C4018: '<': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(100,23): warning C4018: '>': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(106,20): warning C4018: '<': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(247,23): warning C4018: '>': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(341,23): warning C4018: '>': signed/unsigned mismatch
+  Game.cpp
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(28,20): warning C4305: '=': truncation from 'double' to 'float'
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(171,67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(173,29): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(175,67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(337,57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(336,57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(335,97): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(321,10): warning C4101: 'Buffer': unreferenced local variable
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(445,21): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(448,22): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(459,21): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(618,82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(618,57): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(619,81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(619,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(622,20): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(632,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(631,45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(630,98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(636,111): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(636,85): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(637,109): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(637,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(644,21): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(666,24): warning C4018: '<': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Game.cpp(682,25): warning C4018: '<': signed/unsigned mismatch
   Win32SimpleSample.vcxproj -> \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

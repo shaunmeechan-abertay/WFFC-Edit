@@ -296,11 +296,15 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 
 	//Set texture and model path
 	//ISSUE: This path needs to be relative not the whole path (e.g. database/x not C://../../../database/x)
-	std::error_code ec;
+	std::string filename = textureFile.substr(textureFile.rfind("\\"), textureFile.length() );
 	std::filesystem::path relativePath = std::filesystem::relative(textureFile, "/database/data");
 
-	newDisplayObject.m_texturePath = textureFile;
-	newDisplayObject.m_modelPath = modelFile;
+	newDisplayObject.m_texturePath = "database/data" + filename;
+
+	filename = modelFile.substr(modelFile.rfind("\\"), modelFile.length());
+	relativePath = std::filesystem::relative(modelFile, "/database/data");
+
+	newDisplayObject.m_modelPath = "database/data" + filename;
 
 
 	//set position

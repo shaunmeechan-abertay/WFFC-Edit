@@ -869,7 +869,7 @@ std::vector<SceneObject> Game::getDisplayList()
 		newSceneObject.tex_diffuse_path = m_displayList[i].m_texturePath;
 		newSceneObject.posX = m_displayList[i].m_position.x;
 		newSceneObject.posY = m_displayList[i].m_position.y;
-		newSceneObject.posZ = m_displayList[i].m_position.y;
+		newSceneObject.posZ = m_displayList[i].m_position.z;
 		newSceneObject.rotX = m_displayList[i].m_orientation.x;
 		newSceneObject.rotY = m_displayList[i].m_orientation.y;
 		newSceneObject.rotZ = m_displayList[i].m_orientation.z;
