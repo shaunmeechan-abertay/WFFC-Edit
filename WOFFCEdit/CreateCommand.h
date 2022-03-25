@@ -1,10 +1,11 @@
-//TODO: Make a perform action that makes an object just using the display list (e.g. no need for an input object)
 #pragma once
 #include "Commands.h"
 #include "SceneObject.h"
 #include "Model.h"
 #include "DeleteCommand.h"
 #include "DeviceResources.h"
+#include <filesystem>
+#include <iostream>
 
 class CreateCommand: public Commands
 {

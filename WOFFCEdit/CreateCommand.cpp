@@ -254,6 +254,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
 	createdObject = newDisplayObject;
 }
 
+//Used to create a new object - called from MFC
 void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
 {
 	//create a temp display object that we will populate then append to the display list.
@@ -295,6 +296,9 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 
 	//Set texture and model path
 	//ISSUE: This path needs to be relative not the whole path (e.g. database/x not C://../../../database/x)
+	std::error_code ec;
+	std::filesystem::path relativePath = std::filesystem::relative(textureFile, "/database/data");
+
 	newDisplayObject.m_texturePath = textureFile;
 	newDisplayObject.m_modelPath = modelFile;
 

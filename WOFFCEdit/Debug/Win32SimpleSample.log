@@ -5,5 +5,5 @@
 \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(100,23): warning C4018: '>': signed/unsigned mismatch
 \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(106,20): warning C4018: '<': signed/unsigned mismatch
 \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(247,23): warning C4018: '>': signed/unsigned mismatch
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(335,23): warning C4018: '>': signed/unsigned mismatch
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(341,23): warning C4018: '>': signed/unsigned mismatch
   Win32SimpleSample.vcxproj -> \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
