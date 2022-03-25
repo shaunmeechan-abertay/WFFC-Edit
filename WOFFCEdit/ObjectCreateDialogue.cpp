@@ -26,7 +26,7 @@ void ObjectCreateDialogue::DoDataExchange(CDataExchange* pDX)
 
 void ObjectCreateDialogue::End()
 {
-	m_ToolSystem->CreateNewGameObject2(allTextureFiles,modelFile);
+	m_ToolSystem->CreateNewGameObject(textureFile,modelFile);
 	DestroyWindow();
 }
 
@@ -55,11 +55,8 @@ void ObjectCreateDialogue::OnBnClickedLoadTexture()
 	if (dlg.DoModal() == IDOK)
 	{
 		POSITION fileNamesPosition = dlg.GetStartPosition();
-		while (fileNamesPosition != NULL)
-		{
-			filename = dlg.GetNextPathName(fileNamesPosition);
-			allTextureFiles.push_back(filename);
-		}
+		filename = dlg.GetNextPathName(fileNamesPosition);
+		textureFile = filename;
 	}
 
 }

@@ -69,9 +69,7 @@ public:
 	void focusOnItem();
 	bool shouldResetOrientation = false;
 	
-	//CLEAN THESE UP!
-	void CreateNewObject();
-	void CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath);
+	void CreateNewObject(std::string texturespath, std::string modelspath);
 	std::vector<SceneObject> getDisplayList();
 
 #ifdef DXTK_AUDIO

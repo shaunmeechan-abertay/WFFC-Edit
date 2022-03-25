@@ -821,23 +821,7 @@ void Game::focusOnItem()
 	}
 }
 
-void Game::CreateNewObject()
-{
-	if (m_displayList.empty() == true)
-	{
-		return;
-	}
-	//Something isn't right here, m_displayList become empty when we get here
-	//Try a data breakpoint or something here or 
-	//create a function in CreateCommand that creates a default object <- this might be better
-	CreateCommand* createCommand = new CreateCommand;
-	//This will need to deal with deletion of multiple deleted object
-	createCommand->performAction(m_displayList);
-	Commands* command = createCommand;
-	commandList.push_back(command);
-}
-
-void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string modelspath)
+void Game::CreateNewObject(std::string texturespath, std::string modelspath)
 {
 	if (m_displayList.empty() == true)
 	{
@@ -846,7 +830,7 @@ void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string 
 	CreateCommand* createCommand = new CreateCommand;
 	//This will need to deal with deletion of multiple deleted object
 	//createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
-	createCommand->performAction(m_displayList,texturespaths.at(0),modelspath,m_deviceResources,*m_fxFactory);
+	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
 	commandList.push_back(command);
 	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
@@ -854,6 +838,11 @@ void Game::CreateNewObject2(std::vector<std::string> texturespaths, std::string 
 
 std::vector<SceneObject> Game::getDisplayList()
 {
+	//NOTE: If we delete an object then undo it will be put at the bottom of the list
+	// 	   This means ID 1 could be in space 15. Will this be an issue?
+	// 	   Probably not since we don't care about the order and use the ID everywhere (or should!)
+	// 	   If something goes wrong check here first tho
+
 	//This needs to break the display list down into a scene object vector
 
 	std::vector<SceneObject> objects;
@@ -906,7 +895,8 @@ std::vector<SceneObject> Game::getDisplayList()
 		newSceneObject.path_node_start = false;
 		newSceneObject.path_node_end = false;
 		newSceneObject.parent_id = 0;
-		newSceneObject.editor_wireframe = m_displayList[i].m_wireframe;
+		//While there is an argument for actually saving the data in reality I don't see why you would ever save this as true
+		newSceneObject.editor_wireframe = false;
 		newSceneObject.name = "Name";
 
 		newSceneObject.light_type = m_displayList[i].m_light_type;

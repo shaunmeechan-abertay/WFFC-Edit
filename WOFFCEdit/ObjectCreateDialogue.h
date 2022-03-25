@@ -21,7 +21,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	afx_msg void End();		//kill the dialogue
 
-	std::vector<CString>allTextureFiles;
+	CString textureFile;
 	CString modelFile;
 	ToolMain* m_ToolSystem;	//Instance of Tool System that we interface to. 
 	DECLARE_MESSAGE_MAP()
