@@ -316,7 +316,10 @@ void Game::Render()
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
-	//CAMERA POSITION ON HUD
+	//CAMERA POSITION ON HUD - DON'T MOVE THIS! WHILE IT IS BROKEN (RENDER BEHIND EVERYTHING) MOVINING IT JUST CAUSES CHAOS
+	//SOME OBJECTS WON'T RENDER OTHER WILL, THE TERRAIN HAS NO TEXTURE - JUST BAD!
+	//TODO: This is probably fixable so try fix this if theres time.
+
 	m_sprites->Begin();
 	WCHAR   Buffer[256];
 	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
