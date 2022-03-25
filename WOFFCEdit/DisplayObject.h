@@ -19,6 +19,8 @@ public:
 	bool									m_render;
 	bool									m_wireframe;
 	bool									m_selected;
+	std::string								m_texturePath;
+	std::string								m_modelPath;
 
 	int		m_light_type;
 	float	m_light_diffuse_r,	m_light_diffuse_g,	m_light_diffuse_b;

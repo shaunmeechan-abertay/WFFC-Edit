@@ -8,7 +8,6 @@
 #include "InputCommands.h"
 #include <vector>
 
-
 class ToolMain
 {
 public: //methods
@@ -25,6 +24,7 @@ public: //methods
 
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
+	void	CreateNewGameObject(CString textures, CString models);
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk

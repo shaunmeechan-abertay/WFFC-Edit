@@ -27,6 +27,10 @@ void CopyCommand::performAction(std::vector<DisplayObject>& objects)
 				}
 			});
 
+		//Set texture and model paths
+		newObject.m_texturePath = objects[i].m_texturePath;
+		newObject.m_modelPath = objects[i].m_modelPath;
+
 		//set position
 		newObject.m_position.x = objects[i].m_position.x;
 		newObject.m_position.y = objects[i].m_position.y + 5;
@@ -81,6 +85,11 @@ void CopyCommand::performAction(DisplayObject* object)
 				lights->SetTexture(copiedObject.m_texture_diffuse);
 			}
 		});
+
+	//set model and texture paths
+	copiedObject.m_texturePath = object->m_texturePath;
+	copiedObject.m_modelPath = object->m_modelPath;
+
 
 	//set position
 	copiedObject.m_position.x = object->m_position.x;

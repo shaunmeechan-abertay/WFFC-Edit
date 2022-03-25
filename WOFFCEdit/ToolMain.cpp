@@ -199,6 +199,9 @@ void ToolMain::onActionLoad()
 
 void ToolMain::onActionSave()
 {
+	//Get the display list from the game incase it changed
+	m_sceneGraph = m_d3dRenderer.getDisplayList();
+
 	//SQL
 	int rc;
 	char *sqlCommand;
@@ -208,7 +211,8 @@ void ToolMain::onActionSave()
 
 	//OBJECTS IN THE WORLD Delete them all
 	//prepare SQL Text
-	sqlCommand = "DELETE FROM Objects";	 //will delete the whole object table.   Slightly risky but hey.
+	//Maybe best to backup table before deleting the whole thing
+	sqlCommand = "DELETE FROM Objects";	 //will delete the whole object table.   Slightly risky but hey. (Could this be improved with an ACID test?)
 	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
 	sqlite3_step(pResults);
 
@@ -428,4 +432,18 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_toolInputCommands.focusOnObject = true;
 	}
 	else m_toolInputCommands.focusOnObject = false;	
+}
+
+void ToolMain::CreateNewGameObject(CString texture, CString models)
+{
+	//Convert the CStrings to a strings
+	//This get's around a weird LINK2019 error that happens if this sends a CString and game takes that in
+	CT2CA convert(models);
+	std::string s(convert);
+
+	CT2CA convertedTexturePath(texture);
+	std::string textureFile(convertedTexturePath);
+	m_d3dRenderer.CreateNewObject(textureFile,s);
+	//m_d3dRenderer.CreateNewObject();
+
 }

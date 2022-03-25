@@ -423,6 +423,7 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 
     m_deviceResources->PIXEndEvent();
 }
+
 void Game::setSelectedObject(DisplayObject* newObject)
 {
 	if (selectedObject != NULL)
@@ -540,6 +541,10 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 				lights->SetTexture(newDisplayObject.m_texture_diffuse);			
 			}
 		});
+
+		//Set texture and model path
+		newDisplayObject.m_texturePath = SceneGraph->at(i).tex_diffuse_path;
+		newDisplayObject.m_modelPath = SceneGraph->at(i).model_path;
 
 		//set position
 		newDisplayObject.m_position.x = SceneGraph->at(i).posX;
@@ -709,7 +714,7 @@ void Game::setID(int newID)
 
 void Game::copyObject()
 {
-	if (selectedObjects.size() > 0)
+	if (selectedObjects.empty() == false)
 	{
 		copyCommand.performAction(selectedObjects);
 	}
@@ -814,6 +819,106 @@ void Game::focusOnItem()
 	{
 		return;
 	}
+}
+
+void Game::CreateNewObject(std::string texturespath, std::string modelspath)
+{
+	if (m_displayList.empty() == true)
+	{
+		return;
+	}
+	CreateCommand* createCommand = new CreateCommand;
+	//This will need to deal with deletion of multiple deleted object
+	//createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
+	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
+	Commands* command = createCommand;
+	commandList.push_back(command);
+	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
+}
+
+std::vector<SceneObject> Game::getDisplayList()
+{
+	//NOTE: If we delete an object then undo it will be put at the bottom of the list
+	// 	   This means ID 1 could be in space 15. Will this be an issue?
+	// 	   Probably not since we don't care about the order and use the ID everywhere (or should!)
+	// 	   If something goes wrong check here first tho
+
+	//This needs to break the display list down into a scene object vector
+
+	std::vector<SceneObject> objects;
+
+	for (unsigned int i = 0; i < m_displayList.size(); i++)
+	{
+		SceneObject newSceneObject;
+		newSceneObject.ID = m_displayList[i].m_ID;
+		newSceneObject.chunk_ID = 0;
+		//We need to store the model path of each object
+		newSceneObject.model_path = m_displayList[i].m_modelPath;
+		//And the texture path
+		newSceneObject.tex_diffuse_path = m_displayList[i].m_texturePath;
+		newSceneObject.posX = m_displayList[i].m_position.x;
+		newSceneObject.posY = m_displayList[i].m_position.y;
+		newSceneObject.posZ = m_displayList[i].m_position.z;
+		newSceneObject.rotX = m_displayList[i].m_orientation.x;
+		newSceneObject.rotY = m_displayList[i].m_orientation.y;
+		newSceneObject.rotZ = m_displayList[i].m_orientation.z;
+		newSceneObject.scaX = m_displayList[i].m_scale.x;
+		newSceneObject.scaY = m_displayList[i].m_scale.y;
+		newSceneObject.scaZ = m_displayList[i].m_scale.z;
+		newSceneObject.render = false;
+		newSceneObject.collision = 0;
+		newSceneObject.collision_mesh = "";
+		newSceneObject.collectable = false;
+		newSceneObject.destructable = false;
+		newSceneObject.health_amount = 0;
+		newSceneObject.editor_render = m_displayList[i].m_render;
+		newSceneObject.editor_texture_vis = true;
+		newSceneObject.editor_normals_vis = false;
+		newSceneObject.editor_collision_vis = false;
+		newSceneObject.editor_pivot_vis = false;
+		newSceneObject.pivotX = 0;
+		newSceneObject.pivotY = 0;
+		newSceneObject.pivotZ = 0;
+		newSceneObject.snapToGround = false;
+		newSceneObject.AINode = false;
+		newSceneObject.audio_path = "";
+		newSceneObject.volume = 0;
+		newSceneObject.pitch = 0;
+		newSceneObject.pan = 0;
+		newSceneObject.one_shot = false;
+		newSceneObject.play_on_init = false;
+		newSceneObject.play_in_editor = false;
+		newSceneObject.min_dist = 0;
+		newSceneObject.max_dist = 0;
+		newSceneObject.camera = false;
+		newSceneObject.path_node = false;
+		newSceneObject.path_node_start = false;
+		newSceneObject.path_node_end = false;
+		newSceneObject.parent_id = 0;
+		//While there is an argument for actually saving the data in reality I don't see why you would ever save this as true
+		newSceneObject.editor_wireframe = false;
+		newSceneObject.name = "Name";
+
+		newSceneObject.light_type = m_displayList[i].m_light_type;
+		newSceneObject.light_diffuse_r = m_displayList[i].m_light_diffuse_r;
+		newSceneObject.light_diffuse_g = m_displayList[i].m_light_diffuse_g;
+		newSceneObject.light_diffuse_b = m_displayList[i].m_light_diffuse_b;
+		newSceneObject.light_specular_r = m_displayList[i].m_light_specular_r;
+		newSceneObject.light_specular_g = m_displayList[i].m_light_specular_g;
+		newSceneObject.light_specular_b = m_displayList[i].m_light_specular_b;
+		newSceneObject.light_spot_cutoff = m_displayList[i].m_light_spot_cutoff;
+		newSceneObject.light_constant = m_displayList[i].m_light_constant;
+		newSceneObject.light_linear = m_displayList[i].m_light_linear;
+		newSceneObject.light_quadratic = m_displayList[i].m_light_quadratic;
+
+
+		//send completed object to scenegraph
+		objects.push_back(newSceneObject);
+	}
+
+
+
+	return objects;
 }
 
 #ifdef DXTK_AUDIO

@@ -11,6 +11,7 @@
 #include "SelectDialogue.h"
 #include "TextureSelectDialogue.h"
 #include "ModelSelectDialogue.h"
+#include "ObjectCreateDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -30,8 +31,9 @@ private:
 	SelectDialogue m_ToolSelectDialogue;			//for modeless dialogue, declare it here
 	TextureSelectDialogue m_ToolTextureSelectDialogue;
 	ModelSelectDialogue m_ToolModelSelectDialogue;
+	ObjectCreateDialogue m_ToolObjectCreateDialogue;
 
-	Game m_GameSystem; //Instance of Tool System that we interface to.
+	Game m_GameSystem; //Instance of game System that we interface to.
 	int m_width;		
 	int m_height;
 	
@@ -41,6 +43,7 @@ private:
 	afx_msg void MenuConvertTextures();
 	afx_msg void MenuConvertModel();
 	afx_msg void MenuEditSelect();
+	afx_msg void MenuEditCreate();
 	afx_msg	void ToolBarButton1();
 
 

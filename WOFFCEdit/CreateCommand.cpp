@@ -26,6 +26,11 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, DisplayOb
 		}
 	});
 
+	//Set texture and model path
+	newDisplayObject.m_texturePath = deletedObject.m_texturePath;
+	newDisplayObject.m_modelPath = deletedObject.m_modelPath;
+
+
 	//set position
 	newDisplayObject.m_position.x = deletedObject.m_position.x;
 	newDisplayObject.m_position.y = deletedObject.m_position.y;
@@ -118,6 +123,11 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 				}
 			});
 
+		//Set texture and model path
+		newObject.m_texturePath = objectsToCreate[i].m_texturePath;
+		newObject.m_modelPath = objectsToCreate[i].m_modelPath;
+
+
 		//set position
 		newObject.m_position.x = objectsToCreate[i].m_position.x;
 		newObject.m_position.y = objectsToCreate[i].m_position.y;
@@ -172,6 +182,171 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 		objects.push_back(newObject);
 		createdObjects.push_back(newObject);
 	}
+}
+
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
+{
+	//create a temp display object that we will populate then append to the display list.
+	DisplayObject newDisplayObject;
+
+	//load model
+	newDisplayObject.m_model = objects[ID].m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+	//Load Texture
+	newDisplayObject.m_texture_diffuse = objects[ID].m_texture_diffuse;
+
+	//apply new texture to models effect
+	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			}
+		});
+
+	//Set texture and model path
+	newDisplayObject.m_texturePath = objects[ID].m_texturePath;
+	newDisplayObject.m_modelPath = objects[ID].m_modelPath;
+
+
+	//set position
+	newDisplayObject.m_position.x = objects[ID].m_position.x;
+	newDisplayObject.m_position.y = objects[ID].m_position.y + 10;
+	newDisplayObject.m_position.z = objects[ID].m_position.z;
+
+	//setorientation
+	newDisplayObject.m_orientation.x = objects[ID].m_orientation.x;
+	newDisplayObject.m_orientation.y = objects[ID].m_orientation.y;
+	newDisplayObject.m_orientation.z = objects[ID].m_orientation.z;
+
+	//set scale
+	newDisplayObject.m_scale.x = objects[ID].m_scale.x;
+	newDisplayObject.m_scale.y = objects[ID].m_scale.y;
+	newDisplayObject.m_scale.z = objects[ID].m_scale.z;
+
+	//set wireframe / render flags
+	newDisplayObject.m_render = objects[ID].m_render;
+	newDisplayObject.m_wireframe = false;
+	newDisplayObject.m_selected = false;
+	newDisplayObject.m_light_type = objects[ID].m_light_type;
+	newDisplayObject.m_light_diffuse_r = objects[ID].m_light_diffuse_r;
+	newDisplayObject.m_light_diffuse_g = objects[ID].m_light_diffuse_g;
+	newDisplayObject.m_light_diffuse_b = objects[ID].m_light_diffuse_b;
+	newDisplayObject.m_light_specular_r = objects[ID].m_light_specular_r;
+	newDisplayObject.m_light_specular_g = objects[ID].m_light_specular_g;
+	newDisplayObject.m_light_specular_b = objects[ID].m_light_specular_b;
+	newDisplayObject.m_light_spot_cutoff = objects[ID].m_light_spot_cutoff;
+	newDisplayObject.m_light_constant = objects[ID].m_light_constant;
+	newDisplayObject.m_light_linear = objects[ID].m_light_linear;
+	newDisplayObject.m_light_quadratic = objects[ID].m_light_quadratic;
+	//Assign ID
+	unsigned int maxID = 0;
+	for (unsigned int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
+	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
+}
+
+//Used to create a new object - called from MFC
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
+{
+	//create a temp display object that we will populate then append to the display list.
+	DisplayObject newDisplayObject;
+
+	//load model
+	std::wstring modelwstr = StringToWCHART(modelFile);					//convect string to Wchar
+	try
+	{
+		//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+		newDisplayObject.m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	}
+	catch (const std::exception& ex)
+	{
+		//SOMETHING WENT WRONG
+		std::printf(ex.what());
+	}
+
+		//Load Texture
+	std::wstring texturewstr = StringToWCHART(textureFile);								//convect string to Wchar
+	HRESULT rs;
+	rs = DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+	
+	//if texture fails.  load error default
+	if (rs)
+	{
+		DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+	}
+
+	//apply new texture to models effect
+	newDisplayObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+			}
+		});
+
+	//Set texture and model path
+	std::string filename = textureFile.substr(textureFile.rfind("\\"), textureFile.length() );
+	std::filesystem::path relativePath = std::filesystem::relative(textureFile, "/database/data");
+
+	newDisplayObject.m_texturePath = "database/data" + filename;
+
+	filename = modelFile.substr(modelFile.rfind("\\"), modelFile.length());
+	relativePath = std::filesystem::relative(modelFile, "/database/data");
+
+	newDisplayObject.m_modelPath = "database/data" + filename;
+
+	//set position
+	newDisplayObject.m_position.x = 0;
+	newDisplayObject.m_position.y = 10;
+	newDisplayObject.m_position.z = 0;
+
+	//setorientation
+	newDisplayObject.m_orientation.x = 0;
+	newDisplayObject.m_orientation.y = 0;
+	newDisplayObject.m_orientation.z = 0;
+
+	//set scale
+	newDisplayObject.m_scale.x = 1;
+	newDisplayObject.m_scale.y = 1;
+	newDisplayObject.m_scale.z = 1;
+
+	//set wireframe / render flags
+	newDisplayObject.m_render = true;
+	newDisplayObject.m_wireframe = false;
+	newDisplayObject.m_selected = false;
+	newDisplayObject.m_light_type = objects[0].m_light_type;
+	newDisplayObject.m_light_diffuse_r = 1;
+	newDisplayObject.m_light_diffuse_g = 1;
+	newDisplayObject.m_light_diffuse_b = 1;
+	newDisplayObject.m_light_specular_r = 1;
+	newDisplayObject.m_light_specular_g = 1;
+	newDisplayObject.m_light_specular_b = 1;
+	newDisplayObject.m_light_spot_cutoff = objects[0].m_light_spot_cutoff;
+	newDisplayObject.m_light_constant = objects[0].m_light_constant;
+	newDisplayObject.m_light_linear = objects[0].m_light_linear;
+	newDisplayObject.m_light_quadratic = objects[0].m_light_quadratic;
+	//Assign ID
+	unsigned int maxID = 0;
+	for (unsigned int i = 0; i < objects.size(); i++)
+	{
+		if (objects[i].m_ID > maxID)
+		{
+			maxID = objects[i].m_ID;
+		}
+	}
+	newDisplayObject.m_ID = maxID + 1;
+	objects.push_back(newDisplayObject);
+	createdObject = newDisplayObject;
 }
 
 Commands::CommandType CreateCommand::getType()

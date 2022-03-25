@@ -65,6 +65,7 @@
     <ClCompile Include="CreateCommand.cpp" />
     <ClCompile Include="DeleteCommand.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
+    <ClCompile Include="ObjectCreateDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -120,6 +121,7 @@
     <ClInclude Include="CreateCommand.h" />
     <ClInclude Include="DeleteCommand.h" />
     <ClInclude Include="CopyCommand.h" />
+    <ClInclude Include="ObjectCreateDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

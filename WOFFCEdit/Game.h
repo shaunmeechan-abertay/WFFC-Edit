@@ -18,7 +18,7 @@
 #include <list>
 #include <limits>
 #include <memory>
-
+#include <string>
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -68,6 +68,9 @@ public:
 	//Focus function
 	void focusOnItem();
 	bool shouldResetOrientation = false;
+	
+	void CreateNewObject(std::string texturespath, std::string modelspath);
+	std::vector<SceneObject> getDisplayList();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
