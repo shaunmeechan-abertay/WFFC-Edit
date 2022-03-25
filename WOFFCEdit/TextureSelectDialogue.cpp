@@ -61,11 +61,11 @@ void TextureSelectDialogue::OnBnClickedOk()
 
 void TextureSelectDialogue::OnBnClickedConvert()
 {
-	std::string stringCommand = "cmd.exe /k texconv -r ";
+	std::string pathToFolder = "\database/data ";
+	std::string stringCommand = "cmd.exe /k texconv -y -o " + pathToFolder + "-r ";
 
 	//Load all the paths into a string
 	CString string;
-	//Have to clear array this way as calling .clear at the end was casusing a crash
 	int sizeOfArray = all_sel_files.size();
 	for (int i = 0; i < sizeOfArray; i++)
 	{
