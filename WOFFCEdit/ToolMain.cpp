@@ -313,6 +313,8 @@ void ToolMain::Tick(MSG *msg)
 		m_selectedObject = m_d3dRenderer.MousePicking();
 		m_toolInputCommands.mouse_LB_Down = false;
 	}
+
+	//Need to detect if player is holding down the mouse
 }
 
 void ToolMain::UpdateInput(MSG * msg)
