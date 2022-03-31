@@ -14,9 +14,9 @@ DragArrow::DragArrow()
 	m_position.x = 0;
 	m_position.y = 0;
 	m_position.z = 0;
-	m_scale.x = 1.0f;
-	m_scale.y = 1.0f;
-	m_scale.z = 1.0f;
+	m_scale.x = 0.1f;
+	m_scale.y = 0.1f;
+	m_scale.z = 0.1f;
 	m_render = true;
 	m_wireframe = false;
 
@@ -45,8 +45,8 @@ void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot
 {
 	//Set texture and model path
 	//Change these later
-	m_texturePath = "database/data/cup.dds";
-	m_modelPath = "database/data/cup.cmo";
+	m_texturePath = "database/data/Arrow5Albedo.dds";
+	m_modelPath = "database/data/Arrow5.cmo";
 
 		//load model
 	std::wstring modelwstr = StringToWCHART(m_modelPath);					//convect string to Wchar

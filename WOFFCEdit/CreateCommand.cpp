@@ -271,6 +271,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 	{
 		//SOMETHING WENT WRONG
 		std::printf(ex.what());
+		return;
 	}
 
 		//Load Texture
