@@ -28,6 +28,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_X		= 0;
 	m_toolInputCommands.mouse_Y		= 0;
 	m_toolInputCommands.mouse_LB_Down		= false;
+	m_toolInputCommands.mouse_LB_Up = false;
 	m_toolInputCommands.multipick = false;
 	m_toolInputCommands.copy = false;
 	m_toolInputCommands.paste = false;
@@ -310,11 +311,10 @@ void ToolMain::Tick(MSG *msg)
 
 	if (m_toolInputCommands.mouse_LB_Down)
 	{
-		m_selectedObject = m_d3dRenderer.MousePicking();
-		m_toolInputCommands.mouse_LB_Down = false;
+		//m_selectedObject = m_d3dRenderer.MousePicking();
+		//Call click and drag function
+		m_d3dRenderer.clickAndDrag();
 	}
-
-	//Need to detect if player is holding down the mouse
 }
 
 void ToolMain::UpdateInput(MSG * msg)
@@ -341,6 +341,13 @@ void ToolMain::UpdateInput(MSG * msg)
 		//set some flag for the mouse button in inputcommands
 		//mouse left pressed
 		m_toolInputCommands.mouse_LB_Down = true;
+		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_toolInputCommands.mouse_LB_Up = false;
+		break;
+
+	case WM_LBUTTONUP:
+		m_toolInputCommands.mouse_LB_Up = true;
+		m_toolInputCommands.mouse_LB_Down = false;
 		break;
 
 	}

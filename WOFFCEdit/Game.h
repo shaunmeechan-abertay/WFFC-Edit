@@ -60,6 +60,10 @@ public:
 
 	int MousePicking();
 
+	//Click and drag
+	DragArrow* selectedArrow;
+	void clickAndDrag();
+
 	void setID(int newID);
 
 	void copyObject();

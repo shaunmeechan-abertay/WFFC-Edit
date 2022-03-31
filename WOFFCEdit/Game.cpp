@@ -823,6 +823,25 @@ int Game::MousePicking()
 		}
 	}
 
+	//If we got a hit. Return it.
+	setID(selectedID);
+	return selectedID;
+}
+
+void Game::clickAndDrag()
+{
+	int selectedID = -1;
+	float pickedDistance = 0;
+	//Set the float to the max possible distance as we will reduce this to the closes object
+	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
+	float closestDistance = std::numeric_limits<float>::max();
+
+	//setup near and far planes of frustum with mouse X and mouse Y passed
+	//down from Toolmain.
+	//They may look the same but note the difference in Z
+	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0.0f, 1.0f);
+	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 1.0f, 1.0f);
+
 	//Test for collision against a drag arrow
 	for (int i = 0; i < m_dragArrowList.size(); i++)
 	{
@@ -833,8 +852,8 @@ int Game::MousePicking()
 			m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
 		//Convert eular angles into a quaterion for the rotation of the object
 		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
-			m_dragArrowList[i].m_orientation.x * 3.1415/180,
-			m_dragArrowList[i].m_orientation.z * 3.1415/180);
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
 		//Create set the matrix of the selected object in the world based on the translation,scale and roation
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 		//Unproject the points on the near and far plane, with respect to the matrix we just created
@@ -845,20 +864,16 @@ int Game::MousePicking()
 		XMVECTOR pickingVector = farPoint - nearPoint;
 		pickingVector = XMVector3Normalize(pickingVector);
 
-		if (m_dragArrowList.empty() == false)
+		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
-			for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
+			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
-				{
-					m_dragArrowList[i].m_wireframe = true;
-				}
+				selectedArrow = &m_dragArrowList[i];
+				selectedArrow->m_wireframe = true;
+				closestDistance = pickedDistance;
 			}
 		}
 	}
-	//If we got a hit. Return it.
-	setID(selectedID);
-	return selectedID;
 }
 
 void Game::setID(int newID)
