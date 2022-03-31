@@ -44,11 +44,13 @@ void DragArrow::cleanUp()
 {
 	//delete the texture & model
 	m_model.reset();
+	m_modelPath = "";
+	m_texturePath = "";
 	m_model.~shared_ptr();
 	m_texture_diffuse->Release();
 }
 
-void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot, float zRot, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
+void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot, float zRot, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory, std::shared_ptr<DirectX::Model> model, ID3D11ShaderResourceView* texture)
 {
 	//Set texture and model path
 	//Change these later
@@ -56,27 +58,41 @@ void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot
 	m_modelPath = "database/data/Arrow5.cmo";
 
 		//load model
-	std::wstring modelwstr = StringToWCHART(m_modelPath);					//convect string to Wchar
-	try
+	if (model == NULL)
 	{
-		//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
-		m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+		std::wstring modelwstr = StringToWCHART(m_modelPath);					//convect string to Wchar
+		try
+		{
+			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+			m_model = DirectX::Model::CreateFromCMO(device->GetD3DDevice(), modelwstr.c_str(), m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+		}
+		catch (const std::exception& ex)
+		{
+			//SOMETHING WENT WRONG
+			std::printf(ex.what());
+		}
 	}
-	catch (const std::exception& ex)
+	else
 	{
-		//SOMETHING WENT WRONG
-		std::printf(ex.what());
+		m_model = model;
 	}
 
-	//Load Texture
-	std::wstring texturewstr = StringToWCHART(m_texturePath);								//convect string to Wchar
-	HRESULT rs;
-	rs = DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), texturewstr.c_str(), nullptr, &m_texture_diffuse);	//load tex into Shader resource
-
-	//if texture fails.  load error default
-	if (rs)
+	if (texture == NULL)
 	{
-		DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), L"database/data/Error.dds", nullptr, &m_texture_diffuse);	//load tex into Shader resource
+		//Load Texture
+		std::wstring texturewstr = StringToWCHART(m_texturePath);								//convect string to Wchar
+		HRESULT rs;
+		rs = DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), texturewstr.c_str(), nullptr, &m_texture_diffuse);	//load tex into Shader resource
+
+		//if texture fails.  load error default
+		if (rs)
+		{
+			DirectX::CreateDDSTextureFromFile(device->GetD3DDevice(), L"database/data/Error.dds", nullptr, &m_texture_diffuse);	//load tex into Shader resource
+		}
+	}
+	else
+	{
+		m_texture_diffuse = texture;
 	}
 
 	//apply new texture to models effect

@@ -457,6 +457,8 @@ void Game::setSelectedObject(DisplayObject* newObject)
 		cleanupAllArrows();
 	}
 	selectedObject = newObject;
+	selectedObject->m_wireframe = true;
+	selectedObject->m_selected = true;
 
 	//Now we need to spawn the selection arrows around the object in 6 places
 	for (unsigned int i = 0; i < 6; i++)
@@ -466,32 +468,38 @@ void Game::setSelectedObject(DisplayObject* newObject)
 		{
 		case 0:
 			//Up
-			newArrow.setup(selectedObject->m_position.x, 1, selectedObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.up = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 1:
 			//Down (should also rotate this to face down once actual model is in)
-			newArrow.setup(selectedObject->m_position.x, -1, selectedObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, -1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.down = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 2:
 			//Left 
-			newArrow.setup(selectedObject->m_position.x - 1, selectedObject->m_position.y, selectedObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x - 1, newObject->m_position.y, newObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.left = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 3:
 			//Right
-			newArrow.setup(selectedObject->m_position.x + 1, selectedObject->m_position.y, selectedObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x + 1, newObject->m_position.y, newObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.right = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 4:
 			//back
-			newArrow.setup(selectedObject->m_position.x, selectedObject->m_position.y, selectedObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.back = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 5:
 			//forward
-			newArrow.setup(selectedObject->m_position.x, selectedObject->m_position.y, selectedObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.forward = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		default:
@@ -754,7 +762,7 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				m_displayList[i].m_wireframe = true;
+				//m_displayList[i].m_wireframe = true;
 
 				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
 				{
@@ -941,11 +949,9 @@ void Game::CreateNewObject(std::string texturespath, std::string modelspath)
 	}
 	CreateCommand* createCommand = new CreateCommand;
 	//This will need to deal with deletion of multiple deleted object
-	//createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
 	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
 	commandList.push_back(command);
-	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
 }
 
 std::vector<SceneObject> Game::getDisplayList()
@@ -1035,6 +1041,8 @@ std::vector<SceneObject> Game::getDisplayList()
 
 void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 {
+	newObject->m_selected = true;
+	newObject->m_wireframe = true;
 	selectedObjects.push_back(*newObject);
 	//Now we need to spawn the selection arrows around the object in 6 places
 	for (unsigned int i = 0; i < 6; i++)
@@ -1050,31 +1058,31 @@ void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 			break;
 		case 1:
 			//Down (should also rotate this to face down once actual model is in)
-			newArrow.setup(newObject->m_position.x, -1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, -1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.down = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 2:
 			//Left 
-			newArrow.setup(newObject->m_position.x - 1, newObject->m_position.y, newObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x - 1, newObject->m_position.y, newObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.left = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 3:
 			//Right
-			newArrow.setup(newObject->m_position.x + 1, newObject->m_position.y, newObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x + 1, newObject->m_position.y, newObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.right = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 4:
 			//back
-			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.back = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 5:
 			//forward
-			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.forward = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
@@ -1101,7 +1109,7 @@ void Game::eraseSelectedObject(DisplayObject* newObject)
 
 void Game::cleanupAllArrows()
 {
-	//Now we need to clear the arrows around that object (THIS IS BROKEN, CREATING A BAD MEMORY LEAK!)
+	//Now we need to clear the arrows around that object
 	for (int i = 0; i < m_dragArrowList.size(); i++)
 	{
 		m_dragArrowList[i].cleanUp();
