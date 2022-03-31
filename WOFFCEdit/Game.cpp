@@ -468,13 +468,13 @@ void Game::setSelectedObject(DisplayObject* newObject)
 		{
 		case 0:
 			//Up
-			newArrow.setup(newObject->m_position.x, 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y + 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
 			newArrow.up = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 1:
 			//Down (should also rotate this to face down once actual model is in)
-			newArrow.setup(newObject->m_position.x, -1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y - 1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.down = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
@@ -545,12 +545,12 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 				{
 				case 0:
 					//Up
-					newArrow.setup(newObjects[i].m_position.x, 1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y + 1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
 					m_dragArrowList.push_back(newArrow);
 					break;
 				case 1:
 					//Down (should also rotate this to face down once actual model is in)
-					newArrow.setup(newObjects[i].m_position.x, -1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y - 1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
 					m_dragArrowList.push_back(newArrow);
 					break;
 				case 2:
@@ -830,6 +830,9 @@ int Game::MousePicking()
 
 void Game::clickAndDrag()
 {
+	//XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0, 0);
+	//XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
+
 	int selectedID = -1;
 	float pickedDistance = 0;
 	//Set the float to the max possible distance as we will reduce this to the closes object
@@ -868,6 +871,30 @@ void Game::clickAndDrag()
 		{
 			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
+				if (m_dragArrowList[i].m_wireframe == true)
+				{
+					//User is still holding onto the same object
+					m_dragArrowList[i].m_selected = true;
+					//Now we need to move based on what direction that arrow is
+					if (m_dragArrowList[i].back == true)
+					{
+						//Calculate the distance between where the mouse is and where the object is
+					}
+					if (m_dragArrowList[i].forward == true)
+					{
+						//Calculate the distance between where the mouse is and where the object is
+					}
+					if (m_dragArrowList[i].up == true)
+					{
+						//Calculate the distance between where the mouse is and where the object is
+						//Get mouse Y (remember it's in screenspace so convert to world space)
+						XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X,m_InputCommands.mouse_Y,0,0);
+						XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
+						float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
+						selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
+						//Now we need to move the arrows
+					}
+				}
 				selectedArrow = &m_dragArrowList[i];
 				selectedArrow->m_wireframe = true;
 				closestDistance = pickedDistance;
@@ -1101,13 +1128,13 @@ void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 		{
 		case 0:
 			//Up
-			newArrow.setup(newObject->m_position.x, 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y + 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
 			newArrow.up = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
 		case 1:
-			//Down (should also rotate this to face down once actual model is in)
-			newArrow.setup(newObject->m_position.x, -1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			//Down
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y - 1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 			newArrow.down = true;
 			m_dragArrowList.push_back(newArrow);
 			break;
