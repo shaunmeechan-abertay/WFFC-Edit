@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
 
-
 class DisplayObject
 {
 public:
@@ -29,5 +28,6 @@ public:
 	float	m_light_constant;
 	float	m_light_linear;
 	float	m_light_quadratic;
+
 };
 

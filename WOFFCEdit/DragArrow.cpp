@@ -114,6 +114,40 @@ void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot
 
 }
 
+void DragArrow::updateDragArrow()
+{
+	if (up == true)
+	{
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y + 1, attachedObject->m_position.z);
+		return;
+	}
+	if (down == true)
+	{
+		DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y - 1, attachedObject->m_position.z);
+		return;
+	}
+	if (left == true)
+	{
+		DirectX::SimpleMath::Vector3(attachedObject->m_position.x - 1, attachedObject->m_position.y, attachedObject->m_position.z);
+		return;
+	}
+	if (right == true)
+	{
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x + 1, attachedObject->m_position.y, attachedObject->m_position.z);
+		return;
+	}
+	if (back == true)
+	{
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y, attachedObject->m_position.z - 1);
+		return;
+	}
+	if (forward == true)
+	{
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y, attachedObject->m_position.z + 1);
+		return;
+	}
+}
+
 std::wstring DragArrow::StringToWCHART(std::string s)
 {
 	int len;
