@@ -38,7 +38,14 @@ DragArrow::DragArrow()
 
 DragArrow::~DragArrow()
 {
-	//delete the texture
+}
+
+void DragArrow::cleanUp()
+{
+	//delete the texture & model
+	m_model.reset();
+	m_model.~shared_ptr();
+	m_texture_diffuse->Release();
 }
 
 void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot, float zRot, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)

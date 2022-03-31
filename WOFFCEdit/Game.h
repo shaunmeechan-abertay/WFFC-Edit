@@ -73,6 +73,13 @@ public:
 	void CreateNewObject(std::string texturespath, std::string modelspath);
 	std::vector<SceneObject> getDisplayList();
 
+	//Functions for selected objects vector
+	void pushBackNewSelectedObject(DisplayObject* newObject);
+	void eraseSelectedObject(DisplayObject* newObject);
+
+	//Functions for dealing with drag arrows
+	void cleanupAllArrows();
+
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
 #endif
