@@ -884,6 +884,7 @@ void Game::clickAndDrag()
 		{
 			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
+				//This is just to check if it's selected, can change later
 				if (m_dragArrowList[i].m_wireframe == true)
 				{
 					//User is still holding onto the same object
@@ -891,7 +892,7 @@ void Game::clickAndDrag()
 					//Now we need to move based on what direction that arrow is
 					if (m_dragArrowList[i].back == true)
 					{
-						//Calculate the distance between where the mouse is and where the object is
+						//Move the object "back", this depends on how the camera is viewing it
 					}
 					if (m_dragArrowList[i].forward == true)
 					{
@@ -899,19 +900,26 @@ void Game::clickAndDrag()
 					}
 					if (m_dragArrowList[i].up == true)
 					{
-						//Calculate the distance between where the mouse is and where the object is
-						//Get mouse Y (remember it's in screenspace so convert to world space)
-						XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X,m_InputCommands.mouse_Y,0,0);
-						XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
-						//Scale this based on the distance between the camera and the object
-						float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
-						selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
-						//Now we need to move the arrows
+						
+						selectedObject->m_position.y = selectedObject->m_position.y + 0.5f;
+					}
+					if (m_dragArrowList[i].down == true)
+					{
+						selectedObject->m_position.y = selectedObject->m_position.y - 0.5f;
+					}
 						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
 						{
 							m_dragArrowList[j].updateDragArrow();
 						}
-					}
+						//Old mouse code (try to get to work)
+						//Calculate the distance between where the mouse is and where the object is
+						//Get mouse Y (remember it's in screenspace so convert to world space)
+						//XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0, 0);
+						//The view matrix might be the issue here? It's the only thing I can think of that would be changed by the camera moving
+						//XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
+						//Scale this based on the distance between the camera and the object
+						//float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
+						//selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
 				}
 				selectedArrow = &m_dragArrowList[i];
 				selectedArrow->m_wireframe = true;
