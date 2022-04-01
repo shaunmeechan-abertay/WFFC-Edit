@@ -204,18 +204,23 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
-		DeleteCommand* deleteCommand =  new DeleteCommand;
 		if (selectedObjects.empty() == false)
 		{
+			DeleteCommand* deleteCommand =  new DeleteCommand;
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
+			Commands* command = deleteCommand;
+			commandList.push_back(command);
 		}
-		else
+		if (selectedObject != NULL)
 		{
- 			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
+			DeleteCommand* deleteCommand = new DeleteCommand;
+			cleanupAllArrows();
+			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
+			selectedObject = NULL;
+			Commands* command = deleteCommand;
+			commandList.push_back(command);
 		}
-		Commands *command = deleteCommand;
-		commandList.push_back(command);
 	}
 
 	if (m_InputCommands.UndoCommand && inputDown == false)
