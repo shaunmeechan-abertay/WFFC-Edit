@@ -123,12 +123,12 @@ void DragArrow::updateDragArrow()
 	}
 	if (down == true)
 	{
-		DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y - 1, attachedObject->m_position.z);
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x, attachedObject->m_position.y - 1, attachedObject->m_position.z);
 		return;
 	}
 	if (left == true)
 	{
-		DirectX::SimpleMath::Vector3(attachedObject->m_position.x - 1, attachedObject->m_position.y, attachedObject->m_position.z);
+		m_position = DirectX::SimpleMath::Vector3(attachedObject->m_position.x - 1, attachedObject->m_position.y, attachedObject->m_position.z);
 		return;
 	}
 	if (right == true)
