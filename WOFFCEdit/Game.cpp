@@ -901,10 +901,10 @@ void Game::clickAndDrag()
 						//					pushInX = false
 						//					----------------
 						// 					|				|
-						//pushInX = False	|				| pushInX = true
+						//pushInX = False	|				| pushInX = true (less Z)
 						//					|				|
 						//					-----------------
-						//					pushInX = true
+						//					pushInX = true (more X)
 						//	
 						//This shows, based on the camera direction, when pushInX is true or false
 						bool pushInX = false;
@@ -917,11 +917,20 @@ void Game::clickAndDrag()
 						{
 							pushInX = false;
 						}
-						selectedObject->m_position.y = selectedObject->m_position.y;
+						selectedObject->m_position.z = selectedObject->m_position.z - 0.5f;
+					}
+					if (m_dragArrowList[i].left == true)
+					{
+						selectedObject->m_position.x = selectedObject->m_position.x - 0.5f;
+					}
+					if (m_dragArrowList[i].right == true)
+					{
+						selectedObject->m_position.x = selectedObject->m_position.x + 0.5f;
 					}
 					if (m_dragArrowList[i].forward == true)
 					{
 						//Calculate the distance between where the mouse is and where the object is
+						selectedObject->m_position.z = selectedObject->m_position.z + 0.5f;
 					}
 					if (m_dragArrowList[i].up == true)
 					{
