@@ -892,7 +892,32 @@ void Game::clickAndDrag()
 					//Now we need to move based on what direction that arrow is
 					if (m_dragArrowList[i].back == true)
 					{
-						//Move the object "back", this depends on how the camera is viewing it
+						//Move the object "back", this depends on how the camera is viewing it	
+						//1 in X is starting pos m_camLookDirection give us this
+						//We should never assume it will be a whole number, instead use a range
+						//We need to move the object away from the camera in the direction that is highest (e.g. X=1,Z=0 means push in X whereas X=0.2,Z=0.9 means push in Z)
+
+						//Diagram
+						//					pushInX = false
+						//					----------------
+						// 					|				|
+						//pushInX = False	|				| pushInX = true
+						//					|				|
+						//					-----------------
+						//					pushInX = true
+						//	
+						//This shows, based on the camera direction, when pushInX is true or false
+						bool pushInX = false;
+						XMVECTOR something = m_camLookDirection;
+						if (something.m128_f32[0] > something.m128_f32[2])
+						{
+							pushInX = true;
+						}
+						else
+						{
+							pushInX = false;
+						}
+						selectedObject->m_position.y = selectedObject->m_position.y;
 					}
 					if (m_dragArrowList[i].forward == true)
 					{
@@ -900,7 +925,6 @@ void Game::clickAndDrag()
 					}
 					if (m_dragArrowList[i].up == true)
 					{
-						
 						selectedObject->m_position.y = selectedObject->m_position.y + 0.5f;
 					}
 					if (m_dragArrowList[i].down == true)
