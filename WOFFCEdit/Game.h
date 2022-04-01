@@ -14,6 +14,7 @@
 #include "DeleteCommand.h"
 #include "CreateCommand.h"
 #include "CopyCommand.h"
+#include "UndoMove.h"
 #include "DragArrow.h"
 #include <vector>
 #include <list>
@@ -64,8 +65,13 @@ public:
 	DragArrow* selectedArrow;
 	void clickAndDrag();
 	void checkForDragArrow();
+	void dragFinished();
 	float mouseYOnClick;
 	float mouseXOnClick;
+	//DO NOT USE XMVECTOR HERE! YES IT MAKES SENSE BUT CAUSES A COMPILER ERROR THAT BREAKS THE COMPALATION OF COMMANDS.H
+	float objectsOriginalPositionX;
+	float objectsOriginalPositionY;
+	float objectsOriginalPositionZ;
 
 	void setID(int newID);
 

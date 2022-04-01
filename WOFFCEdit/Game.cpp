@@ -1023,6 +1023,23 @@ void Game::checkForDragArrow()
 	}
 	mouseYOnClick = m_InputCommands.mouse_Y;
 	mouseXOnClick = m_InputCommands.mouse_X;
+	if (selectedObject != NULL)
+	{
+		objectsOriginalPositionX = selectedObject->m_position.x;
+		objectsOriginalPositionY = selectedObject->m_position.y;
+		objectsOriginalPositionZ = selectedObject->m_position.z;
+	}
+}
+void Game::dragFinished()
+{
+	if (selectedObject != NULL)
+	{
+		UndoMove* UndoMoveCommand = new UndoMove;
+		UndoMoveCommand->setup(selectedObject, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
+		Commands* command = UndoMoveCommand;
+		commandList.push_back(command);
+	}
+	//check multiple
 }
 void Game::setID(int newID)
 {

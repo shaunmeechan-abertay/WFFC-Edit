@@ -67,6 +67,7 @@
     <ClCompile Include="CopyCommand.cpp" />
     <ClCompile Include="ObjectCreateDialogue.cpp" />
     <ClCompile Include="DragArrow.cpp" />
+    <ClCompile Include="UndoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -124,6 +125,7 @@
     <ClInclude Include="CopyCommand.h" />
     <ClInclude Include="ObjectCreateDialogue.h" />
     <ClInclude Include="DragArrow.h" />
+    <ClInclude Include="UndoMove.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

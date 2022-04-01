@@ -12,7 +12,9 @@ public:
 		Delete,
 		Create,
 		Copy,
-		Pase
+		Pase,
+		UndoMove,
+		Move
 	};
 
 	CommandType type = CommandType::Default;

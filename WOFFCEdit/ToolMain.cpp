@@ -350,6 +350,8 @@ void ToolMain::UpdateInput(MSG * msg)
 	case WM_LBUTTONUP:
 		m_toolInputCommands.mouse_LB_Up = true;
 		m_toolInputCommands.mouse_LB_Down = false;
+		//A drag finished, create a UndoMove actions
+		m_d3dRenderer.dragFinished();
 		break;
 
 	}
