@@ -64,9 +64,8 @@ public:
 	DragArrow* selectedArrow;
 	void clickAndDrag();
 	void checkForDragArrow();
-	float mouseYOnClick = m_InputCommands.mouse_Y;
-	float mouseXOnClick = m_InputCommands.mouse_X;
-
+	float mouseYOnClick;
+	float mouseXOnClick;
 
 	void setID(int newID);
 

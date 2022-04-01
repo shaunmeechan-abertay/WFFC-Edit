@@ -881,8 +881,9 @@ void Game::clickAndDrag()
 		pickingVector = XMVector3Normalize(pickingVector);
 
 		//We want to detect if the user is clicking the selected arrow
-		//This is almost really good. One last big issue, the object moves even if the mouse doesn't
-		//e.g. you click the arrow.
+		//This is almost really good. One last big issue, the object moves further than the mouse does
+		//This means the mouse ends up away from the object so the user has to keep up with it
+		//It should move at the same rate as the mouse to make it look like it's attached
 		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
 			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
@@ -907,8 +908,6 @@ void Game::clickAndDrag()
 					//Did the nouse move?
 					if (mouseMovedX == false && mouseMovedY == false)
 					{
-						std::cout << "mouse didn't move!" << std::endl;
-						std::cout << "mouse didn't move!" << std::endl;
 						break;
 					}
 					//Now we need to move based on what direction that arrow is
@@ -931,28 +930,28 @@ void Game::clickAndDrag()
 						//This shows, based on the camera direction, when pushInX is true or false
 						bool pushInX = false;
 
-						selectedObject->m_position.z = selectedObject->m_position.z - 0.5f;
+						selectedObject->m_position.z = selectedObject->m_position.z - 0.1f;
 					}
 					if (selectedArrow->left == true)
 					{
-						selectedObject->m_position.x = selectedObject->m_position.x - 0.5f;
+						selectedObject->m_position.x = selectedObject->m_position.x - 0.1f;
 					}
 					if (selectedArrow->right == true)
 					{
-						selectedObject->m_position.x = selectedObject->m_position.x + 0.5f;
+						selectedObject->m_position.x = selectedObject->m_position.x + 0.1f;
 					}
 					if (selectedArrow->forward == true)
 					{
 						//Calculate the distance between where the mouse is and where the object is
-						selectedObject->m_position.z = selectedObject->m_position.z + 0.5f;
+						selectedObject->m_position.z = selectedObject->m_position.z + 0.1f;
 					}
 					if (selectedArrow->up == true)
 					{
-						selectedObject->m_position.y = selectedObject->m_position.y + 0.5f;
+						selectedObject->m_position.y = selectedObject->m_position.y + 0.1f;
 					}
 					if (selectedArrow->down == true)
 					{
-						selectedObject->m_position.y = selectedObject->m_position.y - 0.5f;
+						selectedObject->m_position.y = selectedObject->m_position.y - 0.1f;
 					}
 						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
 						{
@@ -1023,7 +1022,7 @@ void Game::checkForDragArrow()
 		}
 	}
 	mouseYOnClick = m_InputCommands.mouse_Y;
-		mouseXOnClick = m_InputCommands.mouse_X;
+	mouseXOnClick = m_InputCommands.mouse_X;
 }
 void Game::setID(int newID)
 {
