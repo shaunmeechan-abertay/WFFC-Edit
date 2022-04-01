@@ -843,9 +843,6 @@ int Game::MousePicking()
 
 void Game::clickAndDrag()
 {
-	//XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0, 0);
-	//XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
-
 	int selectedID = -1;
 	float pickedDistance = 0;
 	//Set the float to the max possible distance as we will reduce this to the closes object
@@ -880,17 +877,20 @@ void Game::clickAndDrag()
 		XMVECTOR pickingVector = farPoint - nearPoint;
 		pickingVector = XMVector3Normalize(pickingVector);
 
+		//We want to detect if the user is clicking the selected arrow
 		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
 			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				//This is just to check if it's selected, can change later
-				if (m_dragArrowList[i].m_wireframe == true)
+				if (selectedArrow == NULL)
 				{
-					//User is still holding onto the same object
-					m_dragArrowList[i].m_selected = true;
+					return;
+				}
+				//This is just to check if it's selected, can change later
+				if (m_dragArrowList[i].attachedObject == selectedArrow->attachedObject)
+				{
 					//Now we need to move based on what direction that arrow is
-					if (m_dragArrowList[i].back == true)
+					if (selectedArrow->back == true)
 					{
 						//Move the object "back", this depends on how the camera is viewing it	
 						//1 in X is starting pos m_camLookDirection give us this
@@ -919,24 +919,24 @@ void Game::clickAndDrag()
 						}
 						selectedObject->m_position.z = selectedObject->m_position.z - 0.5f;
 					}
-					if (m_dragArrowList[i].left == true)
+					if (selectedArrow->left == true)
 					{
 						selectedObject->m_position.x = selectedObject->m_position.x - 0.5f;
 					}
-					if (m_dragArrowList[i].right == true)
+					if (selectedArrow->right == true)
 					{
 						selectedObject->m_position.x = selectedObject->m_position.x + 0.5f;
 					}
-					if (m_dragArrowList[i].forward == true)
+					if (selectedArrow->forward == true)
 					{
 						//Calculate the distance between where the mouse is and where the object is
 						selectedObject->m_position.z = selectedObject->m_position.z + 0.5f;
 					}
-					if (m_dragArrowList[i].up == true)
+					if (selectedArrow->up == true)
 					{
 						selectedObject->m_position.y = selectedObject->m_position.y + 0.5f;
 					}
-					if (m_dragArrowList[i].down == true)
+					if (selectedArrow->down == true)
 					{
 						selectedObject->m_position.y = selectedObject->m_position.y - 0.5f;
 					}
@@ -954,6 +954,54 @@ void Game::clickAndDrag()
 						//float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
 						//selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
 				}
+			}
+		}
+	}
+}
+
+void Game::checkForDragArrow()
+{
+	int selectedID = -1;
+	float pickedDistance = 0;
+	//Set the float to the max possible distance as we will reduce this to the closes object
+	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
+	float closestDistance = std::numeric_limits<float>::max();
+
+	//setup near and far planes of frustum with mouse X and mouse Y passed
+	//down from Toolmain.
+	//They may look the same but note the difference in Z
+	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0.0f, 1.0f);
+	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 1.0f, 1.0f);
+
+	//Test for collision against a drag arrow
+	for (int i = 0; i < m_dragArrowList.size(); i++)
+	{
+		//Get the scale factor and translation of the object
+		const XMVECTORF32 scale = { m_dragArrowList[i].m_scale.x,
+			m_dragArrowList[i].m_scale.y, m_dragArrowList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_dragArrowList[i].m_position.x,
+			m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
+		//Convert eular angles into a quaterion for the rotation of the object
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
+		//Create set the matrix of the selected object in the world based on the translation,scale and roation
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		//Unproject the points on the near and far plane, with respect to the matrix we just created
+		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+
+		//Turn the transformed points into our picking vector
+		XMVECTOR pickingVector = farPoint - nearPoint;
+		pickingVector = XMVector3Normalize(pickingVector);
+
+		bool hitModel = false;
+		//Problem: Right now we can pick the arrow on the other side of the object. We don't want this.
+		//When we have selected an arrow we don't want to select any others.
+		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
+		{
+			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance && hitModel == false)
+			{
 				selectedArrow = &m_dragArrowList[i];
 				selectedArrow->m_wireframe = true;
 				closestDistance = pickedDistance;

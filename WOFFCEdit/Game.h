@@ -63,6 +63,7 @@ public:
 	//Click and drag
 	DragArrow* selectedArrow;
 	void clickAndDrag();
+	void checkForDragArrow();
 
 	void setID(int newID);
 

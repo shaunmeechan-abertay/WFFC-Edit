@@ -342,6 +342,8 @@ void ToolMain::UpdateInput(MSG * msg)
 		//mouse left pressed
 		m_toolInputCommands.mouse_LB_Down = true;
 		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_d3dRenderer.checkForDragArrow();
+		//See if the user clicked a drag Arrow
 		m_toolInputCommands.mouse_LB_Up = false;
 		break;
 
