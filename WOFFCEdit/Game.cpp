@@ -855,6 +855,9 @@ void Game::clickAndDrag()
 	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0.0f, 1.0f);
 	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 1.0f, 1.0f);
 
+	bool mouseMovedY = false;
+	bool mouseMovedX = false;
+
 	//Test for collision against a drag arrow
 	for (int i = 0; i < m_dragArrowList.size(); i++)
 	{
@@ -878,6 +881,8 @@ void Game::clickAndDrag()
 		pickingVector = XMVector3Normalize(pickingVector);
 
 		//We want to detect if the user is clicking the selected arrow
+		//This is almost really good. One last big issue, the object moves even if the mouse doesn't
+		//e.g. you click the arrow.
 		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
 			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
@@ -886,9 +891,26 @@ void Game::clickAndDrag()
 				{
 					return;
 				}
+				float newMouseY = m_InputCommands.mouse_Y;
+				float newMouseX = m_InputCommands.mouse_X;
+				if (newMouseX != mouseXOnClick)
+				{
+					mouseMovedX = true;
+				}
+				if (newMouseY != mouseYOnClick)
+				{
+					mouseMovedY = true;
+				}
 				//This is just to check if it's selected, can change later
 				if (m_dragArrowList[i].attachedObject == selectedArrow->attachedObject)
 				{
+					//Did the nouse move?
+					if (mouseMovedX == false && mouseMovedY == false)
+					{
+						std::cout << "mouse didn't move!" << std::endl;
+						std::cout << "mouse didn't move!" << std::endl;
+						break;
+					}
 					//Now we need to move based on what direction that arrow is
 					if (selectedArrow->back == true)
 					{
@@ -908,15 +930,7 @@ void Game::clickAndDrag()
 						//	
 						//This shows, based on the camera direction, when pushInX is true or false
 						bool pushInX = false;
-						XMVECTOR something = m_camLookDirection;
-						if (something.m128_f32[0] > something.m128_f32[2])
-						{
-							pushInX = true;
-						}
-						else
-						{
-							pushInX = false;
-						}
+
 						selectedObject->m_position.z = selectedObject->m_position.z - 0.5f;
 					}
 					if (selectedArrow->left == true)
@@ -1008,8 +1022,9 @@ void Game::checkForDragArrow()
 			}
 		}
 	}
+	mouseYOnClick = m_InputCommands.mouse_Y;
+		mouseXOnClick = m_InputCommands.mouse_X;
 }
-
 void Game::setID(int newID)
 {
 	ID = newID;
