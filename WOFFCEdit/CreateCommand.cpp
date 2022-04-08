@@ -180,7 +180,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::vect
 		}
 
 		objects.push_back(newObject);
-		createdObjects.push_back(newObject);
+		createdObjects.push_back(&newObject);
 	}
 }
 
@@ -360,7 +360,7 @@ DisplayObject CreateCommand::getCreatedObject()
 	return createdObject;
 }
 
-std::vector<DisplayObject> CreateCommand::getCreatedObjects()
+std::vector<DisplayObject*> CreateCommand::getCreatedObjects()
 {
 	return createdObjects;
 }

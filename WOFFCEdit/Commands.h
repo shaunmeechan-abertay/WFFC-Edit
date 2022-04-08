@@ -27,7 +27,7 @@ public:
 	virtual DisplayObject getDeletedObject();
 	virtual std::vector<DisplayObject> getDeletedObjects();
 	virtual DisplayObject getCreatedObject();
-	virtual std::vector<DisplayObject> getCreatedObjects();
+	virtual std::vector<DisplayObject*> getCreatedObjects();
 	//Used for undo redo move
 	virtual int getMovedObjectsID();
 	virtual std::vector<int> getMovedObjectsIDs();

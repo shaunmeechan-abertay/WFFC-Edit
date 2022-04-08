@@ -25,9 +25,9 @@ DisplayObject Commands::getCreatedObject()
 	return DisplayObject();
 }
 
-std::vector<DisplayObject> Commands::getCreatedObjects()
+std::vector<DisplayObject*> Commands::getCreatedObjects()
 {
-	return std::vector<DisplayObject>();
+	return std::vector<DisplayObject*>();
 }
 
 int Commands::getMovedObjectsID()

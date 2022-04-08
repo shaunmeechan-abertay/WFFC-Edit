@@ -513,7 +513,7 @@ void Game::setSelectedObject(DisplayObject* newObject)
 		m_dragArrowList.push_back(newArrow);
 	}
 }
-void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
+void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 {
 	if (newObjects.empty() == true)
 	{
@@ -527,7 +527,7 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 			//Find the object in the display list
 			for (int j = 0; j < m_displayList.size(); j++)
 			{
-				if (selectedObjects[i].m_ID == m_displayList[j].m_ID)
+				if (selectedObjects[i]->m_ID == m_displayList[j].m_ID)
 				{
 					m_displayList[j].m_wireframe = false;
 					m_displayList[j].m_selected = false;
@@ -540,8 +540,8 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 	//We need to do this in a better way
 		for (int i = 0; i < newObjects.size(); i++)
 		{
-			newObjects[i].m_wireframe = true;
-			newObjects[i].m_selected = true;
+			newObjects[i]->m_wireframe = true;
+			newObjects[i]->m_selected = true;
 			selectedObjects.push_back(newObjects[i]);
 			//Now we need to spawn the selection arrows around the object in 6 places
 			for (unsigned int i = 0; i < 6; i++)
@@ -551,38 +551,38 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 				{
 				case 0:
 					//Up
-					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y + 1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y + 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.up = true;
 					break;
 				case 1:
 					//Down (should also rotate this to face down once actual model is in)
-					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y - 1, newObjects[i].m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.down = true;
 					break;
 				case 2:
 					//Left 
-					newArrow.setup(newObjects[i].m_position.x - 1, newObjects[i].m_position.y, newObjects[i].m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.left = true;
 					break;
 				case 3:
 					//Right
-					newArrow.setup(newObjects[i].m_position.x + 1, newObjects[i].m_position.y, newObjects[i].m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.right = true;
 					break;
 				case 4:
 					//back
-					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y, newObjects[i].m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.back = true;
 					break;
 				case 5:
 					//forward
-					newArrow.setup(newObjects[i].m_position.x, newObjects[i].m_position.y, newObjects[i].m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory);
-					newArrow.attachedObject = &newObjects[i];
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
 					newArrow.forward = true;
 					break;
 				default:
@@ -902,57 +902,113 @@ void Game::clickAndDrag()
 				{
 					mouseMovedY = true;
 				}
-				//This is just to check if it's selected, can change later
-				if (m_dragArrowList[i].attachedObject == selectedArrow->attachedObject)
+
+				//Did the mouse move?
+				if (mouseMovedX == false && mouseMovedY == false)
 				{
-					//Did the nouse move?
-					if (mouseMovedX == false && mouseMovedY == false)
+					break;
+				}
+
+				//This is just to check if it's selected, can change later
+				if (selectedObjects.empty() == true)
+				{
+					if (m_dragArrowList[i].attachedObject == selectedArrow->attachedObject)
 					{
-						break;
+						//Now we need to move based on what direction that arrow is
+						if (selectedArrow->back == true)
+						{
+							//Move the object "back", this depends on how the camera is viewing it	
+							//1 in X is starting pos m_camLookDirection give us this
+							//We should never assume it will be a whole number, instead use a range
+							//We need to move the object away from the camera in the direction that is highest (e.g. X=1,Z=0 means push in X whereas X=0.2,Z=0.9 means push in Z)
+
+							//Diagram
+							//					pushInX = false
+							//					----------------
+							// 					|				|
+							//pushInX = False	|				| pushInX = true (less Z)
+							//					|				|
+							//					-----------------
+							//					pushInX = true (more X)
+							//	
+							//This shows, based on the camera direction, when pushInX is true or false
+							bool pushInX = false;
+
+							selectedObject->m_position.z = selectedObject->m_position.z - 0.1f;
+						}
+						if (selectedArrow->left == true)
+						{
+							selectedObject->m_position.x = selectedObject->m_position.x - 0.1f;
+						}
+						if (selectedArrow->right == true)
+						{
+							selectedObject->m_position.x = selectedObject->m_position.x + 0.1f;
+						}
+						if (selectedArrow->forward == true)
+						{
+							//Calculate the distance between where the mouse is and where the object is
+							selectedObject->m_position.z = selectedObject->m_position.z + 0.1f;
+						}
+						if (selectedArrow->up == true)
+						{
+							selectedObject->m_position.y = selectedObject->m_position.y + 0.1f;
+						}
+						if (selectedArrow->down == true)
+						{
+							selectedObject->m_position.y = selectedObject->m_position.y - 0.1f;
+						}
 					}
+
+				}
+				else
+				{
+					//Multi
+											
 					//Now we need to move based on what direction that arrow is
 					if (selectedArrow->back == true)
 					{
-						//Move the object "back", this depends on how the camera is viewing it	
-						//1 in X is starting pos m_camLookDirection give us this
-						//We should never assume it will be a whole number, instead use a range
-						//We need to move the object away from the camera in the direction that is highest (e.g. X=1,Z=0 means push in X whereas X=0.2,Z=0.9 means push in Z)
-
-						//Diagram
-						//					pushInX = false
-						//					----------------
-						// 					|				|
-						//pushInX = False	|				| pushInX = true (less Z)
-						//					|				|
-						//					-----------------
-						//					pushInX = true (more X)
-						//	
-						//This shows, based on the camera direction, when pushInX is true or false
 						bool pushInX = false;
-
-						selectedObject->m_position.z = selectedObject->m_position.z - 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.z = selectedObjects[k]->m_position.z - 0.1f;
+						}
 					}
 					if (selectedArrow->left == true)
 					{
-						selectedObject->m_position.x = selectedObject->m_position.x - 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.x = selectedObjects[k]->m_position.x - 0.1f;
+						}
 					}
 					if (selectedArrow->right == true)
 					{
-						selectedObject->m_position.x = selectedObject->m_position.x + 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.x = selectedObjects[k]->m_position.x + 0.1f;
+						}
 					}
 					if (selectedArrow->forward == true)
 					{
-						//Calculate the distance between where the mouse is and where the object is
-						selectedObject->m_position.z = selectedObject->m_position.z + 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.z = selectedObjects[k]->m_position.z + 0.1f;
+						}
 					}
 					if (selectedArrow->up == true)
 					{
-						selectedObject->m_position.y = selectedObject->m_position.y + 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.y = selectedObjects[k]->m_position.y + 0.1f;
+						}
 					}
 					if (selectedArrow->down == true)
 					{
-						selectedObject->m_position.y = selectedObject->m_position.y - 0.1f;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.y = selectedObjects[k]->m_position.y - 0.1f;
+						}
 					}
+				}
 						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
 						{
 							m_dragArrowList[j].updateDragArrow();
@@ -966,7 +1022,6 @@ void Game::clickAndDrag()
 						//Scale this based on the distance between the camera and the object
 						//float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
 						//selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
-				}
 			}
 		}
 	}
@@ -1009,7 +1064,6 @@ void Game::checkForDragArrow()
 		pickingVector = XMVector3Normalize(pickingVector);
 
 		bool hitModel = false;
-		//Problem: Right now we can pick the arrow on the other side of the object. We don't want this.
 		//When we have selected an arrow we don't want to select any others.
 		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
@@ -1050,7 +1104,7 @@ void Game::copyObject()
 {
 	if (selectedObjects.empty() == false)
 	{
-		copyCommand.performAction(selectedObjects);
+		copyCommand.performAction(&selectedObjects);
 	}
 	else
 	{
@@ -1108,7 +1162,7 @@ void Game::focusOnItem()
 	{
 		//We want to show all objects that were selected
 		//We need to put the objects in acessending order using bubble sort
-		std::vector<DisplayObject> orderedObjects = selectedObjects;
+		std::vector<DisplayObject*> orderedObjects = selectedObjects;
 		bool shouldOrder = true;
 		bool reordered = false;
 		while (shouldOrder == true)
@@ -1119,9 +1173,9 @@ void Game::focusOnItem()
 				//Have to make sure I isn't greater than the size of the vector
 				if (i < selectedObjects.size() - 1)
 				{
-					if (orderedObjects[i].m_position.x > orderedObjects[i + 1].m_position.x)
+					if (orderedObjects[i]->m_position.x > orderedObjects[i + 1]->m_position.x)
 					{
-						DisplayObject temp = orderedObjects[i];
+						DisplayObject* temp = orderedObjects[i];
 						orderedObjects[i] = orderedObjects[i + 1];
 						orderedObjects[i + 1] = temp;
 						reordered = true;
@@ -1136,7 +1190,7 @@ void Game::focusOnItem()
 		//Now they have been get distance between max and min
 		//Calculate angle between the camera and the object
 		//Create a direction vector
-		Vector3 midPoint = (orderedObjects.back().m_position + orderedObjects.front().m_position)/2;
+		Vector3 midPoint = (orderedObjects.back()->m_position + orderedObjects.front()->m_position)/2;
 		//If you are multi selecting you will probably be in mid air so don't change this
 		midPoint.y = m_camPosition.y;
 		m_camPosition = midPoint + Vector3(-10, 0, 10);
@@ -1257,7 +1311,7 @@ void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 {
 	newObject->m_selected = true;
 	newObject->m_wireframe = true;
-	selectedObjects.push_back(*newObject);
+	selectedObjects.push_back(newObject);
 	//Now we need to spawn the selection arrows around the object in 6 places
 	for (unsigned int i = 0; i < 6; i++)
 	{
@@ -1312,7 +1366,7 @@ void Game::eraseSelectedObject(DisplayObject* newObject)
 	//Find the object in the selected object vector
 	for (int j = 0; j < selectedObjects.size(); j++)
 	{
-		if (newObject->m_ID == selectedObjects.at(j).m_ID)
+		if (newObject->m_ID == selectedObjects.at(j)->m_ID)
 		{
 			//Found object, remove, again function this so we can remove arrows
 			selectedObjects.erase(selectedObjects.begin() + j);

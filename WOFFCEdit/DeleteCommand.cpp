@@ -24,14 +24,14 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 	}
 }
 
-void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject>& ObjectsToDelete)
+void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject*>& ObjectsToDelete)
 {
 
 	for (unsigned int  i = 0; i < (unsigned)ObjectsToDelete.size(); i++)
 	{
 		for (unsigned int j = 0; j < (unsigned)objects.size(); j++)
 		{
-			if (objects[j].m_ID == ObjectsToDelete.at(i).m_ID)
+			if (objects[j].m_ID == ObjectsToDelete.at(i)->m_ID)
 			{
 				objects.at(j).m_wireframe = false;
 				deletedObjects.push_back(objects.at(j));

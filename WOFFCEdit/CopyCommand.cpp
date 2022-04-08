@@ -5,17 +5,17 @@ CopyCommand::CopyCommand()
 	type = Commands::CommandType::Copy;
 }
 
-void CopyCommand::performAction(std::vector<DisplayObject>& objects)
+void CopyCommand::performAction(std::vector<DisplayObject*>* objects)
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (int i = 0; i < objects->size(); i++)
 	{
 		DisplayObject newObject;
 
 		//load model
-		newObject.m_model = objects[i].m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
+		newObject.m_model = objects->at(i)->m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 		//Load Texture
-		newObject.m_texture_diffuse = objects[i].m_texture_diffuse;
+		newObject.m_texture_diffuse = objects->at(i)->m_texture_diffuse;
 
 		//apply new texture to models effect
 		newObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
@@ -28,41 +28,41 @@ void CopyCommand::performAction(std::vector<DisplayObject>& objects)
 			});
 
 		//Set texture and model paths
-		newObject.m_texturePath = objects[i].m_texturePath;
-		newObject.m_modelPath = objects[i].m_modelPath;
+		newObject.m_texturePath = objects->at(i)->m_texturePath;
+		newObject.m_modelPath = objects->at(i)->m_modelPath;
 
 		//set position
-		newObject.m_position.x = objects[i].m_position.x;
-		newObject.m_position.y = objects[i].m_position.y + 5;
-		newObject.m_position.z = objects[i].m_position.z;
+		newObject.m_position.x = objects->at(i)->m_position.x;
+		newObject.m_position.y = objects->at(i)->m_position.y + 5;
+		newObject.m_position.z = objects->at(i)->m_position.z;
 
 		//setorientation
-		newObject.m_orientation.x = objects[i].m_orientation.x;
-		newObject.m_orientation.y = objects[i].m_orientation.y;
-		newObject.m_orientation.z = objects[i].m_orientation.z;
+		newObject.m_orientation.x = objects->at(i)->m_orientation.x;
+		newObject.m_orientation.y = objects->at(i)->m_orientation.y;
+		newObject.m_orientation.z = objects->at(i)->m_orientation.z;
 
 		//set scale
-		newObject.m_scale.x = objects[i].m_scale.x;
-		newObject.m_scale.y = objects[i].m_scale.y;
-		newObject.m_scale.z = objects[i].m_scale.z;
+		newObject.m_scale.x = objects->at(i)->m_scale.x;
+		newObject.m_scale.y = objects->at(i)->m_scale.y;
+		newObject.m_scale.z = objects->at(i)->m_scale.z;
 
 		//set wireframe / render flags
-		newObject.m_render = objects[i].m_render;
+		newObject.m_render = objects->at(i)->m_render;
 		newObject.m_wireframe = false;
 
-		newObject.m_light_type = objects[i].m_light_type;
-		newObject.m_light_diffuse_r = objects[i].m_light_diffuse_r;
-		newObject.m_light_diffuse_g = objects[i].m_light_diffuse_g;
-		newObject.m_light_diffuse_b = objects[i].m_light_diffuse_b;
-		newObject.m_light_specular_r = objects[i].m_light_specular_r;
-		newObject.m_light_specular_g = objects[i].m_light_specular_g;
-		newObject.m_light_specular_b = objects[i].m_light_specular_b;
-		newObject.m_light_spot_cutoff = objects[i].m_light_spot_cutoff;
-		newObject.m_light_constant = objects[i].m_light_constant;
-		newObject.m_light_linear = objects[i].m_light_linear;
-		newObject.m_light_quadratic = objects[i].m_light_quadratic;
+		newObject.m_light_type = objects->at(i)->m_light_type;
+		newObject.m_light_diffuse_r = objects->at(i)->m_light_diffuse_r;
+		newObject.m_light_diffuse_g = objects->at(i)->m_light_diffuse_g;
+		newObject.m_light_diffuse_b = objects->at(i)->m_light_diffuse_b;
+		newObject.m_light_specular_r = objects->at(i)->m_light_specular_r;
+		newObject.m_light_specular_g = objects->at(i)->m_light_specular_g;
+		newObject.m_light_specular_b = objects->at(i)->m_light_specular_b;
+		newObject.m_light_spot_cutoff = objects->at(i)->m_light_spot_cutoff;
+		newObject.m_light_constant = objects->at(i)->m_light_constant;
+		newObject.m_light_linear = objects->at(i)->m_light_linear;
+		newObject.m_light_quadratic = objects->at(i)->m_light_quadratic;
 		//Assign ID
-		newObject.m_ID = objects[i].m_ID;
+		newObject.m_ID = objects->at(i)->m_ID;
 		
 		copiedObjects.push_back(newObject);
 	}

@@ -140,13 +140,13 @@ private:
 	int ID = 0;
 	DisplayObject* selectedObject;
 	//Vector of selected objects
-	std::vector<DisplayObject> selectedObjects;
+	std::vector<DisplayObject*> selectedObjects;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
 	//Setters for our selected object/objects
 	void setSelectedObject(DisplayObject* newObject);
-	void setSelectedObjects(std::vector<DisplayObject> newObjects);
+	void setSelectedObjects(std::vector<DisplayObject*> newObjects);
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;

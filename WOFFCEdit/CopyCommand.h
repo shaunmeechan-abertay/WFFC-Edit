@@ -8,7 +8,7 @@ class CopyCommand : public Commands
 public:
 	CopyCommand();
 	//This is a copy action for a single object (used for undo and paste)
-	void performAction(std::vector<DisplayObject>& objects);
+	void performAction(std::vector<DisplayObject*>* objects);
 	//This is a copy action for a multiple objects (used for undo and paste)
 	void performAction(DisplayObject* object);
 	Commands::CommandType getType();

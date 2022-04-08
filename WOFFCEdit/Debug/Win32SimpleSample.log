@@ -42,20 +42,20 @@ D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(877,109): warning C4
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(877,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(895,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(896,21): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(986,82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(986,57): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(987,81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(987,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(990,20): warning C4018: '<': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1000,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(999,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(998,100): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1004,111): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1004,85): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1005,109): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1005,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1024,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1025,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1313,20): warning C4018: '<': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1327,20): warning C4018: '<': signed/unsigned mismatch
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1041,82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1041,57): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1042,81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1042,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1045,20): warning C4018: '<': signed/unsigned mismatch
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1055,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1054,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1053,100): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1059,111): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1059,85): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1060,109): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1060,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1078,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1079,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1367,20): warning C4018: '<': signed/unsigned mismatch
+D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Game.cpp(1381,20): warning C4018: '<': signed/unsigned mismatch
   Win32SimpleSample.vcxproj -> D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
