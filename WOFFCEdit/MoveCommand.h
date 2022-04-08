@@ -15,14 +15,12 @@ public:
 	int getMovedObjectsID();
 	std::vector<int> getMovedObjectsIDs();
 	//These will be used to undo this command
-	DirectX::XMVECTOR getMovedObjectsPreviousPosition();
-	std::vector<DirectX::XMVECTOR> getMovedObjectsPreviousPositions();
+	DirectX::XMVECTOR getMovedObjectsOriginalPosition();
+	std::vector<DirectX::XMVECTOR> getMovedObjectsOriginalPositions();
 private:
 	int movedObjectID;
 	DirectX::XMVECTOR movedObjectsOriginalPosition;
-	DirectX::XMVECTOR movedObjectsPreviousPosition;
 	std::vector<int> movedObjectsIDs;
 	std::vector<DirectX::XMVECTOR> movedObjectsOriginalPositions;
-	std::vector<DirectX::XMVECTOR> movedObjectsPreviousPositions;
 };
 

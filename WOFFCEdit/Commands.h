@@ -31,8 +31,8 @@ public:
 	//Used for undo redo move
 	virtual int getMovedObjectsID();
 	virtual std::vector<int> getMovedObjectsIDs();
-	virtual DirectX::XMVECTOR getMovedObjectsPreviousPosition();
-	virtual std::vector<DirectX::XMVECTOR> getMovedObjectsPreviousPositions();
+	virtual DirectX::XMVECTOR getMovedObjectsOriginalPosition();
+	virtual std::vector<DirectX::XMVECTOR> getMovedObjectsOriginalPositions();
 	//Used in all
 	virtual CommandType getType();
 };

@@ -40,12 +40,12 @@ std::vector<int> Commands::getMovedObjectsIDs()
 	return std::vector<int>();
 }
 
-DirectX::XMVECTOR Commands::getMovedObjectsPreviousPosition()
+DirectX::XMVECTOR Commands::getMovedObjectsOriginalPosition()
 {
 	return DirectX::XMVECTOR();
 }
 
-std::vector<DirectX::XMVECTOR> Commands::getMovedObjectsPreviousPositions()
+std::vector<DirectX::XMVECTOR> Commands::getMovedObjectsOriginalPositions()
 {
 	return std::vector<DirectX::XMVECTOR>();
 }

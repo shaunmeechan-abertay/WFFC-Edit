@@ -73,6 +73,11 @@ public:
 	float objectsOriginalPositionX;
 	float objectsOriginalPositionY;
 	float objectsOriginalPositionZ;
+	//multi object support
+	std::vector<float> objectsOriginalPositionsX;
+	std::vector<float> objectsOriginalPositionsY;
+	std::vector<float> objectsOriginalPositionsZ;
+	std::vector<int> objectIDs;
 
 	void setID(int newID);
 

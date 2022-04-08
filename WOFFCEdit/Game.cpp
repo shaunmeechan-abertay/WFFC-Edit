@@ -1077,19 +1077,44 @@ void Game::checkForDragArrow()
 	}
 	mouseYOnClick = m_InputCommands.mouse_Y;
 	mouseXOnClick = m_InputCommands.mouse_X;
-	if (selectedObject != NULL)
+	if (selectedObjects.empty() == true)
 	{
 		objectsOriginalPositionX = selectedObject->m_position.x;
 		objectsOriginalPositionY = selectedObject->m_position.y;
 		objectsOriginalPositionZ = selectedObject->m_position.z;
 	}
+	else
+	{
+		for (unsigned int k = 0; k < selectedObjects.size(); k++)
+		{
+			objectsOriginalPositionsX.push_back(selectedObjects[k]->m_position.x);
+			objectsOriginalPositionsY.push_back(selectedObjects[k]->m_position.y);
+			objectsOriginalPositionsZ.push_back(selectedObjects[k]->m_position.z);
+			//objectOriginalPositions.push_back(selectedObjects[k]->m_position);
+			objectIDs.push_back(selectedObjects[k]->m_ID);
+		}
+	}
 }
 void Game::dragFinished()
 {
-	if (selectedObject != NULL)
+	//Something isn't working here. The positions and IDs are being set multiple times.
+	if (selectedObjects.empty() == true)
 	{
 		UndoMove* UndoMoveCommand = new UndoMove;
-		UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ }, selectedObject->m_position);
+		UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
+		Commands* command = UndoMoveCommand;
+		commandList.push_back(command);
+	}
+	else
+	{
+		UndoMove* UndoMoveCommand = new UndoMove;
+		//Make an XMVECTOR to pass in (again this is do solve a strange compilation error)
+		std::vector<XMVECTOR> objectOriginalPositions;
+		for (unsigned int i = 0; i < objectsOriginalPositionsX.size(); i++)
+		{
+			objectOriginalPositions.push_back(XMVECTOR{ objectsOriginalPositionsX[i],objectsOriginalPositionsY[i],objectsOriginalPositionsZ[i] });
+		}
+		UndoMoveCommand->setup(objectIDs, objectOriginalPositions);
 		Commands* command = UndoMoveCommand;
 		commandList.push_back(command);
 	}
@@ -1549,10 +1574,12 @@ void Game::undoAction()
 		if (commandToUndo->getMovedObjectsIDs().empty() == false)
 		{
 			//Multi
+			moveCommand->setup(commandToUndo->getMovedObjectsIDs(), commandToUndo->getMovedObjectsOriginalPositions());
+			moveCommand->performAction(&m_displayList);
 		}
 		else
 		{
-			moveCommand->setup(commandToUndo->getMovedObjectsID(), commandToUndo->getMovedObjectsPreviousPosition());
+			moveCommand->setup(commandToUndo->getMovedObjectsID(), commandToUndo->getMovedObjectsOriginalPosition());
 			moveCommand->performAction(&m_displayList);
 		}
 		//Update all drag arrows
@@ -1569,6 +1596,8 @@ void Game::undoAction()
 		if (commandToUndo->getMovedObjectsIDs().empty() == false)
 		{
 			//Multi
+			undoMoveCommand->setup(commandToUndo->getMovedObjectsIDs(), commandToUndo->getMovedObjectsOriginalPositions());
+			undoMoveCommand->performAction(&m_displayList);
 		}
 		else
 		{
@@ -1582,7 +1611,7 @@ void Game::undoAction()
 					movedObject = &m_displayList.at(i);
 				}
 			}
-			undoMoveCommand->setup(IDOfMovedObject, commandToUndo->getMovedObjectsPreviousPosition(),movedObject->m_position);
+			undoMoveCommand->setup(IDOfMovedObject, commandToUndo->getMovedObjectsOriginalPosition());
 			undoMoveCommand->performAction(&m_displayList);
 		}
 		//Update all drag arrows
@@ -1643,10 +1672,12 @@ void Game::RedoAction()
 		if (commandToDo->getMovedObjectsIDs().empty() == false)
 		{
 			//Multi
+			moveCommand->setup(commandToDo->getMovedObjectsIDs(), commandToDo->getMovedObjectsOriginalPositions());
+			moveCommand->performAction(&m_displayList);
 		}
 		else
 		{
-			moveCommand->setup(commandToDo->getMovedObjectsID(), commandToDo->getMovedObjectsPreviousPosition());
+			moveCommand->setup(commandToDo->getMovedObjectsID(), commandToDo->getMovedObjectsOriginalPosition());
 			moveCommand->performAction(&m_displayList);
 		}
 		//Update all drag arrows
@@ -1663,6 +1694,8 @@ void Game::RedoAction()
 		if (commandToDo->getMovedObjectsIDs().empty() == false)
 		{
 			//Multi
+			undoMoveCommand->setup(commandToDo->getMovedObjectsIDs(), commandToDo->getMovedObjectsOriginalPositions());
+			undoMoveCommand->performAction(&m_displayList);
 		}
 		else
 		{
@@ -1676,7 +1709,7 @@ void Game::RedoAction()
 					movedObject = &m_displayList.at(i);
 				}
 			}
-			undoMoveCommand->setup(IDOfMovedObject, commandToDo->getMovedObjectsPreviousPosition(), movedObject->m_position);
+			undoMoveCommand->setup(IDOfMovedObject, commandToDo->getMovedObjectsOriginalPosition());
 			undoMoveCommand->performAction(&m_displayList);
 		}
 		//Update all drag arrows

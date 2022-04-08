@@ -29,7 +29,7 @@ void MoveCommand::performAction(std::vector<DisplayObject>* displayList)
 		{
 			if (movedObjectID == displayList->at(i).m_ID)
 			{
-				movedObjectsPreviousPosition = displayList->at(i).m_position;
+				movedObjectsOriginalPosition = displayList->at(i).m_position;
 				displayList->at(i).m_position = movedObjectsOriginalPosition;
 			}
 		}
@@ -38,12 +38,12 @@ void MoveCommand::performAction(std::vector<DisplayObject>* displayList)
 	{
 		for (unsigned int i = 0; i < movedObjectsIDs.size(); i++)
 		{
-			for (unsigned int i = 0; i < displayList->size(); i++)
+			for (unsigned int j = 0; j < displayList->size(); j++)
 			{
-				if (movedObjectsIDs[i] == displayList->at(i).m_ID)
+				if (movedObjectsIDs[i] == displayList->at(j).m_ID)
 				{
-					movedObjectsPreviousPositions.push_back(displayList->at(i).m_position);
-					displayList->at(i).m_position = movedObjectsOriginalPositions[i];
+					movedObjectsOriginalPositions.push_back(displayList->at(j).m_position);
+					displayList->at(j).m_position = movedObjectsOriginalPositions[i];
 				}
 			}
 		}
@@ -60,12 +60,12 @@ std::vector<int> MoveCommand::getMovedObjectsIDs()
 	return movedObjectsIDs;
 }
 
-DirectX::XMVECTOR MoveCommand::getMovedObjectsPreviousPosition()
+DirectX::XMVECTOR MoveCommand::getMovedObjectsOriginalPosition()
 {
-	return movedObjectsPreviousPosition;
+	return movedObjectsOriginalPosition;
 }
 
-std::vector<DirectX::XMVECTOR> MoveCommand::getMovedObjectsPreviousPositions()
+std::vector<DirectX::XMVECTOR> MoveCommand::getMovedObjectsOriginalPositions()
 {
-	return movedObjectsPreviousPositions;
+	return movedObjectsOriginalPositions;
 }

@@ -6,20 +6,18 @@ UndoMove::UndoMove()
 }
 
 //This takes in the object ORIGINAL position e.g. where it was before the drag
-void UndoMove::setup(int objectID, DirectX::XMVECTOR originalPosition, DirectX::XMVECTOR currentPosition)
+void UndoMove::setup(int objectID, DirectX::XMVECTOR originalPosition)
 {
 	movedObjectID = objectID;
 	movedObjectsOriginalPosition = originalPosition;
-	movedObjectsPreviousPosition = currentPosition;
 }
 
-void UndoMove::setup(std::vector<int> objectsIDs, std::vector<DirectX::XMVECTOR> originalPositions, std::vector<DirectX::XMVECTOR> currentPositions)
+void UndoMove::setup(std::vector<int> objectsIDs, std::vector<DirectX::XMVECTOR> originalPositions)
 {
 	for (unsigned int i = 0; i < objectsIDs.size(); i++)
 	{
 		movedObjectsIDs.push_back(objectsIDs[i]);
 		movedObjectsOriginalPositions.push_back(originalPositions[i]);
-		movedObjectsPreviousPositions.push_back(currentPositions[i]);
 	}
 }
 
@@ -40,11 +38,12 @@ void UndoMove::performAction(std::vector<DisplayObject>* displayList)
 	{
 		for (unsigned int i = 0; i < movedObjectsIDs.size(); i++)
 		{
-			for (unsigned int i = 0; i < displayList->size(); i++)
+			for (unsigned int j = 0; j < displayList->size(); j++)
 			{
-				if (movedObjectsIDs[i] == displayList->at(i).m_ID)
+				if (movedObjectsIDs[i] == displayList->at(j).m_ID)
 				{
-					displayList->at(i).m_position = movedObjectsOriginalPositions[i];
+					displayList->at(j).m_position = movedObjectsOriginalPositions[i];
+					break;
 				}
 			}
 		}
@@ -61,12 +60,12 @@ std::vector<int> UndoMove::getMovedObjectsIDs()
 	return movedObjectsIDs;
 }
 
-DirectX::XMVECTOR UndoMove::getMovedObjectsPreviousPosition()
+DirectX::XMVECTOR UndoMove::getMovedObjectsOriginalPosition()
 {
-	return movedObjectsPreviousPosition;
+	return movedObjectsOriginalPosition;
 }
 
-std::vector<DirectX::XMVECTOR> UndoMove::getMovedObjectsPreviousPositions()
+std::vector<DirectX::XMVECTOR> UndoMove::getMovedObjectsOriginalPositions()
 {
-	return movedObjectsPreviousPositions;
+	return movedObjectsOriginalPositions;
 }
