@@ -1581,8 +1581,59 @@ void Game::RedoAction()
 			createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
 		}
 		Commands* command = createCommand;
-		UndonecommandList.push_back(command);
+		commandList.push_back(command);
 	}
+	else if (commandToDo->getType() == Commands::CommandType::UndoMove)
+	{
+		MoveCommand* moveCommand = new MoveCommand;
+		if (commandToDo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+		}
+		else
+		{
+			moveCommand->setup(commandToDo->getMovedObjectsID(), commandToDo->getMovedObjectsPreviousPosition());
+			moveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = moveCommand;
+		commandList.push_back(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::Move)
+	{
+		UndoMove* undoMoveCommand = new UndoMove;
+		if (commandToDo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+		}
+		else
+		{
+			//Get the display object that was moved
+			int IDOfMovedObject = commandToDo->getMovedObjectsID();
+			DisplayObject* movedObject;
+			for (unsigned int i = 0; i < m_displayList.size(); i++)
+			{
+				if (IDOfMovedObject == m_displayList[i].m_ID)
+				{
+					movedObject = &m_displayList.at(i);
+				}
+			}
+			undoMoveCommand->setup(IDOfMovedObject, commandToDo->getMovedObjectsPreviousPosition(), movedObject->m_position);
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = undoMoveCommand;
+		commandList.push_back(command);
+	}
+
 }
 
 std::wstring StringToWCHART(std::string s)
