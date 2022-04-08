@@ -5,6 +5,11 @@ void Commands::performAction(DisplayObject)
 	return;
 }
 
+void Commands::performAction(std::vector<DisplayObject>*)
+{
+	return;
+}
+
 DisplayObject Commands::getDeletedObject()
 {
 	return DisplayObject();
@@ -23,6 +28,26 @@ DisplayObject Commands::getCreatedObject()
 std::vector<DisplayObject> Commands::getCreatedObjects()
 {
 	return std::vector<DisplayObject>();
+}
+
+int Commands::getMovedObjectsID()
+{
+	return 0;
+}
+
+std::vector<int> Commands::getMovedObjectsIDs()
+{
+	return std::vector<int>();
+}
+
+DirectX::XMVECTOR Commands::getMovedObjectsPreviousPosition()
+{
+	return DirectX::XMVECTOR();
+}
+
+std::vector<DirectX::XMVECTOR> Commands::getMovedObjectsPreviousPositions()
+{
+	return std::vector<DirectX::XMVECTOR>();
 }
 
 Commands::CommandType Commands::getType()

@@ -3,49 +3,62 @@
 UndoMove::UndoMove()
 {
 	type = Commands::CommandType::UndoMove;
-	movedObject = NULL;
 }
 
-void UndoMove::setup(DisplayObject* object, DirectX::XMVECTOR originalPosition)
+//This takes in the object ORIGINAL position e.g. where it was before the drag
+void UndoMove::setup(int objectID, DirectX::XMVECTOR originalPosition, DirectX::XMVECTOR currentPosition)
 {
-	movedObject = object;
+	movedObjectID = objectID;
 	movedObjectsOriginalPosition = originalPosition;
+	movedObjectsPreviousPosition = currentPosition;
 }
 
-void UndoMove::setup(std::vector<DisplayObject*> objects, std::vector<DirectX::XMVECTOR> originalPositions)
+void UndoMove::setup(std::vector<int> objectsIDs, std::vector<DirectX::XMVECTOR> originalPositions, std::vector<DirectX::XMVECTOR> currentPositions)
 {
-	for (unsigned int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objectsIDs.size(); i++)
 	{
-		movedObjects.push_back(objects[i]);
+		movedObjectsIDs.push_back(objectsIDs[i]);
 		movedObjectsOriginalPositions.push_back(originalPositions[i]);
+		movedObjectsPreviousPositions.push_back(currentPositions[i]);
 	}
 }
 
-void UndoMove::performAction()
+void UndoMove::performAction(std::vector<DisplayObject>* displayList)
 {
-	if (movedObjects.empty() == true)
+	if (movedObjectsIDs.empty() == true)
 	{
-		movedObjectsPreviousPosition = movedObject->m_position;
-		movedObject->m_position = movedObjectsOriginalPosition;
+		//Find the object
+		for (unsigned int i = 0; i < displayList->size(); i++)
+		{
+			if (movedObjectID == displayList->at(i).m_ID)
+			{
+				displayList->at(i).m_position = movedObjectsOriginalPosition;
+			}
+		}
 	}
 	else
 	{
-		for (unsigned int i = 0; i < movedObjects.size(); i++)
+		for (unsigned int i = 0; i < movedObjectsIDs.size(); i++)
 		{
-			movedObjectsPreviousPositions.push_back(movedObjects[i]->m_position);
-			movedObjects[i]->m_position = movedObjectsOriginalPositions[i];
+			for (unsigned int i = 0; i < displayList->size(); i++)
+			{
+				if (movedObjectsIDs[i] == displayList->at(i).m_ID)
+				{
+					displayList->at(i).m_position = movedObjectsOriginalPositions[i];
+				}
+			}
 		}
 	}
 }
 
-DisplayObject* UndoMove::getMovedObject()
+int UndoMove::getMovedObjectsID()
 {
-	return movedObject;
+	return movedObjectID;
 }
 
-std::vector<DisplayObject*> UndoMove::getMovedObjects()
+std::vector<int> UndoMove::getMovedObjectsIDs()
 {
-	return movedObjects;
+	return movedObjectsIDs;
 }
 
 DirectX::XMVECTOR UndoMove::getMovedObjectsPreviousPosition()

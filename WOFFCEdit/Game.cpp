@@ -1035,7 +1035,7 @@ void Game::dragFinished()
 	if (selectedObject != NULL)
 	{
 		UndoMove* UndoMoveCommand = new UndoMove;
-		UndoMoveCommand->setup(selectedObject, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
+		UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ }, selectedObject->m_position);
 		Commands* command = UndoMoveCommand;
 		commandList.push_back(command);
 	}
@@ -1425,6 +1425,30 @@ void Game::CreateWindowSizeDependentResources()
 	
 }
 
+
+void Game::OnDeviceLost()
+{
+    m_states.reset();
+    m_fxFactory.reset();
+    m_sprites.reset();
+    m_batch.reset();
+    m_batchEffect.reset();
+    m_font.reset();
+    m_shape.reset();
+    m_model.reset();
+    m_texture1.Reset();
+    m_texture2.Reset();
+    m_batchInputLayout.Reset();
+}
+
+void Game::OnDeviceRestored()
+{
+    CreateDeviceDependentResources();
+
+    CreateWindowSizeDependentResources();
+}
+#pragma endregion
+
 void Game::undoAction()
 {
 	if (commandList.size() <= 0)
@@ -1432,8 +1456,8 @@ void Game::undoAction()
 		return;
 	}
 
-	Commands* commandToUndo = commandList.front();
-	commandList.pop_front();
+	Commands* commandToUndo = commandList.back();
+	commandList.pop_back();
 	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1454,7 +1478,6 @@ void Game::undoAction()
 	else if (commandToUndo->getType() == Commands::CommandType::Delete)
 	{
 		CreateCommand* createCommand = new CreateCommand;
-		//This will need to deal with deletion of multiple deleted object
 		if (commandToUndo->getDeletedObjects().size() > 0)
 		{
 			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory,false,true);
@@ -1464,6 +1487,56 @@ void Game::undoAction()
 			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory,false,true);
 		}
 		Commands* command = createCommand;
+		UndonecommandList.push_back(command);
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::UndoMove)
+	{
+		MoveCommand* moveCommand = new MoveCommand;
+		if (commandToUndo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+		}
+		else
+		{
+			moveCommand->setup(commandToUndo->getMovedObjectsID(), commandToUndo->getMovedObjectsPreviousPosition());
+			moveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = moveCommand;
+		UndonecommandList.push_back(command);
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::Move)
+	{
+		UndoMove* undoMoveCommand = new UndoMove;
+		if (commandToUndo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+		}
+		else
+		{
+			//Get the display object that was moved
+			int IDOfMovedObject = commandToUndo->getMovedObjectsID();
+			DisplayObject* movedObject;
+			for (unsigned int i = 0; i < m_displayList.size(); i++)
+			{
+				if (IDOfMovedObject == m_displayList[i].m_ID)
+				{
+					movedObject = &m_displayList.at(i);
+				}
+			}
+			undoMoveCommand->setup(IDOfMovedObject, commandToUndo->getMovedObjectsPreviousPosition(),movedObject->m_position);
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = undoMoveCommand;
 		UndonecommandList.push_back(command);
 	}
 
@@ -1476,8 +1549,8 @@ void Game::RedoAction()
 		return;
 	}
 
-	Commands* commandToDo = UndonecommandList.front();
-	UndonecommandList.pop_front();
+	Commands* commandToDo = UndonecommandList.back();
+	UndonecommandList.pop_back();
 	if (commandToDo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1511,29 +1584,6 @@ void Game::RedoAction()
 		UndonecommandList.push_back(command);
 	}
 }
-
-void Game::OnDeviceLost()
-{
-    m_states.reset();
-    m_fxFactory.reset();
-    m_sprites.reset();
-    m_batch.reset();
-    m_batchEffect.reset();
-    m_font.reset();
-    m_shape.reset();
-    m_model.reset();
-    m_texture1.Reset();
-    m_texture2.Reset();
-    m_batchInputLayout.Reset();
-}
-
-void Game::OnDeviceRestored()
-{
-    CreateDeviceDependentResources();
-
-    CreateWindowSizeDependentResources();
-}
-#pragma endregion
 
 std::wstring StringToWCHART(std::string s)
 {

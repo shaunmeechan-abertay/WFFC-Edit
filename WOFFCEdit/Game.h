@@ -15,6 +15,7 @@
 #include "CreateCommand.h"
 #include "CopyCommand.h"
 #include "UndoMove.h"
+#include "MoveCommand.h"
 #include "DragArrow.h"
 #include <vector>
 #include <list>

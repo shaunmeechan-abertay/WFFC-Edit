@@ -410,13 +410,13 @@ void ToolMain::UpdateInput(MSG * msg)
 	else m_toolInputCommands.deleteObject = false;
 
 	//Undo 
-	if (m_keyArray['X'] && m_keyArray[VK_CONTROL])
+	if (m_keyArray['Z'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.UndoCommand = true;
 	}
 	else m_toolInputCommands.UndoCommand = false;
 	//Redo
-	if (m_keyArray['Z'] && m_keyArray[VK_CONTROL])
+	if (m_keyArray['Y'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.RedoCommand = true;
 	}
