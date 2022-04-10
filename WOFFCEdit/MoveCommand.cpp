@@ -29,8 +29,9 @@ void MoveCommand::performAction(std::vector<DisplayObject>* displayList)
 		{
 			if (movedObjectID == displayList->at(i).m_ID)
 			{
-				movedObjectsOriginalPosition = displayList->at(i).m_position;
+				DirectX::XMVECTOR tempPosition = displayList->at(i).m_position;
 				displayList->at(i).m_position = movedObjectsOriginalPosition;
+				movedObjectsOriginalPosition = tempPosition;
 			}
 		}
 	}
