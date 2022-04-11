@@ -13,6 +13,9 @@ void MoveCommand::setup(int objectID, DirectX::XMVECTOR originalPosition)
 
 void MoveCommand::setup(std::vector<int> objectsIDs, std::vector<DirectX::XMVECTOR> originalPositons)
 {
+	movedObjectsIDs.clear();
+	movedObjectsOriginalPositions.clear();
+
 	for (unsigned int i = 0; i < objectsIDs.size(); i++)
 	{
 		movedObjectsIDs.push_back(objectsIDs[i]);
@@ -43,8 +46,10 @@ void MoveCommand::performAction(std::vector<DisplayObject>* displayList)
 			{
 				if (movedObjectsIDs[i] == displayList->at(j).m_ID)
 				{
-					movedObjectsOriginalPositions.push_back(displayList->at(j).m_position);
+					//movedObjectsOriginalPositions.push_back(displayList->at(j).m_position);
+					DirectX::XMVECTOR tempPosition = displayList->at(j).m_position;
 					displayList->at(j).m_position = movedObjectsOriginalPositions[i];
+					movedObjectsOriginalPositions.at(i) = tempPosition;
 				}
 			}
 		}

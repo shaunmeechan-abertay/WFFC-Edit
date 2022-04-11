@@ -14,6 +14,9 @@ void UndoMove::setup(int objectID, DirectX::XMVECTOR originalPosition)
 
 void UndoMove::setup(std::vector<int> objectsIDs, std::vector<DirectX::XMVECTOR> originalPositions)
 {
+	movedObjectsIDs.clear();
+	movedObjectsOriginalPositions.clear();
+
 	for (unsigned int i = 0; i < objectsIDs.size(); i++)
 	{
 		movedObjectsIDs.push_back(objectsIDs[i]);
@@ -30,7 +33,9 @@ void UndoMove::performAction(std::vector<DisplayObject>* displayList)
 		{
 			if (movedObjectID == displayList->at(i).m_ID)
 			{
+				DirectX::XMVECTOR tempPosition = displayList->at(i).m_position;
 				displayList->at(i).m_position = movedObjectsOriginalPosition;
+				movedObjectsOriginalPosition = tempPosition;
 			}
 		}
 	}
@@ -42,7 +47,10 @@ void UndoMove::performAction(std::vector<DisplayObject>* displayList)
 			{
 				if (movedObjectsIDs[i] == displayList->at(j).m_ID)
 				{
+					//This seems wrong...
+					DirectX::XMVECTOR tempPosition = displayList->at(j).m_position;
 					displayList->at(j).m_position = movedObjectsOriginalPositions[i];
+					movedObjectsOriginalPositions.at(i) = tempPosition;
 					break;
 				}
 			}
