@@ -210,7 +210,7 @@ void Game::Update(DX::StepTimer const& timer)
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
 			Commands* command = deleteCommand;
-			commandList.push_back(command);
+			commandList.push(command);
 		}
 		if (selectedObject != NULL)
 		{
@@ -219,7 +219,7 @@ void Game::Update(DX::StepTimer const& timer)
 			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
 			selectedObject = NULL;
 			Commands* command = deleteCommand;
-			commandList.push_back(command);
+			commandList.push(command);
 		}
 	}
 
@@ -1065,9 +1065,16 @@ void Game::checkForDragArrow()
 	objectsOriginalPositionsZ.clear();
 	if (selectedObjects.empty() == true)
 	{
-		objectsOriginalPositionX = selectedObject->m_position.x;
-		objectsOriginalPositionY = selectedObject->m_position.y;
-		objectsOriginalPositionZ = selectedObject->m_position.z;
+		if (selectedObject != NULL)
+		{
+			objectsOriginalPositionX = selectedObject->m_position.x;
+			objectsOriginalPositionY = selectedObject->m_position.y;
+			objectsOriginalPositionZ = selectedObject->m_position.z;
+		}
+		else
+		{
+			return;
+		}
 	}
 	else
 	{
@@ -1082,13 +1089,19 @@ void Game::checkForDragArrow()
 }
 void Game::dragFinished()
 {
-	//Something isn't working here. The positions and IDs are being set multiple times.
 	if (selectedObjects.empty() == true)
 	{
-		UndoMove* UndoMoveCommand = new UndoMove;
-		UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
-		Commands* command = UndoMoveCommand;
-		commandList.push_back(command);
+		if (selectedObject != NULL)
+		{
+			UndoMove* UndoMoveCommand = new UndoMove;
+			UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
+			Commands* command = UndoMoveCommand;
+			commandList.push(command);
+		}
+		else
+		{
+			return;
+		}
 	}
 	else
 	{
@@ -1101,7 +1114,7 @@ void Game::dragFinished()
 		}
 		UndoMoveCommand->setup(objectIDs, objectOriginalPositions);
 		Commands* command = UndoMoveCommand;
-		commandList.push_back(command);
+		commandList.push(command);
 	}
 }
 void Game::setID(int newID)
@@ -1142,7 +1155,7 @@ void Game::pasteObject()
 		setSelectedObject(&m_displayList.at(createCommand->getCreatedObject().m_ID - 1));
 	}
 	Commands* command = createCommand;
-	commandList.push_back(command);
+	commandList.push(command);
 }
 
 void Game::focusOnItem()
@@ -1227,7 +1240,7 @@ void Game::CreateNewObject(std::string texturespath, std::string modelspath)
 	//This will need to deal with deletion of multiple deleted object
 	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
-	commandList.push_back(command);
+	commandList.push(command);
 }
 
 std::vector<SceneObject> Game::getDisplayList()
@@ -1527,8 +1540,8 @@ void Game::undoAction()
 		return;
 	}
 
-	Commands* commandToUndo = commandList.back();
-	commandList.pop_back();
+	Commands* commandToUndo = commandList.top();
+	commandList.pop();
 	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1544,7 +1557,7 @@ void Game::undoAction()
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
 		Commands* command = deleteCommand;
-		UndonecommandList.push_back(command);
+		UndonecommandList.push(command);
 	}
 	else if (commandToUndo->getType() == Commands::CommandType::Delete)
 	{
@@ -1558,7 +1571,7 @@ void Game::undoAction()
 			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory,false,true);
 		}
 		Commands* command = createCommand;
-		UndonecommandList.push_back(command);
+		UndonecommandList.push(command);
 	}
 	else if (commandToUndo->getType() == Commands::CommandType::UndoMove)
 	{
@@ -1580,7 +1593,7 @@ void Game::undoAction()
 			m_dragArrowList[j].updateDragArrow();
 		}
 		Commands* command = moveCommand;
-		UndonecommandList.push_back(command);
+		UndonecommandList.push(command);
 	}
 	else if (commandToUndo->getType() == Commands::CommandType::Move)
 	{
@@ -1612,7 +1625,7 @@ void Game::undoAction()
 			m_dragArrowList[j].updateDragArrow();
 		}
 		Commands* command = undoMoveCommand;
-		UndonecommandList.push_back(command);
+		UndonecommandList.push(command);
 	}
 
 }
@@ -1624,8 +1637,8 @@ void Game::RedoAction()
 		return;
 	}
 
-	Commands* commandToDo = UndonecommandList.back();
-	UndonecommandList.pop_back();
+	Commands* commandToDo = UndonecommandList.top();
+	UndonecommandList.pop();
 	if (commandToDo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1641,7 +1654,7 @@ void Game::RedoAction()
 		//Maybe change this, just means after an action there are no selected objects
 		selectedObjects.clear();
 		Commands* command = deleteCommand;
-		commandList.push_back(command);
+		commandList.push(command);
 	}
 	else if (commandToDo->getType() == Commands::CommandType::Delete)
 	{
@@ -1656,7 +1669,7 @@ void Game::RedoAction()
 			createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
 		}
 		Commands* command = createCommand;
-		commandList.push_back(command);
+		commandList.push(command);
 	}
 	else if (commandToDo->getType() == Commands::CommandType::UndoMove)
 	{
@@ -1678,7 +1691,7 @@ void Game::RedoAction()
 			m_dragArrowList[j].updateDragArrow();
 		}
 		Commands* command = moveCommand;
-		commandList.push_back(command);
+		commandList.push(command);
 	}
 	else if (commandToDo->getType() == Commands::CommandType::Move)
 	{
@@ -1710,7 +1723,7 @@ void Game::RedoAction()
 			m_dragArrowList[j].updateDragArrow();
 		}
 		Commands* command = undoMoveCommand;
-		commandList.push_back(command);
+		commandList.push(command);
 	}
 
 }

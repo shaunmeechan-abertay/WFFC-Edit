@@ -22,6 +22,7 @@
 #include <limits>
 #include <memory>
 #include <string>
+#include <stack>
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -137,8 +138,8 @@ private:
 	bool m_grid;							//grid rendering on / off
 
 	//Command variables
-	std::list<Commands*> commandList;
-	std::list<Commands*> UndonecommandList;
+	std::stack<Commands*> commandList;
+	std::stack<Commands*> UndonecommandList;
 	//This should emulate press
 	bool inputDown = false;
 	//ID from MFC
