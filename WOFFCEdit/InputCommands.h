@@ -16,6 +16,7 @@ struct InputCommands
 	int mouse_X;
 	int mouse_Y;
 	bool mouse_LB_Down;
+	bool mouse_LB_Up;
 	bool multipick;
 	bool copy;
 	bool paste;

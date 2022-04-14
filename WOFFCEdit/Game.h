@@ -14,6 +14,9 @@
 #include "DeleteCommand.h"
 #include "CreateCommand.h"
 #include "CopyCommand.h"
+#include "UndoMove.h"
+#include "MoveCommand.h"
+#include "DragArrow.h"
 #include <vector>
 #include <list>
 #include <limits>
@@ -59,6 +62,23 @@ public:
 
 	int MousePicking();
 
+	//Click and drag
+	DragArrow* selectedArrow;
+	void clickAndDrag();
+	void checkForDragArrow();
+	void dragFinished();
+	float mouseYOnClick;
+	float mouseXOnClick;
+	//DO NOT USE XMVECTOR HERE! YES IT MAKES SENSE BUT CAUSES A COMPILER ERROR THAT BREAKS THE COMPALATION OF COMMANDS.H
+	float objectsOriginalPositionX;
+	float objectsOriginalPositionY;
+	float objectsOriginalPositionZ;
+	//multi object support
+	std::vector<float> objectsOriginalPositionsX;
+	std::vector<float> objectsOriginalPositionsY;
+	std::vector<float> objectsOriginalPositionsZ;
+	std::vector<int> objectIDs;
+
 	void setID(int newID);
 
 	void copyObject();
@@ -71,6 +91,13 @@ public:
 	
 	void CreateNewObject(std::string texturespath, std::string modelspath);
 	std::vector<SceneObject> getDisplayList();
+
+	//Functions for selected objects vector
+	void pushBackNewSelectedObject(DisplayObject* newObject);
+	void eraseSelectedObject(DisplayObject* newObject);
+
+	//Functions for dealing with drag arrows
+	void cleanupAllArrows();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -91,6 +118,7 @@ private:
 
 	//tool specific
 	std::vector<DisplayObject>			m_displayList;
+	std::vector<DragArrow>			m_dragArrowList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
 	RECT								m_ScreenDimensions;
@@ -117,13 +145,13 @@ private:
 	int ID = 0;
 	DisplayObject* selectedObject;
 	//Vector of selected objects
-	std::vector<DisplayObject> selectedObjects;
+	std::vector<DisplayObject*> selectedObjects;
 	// Device resources.
     std::shared_ptr<DX::DeviceResources>    m_deviceResources;
 
 	//Setters for our selected object/objects
 	void setSelectedObject(DisplayObject* newObject);
-	void setSelectedObjects(std::vector<DisplayObject> newObjects);
+	void setSelectedObjects(std::vector<DisplayObject*> newObjects);
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;

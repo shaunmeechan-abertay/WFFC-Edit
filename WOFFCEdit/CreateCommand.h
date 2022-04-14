@@ -21,10 +21,10 @@ public:
 	void performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources>,DirectX::IEffectFactory& m_fxFactory);
 	Commands::CommandType getType();
 	DisplayObject getCreatedObject();
-	std::vector<DisplayObject> getCreatedObjects();
+	std::vector<DisplayObject*> getCreatedObjects();
 private:
 	std::wstring StringToWCHART(std::string s);
 	DisplayObject createdObject;
-	std::vector<DisplayObject> createdObjects;
+	std::vector<DisplayObject*> createdObjects;
 };
 

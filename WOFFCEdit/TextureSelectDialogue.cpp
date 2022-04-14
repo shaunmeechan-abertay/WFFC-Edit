@@ -45,7 +45,7 @@ void TextureSelectDialogue::OnBnClickedOk()
 {
 	//Credit: https://www.programmerall.com/article/50391274688/ 
 	//Issue, this only deals with jpg but texture could be any image, should at least handle png
-	CFileDialog dlg(TRUE, _T("*.jpg"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Image Files(*.jpg)|*.jpg|"), NULL);
+	CFileDialog dlg(TRUE, _T("*.jpg"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Image Files(*.jpg)|*.jpg|(*.png)|*.png"), NULL);
 	dlg.m_ofn.lpstrTitle = _T("Select Image");
 	CString filename;
 	if (dlg.DoModal() == IDOK)

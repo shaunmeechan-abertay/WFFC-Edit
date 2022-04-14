@@ -114,6 +114,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>false</SDLCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,6 +155,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,11 +176,13 @@
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="DisplayChunk.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
+    <ClCompile Include="DragArrow.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
     <ClCompile Include="ModelSelectDialogue.cpp" />
+    <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="ObjectCreateDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
@@ -187,6 +191,7 @@
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TextureSelectDialogue.cpp" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="UndoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChunkObject.h" />
@@ -197,11 +202,13 @@
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DisplayChunk.h" />
     <ClInclude Include="DisplayObject.h" />
+    <ClInclude Include="DragArrow.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="InputCommands.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="ModelSelectDialogue.h" />
+    <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="ObjectCreateDialogue.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
@@ -213,6 +220,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="TextureSelectDialogue.h" />
     <ClInclude Include="ToolMain.h" />
+    <ClInclude Include="UndoMove.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">

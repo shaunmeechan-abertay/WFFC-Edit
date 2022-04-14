@@ -28,6 +28,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_X		= 0;
 	m_toolInputCommands.mouse_Y		= 0;
 	m_toolInputCommands.mouse_LB_Down		= false;
+	m_toolInputCommands.mouse_LB_Up = false;
 	m_toolInputCommands.multipick = false;
 	m_toolInputCommands.copy = false;
 	m_toolInputCommands.paste = false;
@@ -310,8 +311,9 @@ void ToolMain::Tick(MSG *msg)
 
 	if (m_toolInputCommands.mouse_LB_Down)
 	{
-		m_selectedObject = m_d3dRenderer.MousePicking();
-		m_toolInputCommands.mouse_LB_Down = false;
+		//m_selectedObject = m_d3dRenderer.MousePicking();
+		//Call click and drag function
+		m_d3dRenderer.clickAndDrag();
 	}
 }
 
@@ -339,6 +341,17 @@ void ToolMain::UpdateInput(MSG * msg)
 		//set some flag for the mouse button in inputcommands
 		//mouse left pressed
 		m_toolInputCommands.mouse_LB_Down = true;
+		m_selectedObject = m_d3dRenderer.MousePicking();
+		m_d3dRenderer.checkForDragArrow();
+		//See if the user clicked a drag Arrow
+		m_toolInputCommands.mouse_LB_Up = false;
+		break;
+
+	case WM_LBUTTONUP:
+		m_toolInputCommands.mouse_LB_Up = true;
+		m_toolInputCommands.mouse_LB_Down = false;
+		//A drag finished, create a UndoMove actions
+		m_d3dRenderer.dragFinished();
 		break;
 
 	}
@@ -397,13 +410,13 @@ void ToolMain::UpdateInput(MSG * msg)
 	else m_toolInputCommands.deleteObject = false;
 
 	//Undo 
-	if (m_keyArray['X'] && m_keyArray[VK_CONTROL])
+	if (m_keyArray['Z'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.UndoCommand = true;
 	}
 	else m_toolInputCommands.UndoCommand = false;
 	//Redo
-	if (m_keyArray['Z'] && m_keyArray[VK_CONTROL])
+	if (m_keyArray['Y'] && m_keyArray[VK_CONTROL])
 	{
 		m_toolInputCommands.RedoCommand = true;
 	}

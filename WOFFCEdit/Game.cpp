@@ -204,18 +204,23 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
-		DeleteCommand* deleteCommand =  new DeleteCommand;
 		if (selectedObjects.empty() == false)
 		{
+			DeleteCommand* deleteCommand =  new DeleteCommand;
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
+			Commands* command = deleteCommand;
+			commandList.push_back(command);
 		}
-		else
+		if (selectedObject != NULL)
 		{
- 			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
+			DeleteCommand* deleteCommand = new DeleteCommand;
+			cleanupAllArrows();
+			deleteCommand->performAction(m_displayList, selectedObject->m_ID);
+			selectedObject = NULL;
+			Commands* command = deleteCommand;
+			commandList.push_back(command);
 		}
-		Commands *command = deleteCommand;
-		commandList.push_back(command);
 	}
 
 	if (m_InputCommands.UndoCommand && inputDown == false)
@@ -345,6 +350,26 @@ void Game::Render()
 
 		m_deviceResources->PIXEndEvent();
 	}
+
+	numRenderObjects = m_dragArrowList.size();
+	for(int i = 0; i < numRenderObjects; i++)
+	{
+		m_deviceResources->PIXBeginEvent(L"Draw model");
+		const XMVECTORF32 scale = { m_dragArrowList[i].m_scale.x, m_dragArrowList[i].m_scale.y, m_dragArrowList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_dragArrowList[i].m_position.x, m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
+
+		//convert degrees into radians for rotation matrix
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
+
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+
+		m_dragArrowList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, m_dragArrowList[i].m_wireframe);	//last variable in draw,  make TRUE for wireframe
+
+		m_deviceResources->PIXEndEvent();
+	}
+
     m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
@@ -433,10 +458,62 @@ void Game::setSelectedObject(DisplayObject* newObject)
 	{
 		selectedObject->m_wireframe = false;
 		selectedObject->m_selected = false;
+		//Clear all arrows
+		cleanupAllArrows();
 	}
 	selectedObject = newObject;
+	selectedObject->m_wireframe = true;
+	selectedObject->m_selected = true;
+
+	//Now we need to spawn the selection arrows around the object in 6 places
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		DragArrow newArrow;
+		switch (i)
+		{
+		case 0:
+			//Up
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y + 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.up = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 1:
+			//Down (should also rotate this to face down once actual model is in)
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y - 1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.down = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 2:
+			//Left 
+			newArrow.setup(newObject->m_position.x - 1, newObject->m_position.y, newObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.left = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 3:
+			//Right
+			newArrow.setup(newObject->m_position.x + 1, newObject->m_position.y, newObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.right = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 4:
+			//back
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.back = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 5:
+			//forward
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.forward = true;
+			newArrow.attachedObject = newObject;
+			break;
+		default:
+			break;
+		}
+		m_dragArrowList.push_back(newArrow);
+	}
 }
-void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
+void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 {
 	if (newObjects.empty() == true)
 	{
@@ -450,7 +527,7 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 			//Find the object in the display list
 			for (int j = 0; j < m_displayList.size(); j++)
 			{
-				if (selectedObjects[i].m_ID == m_displayList[j].m_ID)
+				if (selectedObjects[i]->m_ID == m_displayList[j].m_ID)
 				{
 					m_displayList[j].m_wireframe = false;
 					m_displayList[j].m_selected = false;
@@ -458,12 +535,61 @@ void Game::setSelectedObjects(std::vector<DisplayObject> newObjects)
 			}
 		}
 		selectedObjects.clear();
+		cleanupAllArrows();
 	}
+	//We need to do this in a better way
 		for (int i = 0; i < newObjects.size(); i++)
 		{
-			newObjects[i].m_wireframe = true;
-			newObjects[i].m_selected = true;
+			newObjects[i]->m_wireframe = true;
+			newObjects[i]->m_selected = true;
 			selectedObjects.push_back(newObjects[i]);
+			//Now we need to spawn the selection arrows around the object in 6 places
+			for (unsigned int i = 0; i < 6; i++)
+			{
+				DragArrow newArrow;
+				switch (i)
+				{
+				case 0:
+					//Up
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y + 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.up = true;
+					break;
+				case 1:
+					//Down (should also rotate this to face down once actual model is in)
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.down = true;
+					break;
+				case 2:
+					//Left 
+					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.left = true;
+					break;
+				case 3:
+					//Right
+					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.right = true;
+					break;
+				case 4:
+					//back
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.back = true;
+					break;
+				case 5:
+					//forward
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.attachedObject = newObjects[i];
+					newArrow.forward = true;
+					break;
+				default:
+					break;
+				}
+				m_dragArrowList.push_back(newArrow);
+			}
 		}
 }
 #pragma endregion
@@ -649,39 +775,43 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				m_displayList[i].m_wireframe = true;
+				//m_displayList[i].m_wireframe = true;
 
 				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
 				{
 					m_displayList[i].m_selected = true;
 					if (selectedObject != NULL)
 					{
-						selectedObjects.push_back(*selectedObject);
-						//Need to make sure selected object is NULL'd other wise the same object will be added a lot
-						//setSelectedObject(NULL);
+						//Since we are adding in click and drag we should move this into a function so we can add the arrows easily
+						//selectedObjects.push_back(*selectedObject);
+						pushBackNewSelectedObject(selectedObject);
 					}
-					selectedObjects.push_back(m_displayList[i]);
+					pushBackNewSelectedObject(&m_displayList[i]);
+					//selectedObjects.push_back(m_displayList[i]);
 				}
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
 				{
 					m_displayList[i].m_selected = false;
+					eraseSelectedObject(&m_displayList[i]);
 					//Got to find object in selected objects list
-					for (int j = 0; j < selectedObjects.size(); j++)
-					{
-						if (m_displayList[i].m_ID == selectedObjects.at(j).m_ID)
-						{
-							//Found object, remove
-							selectedObjects.erase(selectedObjects.begin() + j);
-							break;
-						}
-					}
+					//for (int j = 0; j < selectedObjects.size(); j++)
+					//{
+					//	if (m_displayList[i].m_ID == selectedObjects.at(j).m_ID)
+					//	{
+					//		//Found object, remove, again function this so we can remove arrows
+					//		selectedObjects.erase(selectedObjects.begin() + j);
+					//		break;
+					//	}
+					//}
 					m_displayList[i].m_wireframe = false;
 				}
+				//Single object pick
 				else
 				{
 					//If we have selected objects - deselect them
 					if (selectedObjects.empty() == false)
 					{
+						//This seems inefficient, why not find the ones we need and unwireframe them?
 						for (int j = 0; j < m_displayList.size(); j++)
 						{
 							m_displayList[j].m_wireframe = false;
@@ -705,11 +835,290 @@ int Game::MousePicking()
 			}
 		}
 	}
+
 	//If we got a hit. Return it.
 	setID(selectedID);
 	return selectedID;
 }
 
+void Game::clickAndDrag()
+{
+	int selectedID = -1;
+	float pickedDistance = 0;
+	//Set the float to the max possible distance as we will reduce this to the closes object
+	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
+	float closestDistance = std::numeric_limits<float>::max();
+
+	//setup near and far planes of frustum with mouse X and mouse Y passed
+	//down from Toolmain.
+	//They may look the same but note the difference in Z
+	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0.0f, 1.0f);
+	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 1.0f, 1.0f);
+
+	bool mouseMovedY = false;
+	bool mouseMovedX = false;
+
+	//Test for collision against a drag arrow
+	for (int i = 0; i < m_dragArrowList.size(); i++)
+	{
+		//Get the scale factor and translation of the object
+		const XMVECTORF32 scale = { m_dragArrowList[i].m_scale.x,
+			m_dragArrowList[i].m_scale.y, m_dragArrowList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_dragArrowList[i].m_position.x,
+			m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
+		//Convert eular angles into a quaterion for the rotation of the object
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
+		//Create set the matrix of the selected object in the world based on the translation,scale and roation
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		//Unproject the points on the near and far plane, with respect to the matrix we just created
+		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+
+		//Turn the transformed points into our picking vector
+		XMVECTOR pickingVector = farPoint - nearPoint;
+		pickingVector = XMVector3Normalize(pickingVector);
+
+		//We want to detect if the user is clicking the selected arrow
+		//This is almost really good. One last big issue, the object moves further than the mouse does
+		//This means the mouse ends up away from the object so the user has to keep up with it
+		//It should move at the same rate as the mouse to make it look like it's attached
+		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
+		{
+			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
+			{
+				if (selectedArrow == NULL)
+				{
+					return;
+				}
+				float newMouseY = m_InputCommands.mouse_Y;
+				float newMouseX = m_InputCommands.mouse_X;
+				if (newMouseX != mouseXOnClick)
+				{
+					mouseMovedX = true;
+				}
+				if (newMouseY != mouseYOnClick)
+				{
+					mouseMovedY = true;
+				}
+
+				//Did the mouse move?
+				if (mouseMovedX == false && mouseMovedY == false)
+				{
+					break;
+				}
+
+				//This is just to check if it's selected, can change later
+				if (selectedObjects.empty() == true)
+				{
+					if (m_dragArrowList[i].attachedObject == selectedArrow->attachedObject)
+					{
+						//Now we need to move based on what direction that arrow is
+						if (selectedArrow->back == true)
+						{
+							//Move the object "back", this depends on how the camera is viewing it	
+							//1 in X is starting pos m_camLookDirection give us this
+							//We should never assume it will be a whole number, instead use a range
+							//We need to move the object away from the camera in the direction that is highest (e.g. X=1,Z=0 means push in X whereas X=0.2,Z=0.9 means push in Z)
+
+							//Diagram
+							//					pushInX = false
+							//					----------------
+							// 					|				|
+							//pushInX = False	|				| pushInX = true (less Z)
+							//					|				|
+							//					-----------------
+							//					pushInX = true (more X)
+							//	
+							//This shows, based on the camera direction, when pushInX is true or false
+							bool pushInX = false;
+
+							selectedObject->m_position.z = selectedObject->m_position.z - 0.1f;
+						}
+						if (selectedArrow->left == true)
+						{
+							selectedObject->m_position.x = selectedObject->m_position.x - 0.1f;
+						}
+						if (selectedArrow->right == true)
+						{
+							selectedObject->m_position.x = selectedObject->m_position.x + 0.1f;
+						}
+						if (selectedArrow->forward == true)
+						{
+							//Calculate the distance between where the mouse is and where the object is
+							selectedObject->m_position.z = selectedObject->m_position.z + 0.1f;
+						}
+						if (selectedArrow->up == true)
+						{
+							selectedObject->m_position.y = selectedObject->m_position.y + 0.1f;
+						}
+						if (selectedArrow->down == true)
+						{
+							selectedObject->m_position.y = selectedObject->m_position.y - 0.1f;
+						}
+					}
+
+				}
+				else
+				{
+					//Multi
+											
+					//Now we need to move based on what direction that arrow is
+					if (selectedArrow->back == true)
+					{
+						bool pushInX = false;
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.z = selectedObjects[k]->m_position.z - 0.1f;
+						}
+					}
+					if (selectedArrow->left == true)
+					{
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.x = selectedObjects[k]->m_position.x - 0.1f;
+						}
+					}
+					if (selectedArrow->right == true)
+					{
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.x = selectedObjects[k]->m_position.x + 0.1f;
+						}
+					}
+					if (selectedArrow->forward == true)
+					{
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.z = selectedObjects[k]->m_position.z + 0.1f;
+						}
+					}
+					if (selectedArrow->up == true)
+					{
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.y = selectedObjects[k]->m_position.y + 0.1f;
+						}
+					}
+					if (selectedArrow->down == true)
+					{
+						for (unsigned int k = 0; k < selectedObjects.size(); k++)
+						{
+							selectedObjects[k]->m_position.y = selectedObjects[k]->m_position.y - 0.1f;
+						}
+					}
+				}
+						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+						{
+							m_dragArrowList[j].updateDragArrow();
+						}
+						//Old mouse code (try to get to work)
+						//Calculate the distance between where the mouse is and where the object is
+						//Get mouse Y (remember it's in screenspace so convert to world space)
+						//XMVECTOR mousePositionAsVector = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0, 0);
+						//The view matrix might be the issue here? It's the only thing I can think of that would be changed by the camera moving
+						//XMVECTOR mousePoint = XMVector3Unproject(mousePositionAsVector, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, m_world);
+						//Scale this based on the distance between the camera and the object
+						//float YDistance = mousePoint.m128_f32[1] - selectedObject->m_position.y;
+						//selectedObject->m_position.y = selectedObject->m_position.y + YDistance;
+			}
+		}
+	}
+}
+
+void Game::checkForDragArrow()
+{
+	int selectedID = -1;
+	float pickedDistance = 0;
+	//Set the float to the max possible distance as we will reduce this to the closes object
+	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
+	float closestDistance = std::numeric_limits<float>::max();
+
+	//setup near and far planes of frustum with mouse X and mouse Y passed
+	//down from Toolmain.
+	//They may look the same but note the difference in Z
+	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 0.0f, 1.0f);
+	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_X, m_InputCommands.mouse_Y, 1.0f, 1.0f);
+
+	//Test for collision against a drag arrow
+	for (int i = 0; i < m_dragArrowList.size(); i++)
+	{
+		//Get the scale factor and translation of the object
+		const XMVECTORF32 scale = { m_dragArrowList[i].m_scale.x,
+			m_dragArrowList[i].m_scale.y, m_dragArrowList[i].m_scale.z };
+		const XMVECTORF32 translate = { m_dragArrowList[i].m_position.x,
+			m_dragArrowList[i].m_position.y, m_dragArrowList[i].m_position.z };
+		//Convert eular angles into a quaterion for the rotation of the object
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_dragArrowList[i].m_orientation.y * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.x * 3.1415 / 180,
+			m_dragArrowList[i].m_orientation.z * 3.1415 / 180);
+		//Create set the matrix of the selected object in the world based on the translation,scale and roation
+		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		//Unproject the points on the near and far plane, with respect to the matrix we just created
+		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+
+		//Turn the transformed points into our picking vector
+		XMVECTOR pickingVector = farPoint - nearPoint;
+		pickingVector = XMVector3Normalize(pickingVector);
+
+		bool hitModel = false;
+		//When we have selected an arrow we don't want to select any others.
+		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
+		{
+			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance && hitModel == false)
+			{
+				selectedArrow = &m_dragArrowList[i];
+				selectedArrow->m_wireframe = true;
+				closestDistance = pickedDistance;
+			}
+		}
+	}
+	mouseYOnClick = m_InputCommands.mouse_Y;
+	mouseXOnClick = m_InputCommands.mouse_X;
+	if (selectedObjects.empty() == true)
+	{
+		objectsOriginalPositionX = selectedObject->m_position.x;
+		objectsOriginalPositionY = selectedObject->m_position.y;
+		objectsOriginalPositionZ = selectedObject->m_position.z;
+	}
+	else
+	{
+		for (unsigned int k = 0; k < selectedObjects.size(); k++)
+		{
+			objectsOriginalPositionsX.push_back(selectedObjects[k]->m_position.x);
+			objectsOriginalPositionsY.push_back(selectedObjects[k]->m_position.y);
+			objectsOriginalPositionsZ.push_back(selectedObjects[k]->m_position.z);
+			objectIDs.push_back(selectedObjects[k]->m_ID);
+		}
+	}
+}
+void Game::dragFinished()
+{
+	//Something isn't working here. The positions and IDs are being set multiple times.
+	if (selectedObjects.empty() == true)
+	{
+		UndoMove* UndoMoveCommand = new UndoMove;
+		UndoMoveCommand->setup(selectedObject->m_ID, XMVECTOR{ objectsOriginalPositionX,objectsOriginalPositionY,objectsOriginalPositionZ });
+		Commands* command = UndoMoveCommand;
+		commandList.push_back(command);
+	}
+	else
+	{
+		UndoMove* UndoMoveCommand = new UndoMove;
+		//Make an XMVECTOR to pass in (again this is do solve a strange compilation error)
+		std::vector<XMVECTOR> objectOriginalPositions;
+		for (unsigned int i = 0; i < objectsOriginalPositionsX.size(); i++)
+		{
+			objectOriginalPositions.push_back(XMVECTOR{ objectsOriginalPositionsX[i],objectsOriginalPositionsY[i],objectsOriginalPositionsZ[i] });
+		}
+		UndoMoveCommand->setup(objectIDs, objectOriginalPositions);
+		Commands* command = UndoMoveCommand;
+		commandList.push_back(command);
+	}
+	//check multiple
+}
 void Game::setID(int newID)
 {
 	ID = newID;
@@ -719,7 +1128,7 @@ void Game::copyObject()
 {
 	if (selectedObjects.empty() == false)
 	{
-		copyCommand.performAction(selectedObjects);
+		copyCommand.performAction(&selectedObjects);
 	}
 	else
 	{
@@ -753,7 +1162,6 @@ void Game::pasteObject()
 
 void Game::focusOnItem()
 {
-	//For now focus on a single item
 	if (selectedObject == NULL)
 	{
 	}
@@ -777,7 +1185,7 @@ void Game::focusOnItem()
 	{
 		//We want to show all objects that were selected
 		//We need to put the objects in acessending order using bubble sort
-		std::vector<DisplayObject> orderedObjects = selectedObjects;
+		std::vector<DisplayObject*> orderedObjects = selectedObjects;
 		bool shouldOrder = true;
 		bool reordered = false;
 		while (shouldOrder == true)
@@ -788,9 +1196,9 @@ void Game::focusOnItem()
 				//Have to make sure I isn't greater than the size of the vector
 				if (i < selectedObjects.size() - 1)
 				{
-					if (orderedObjects[i].m_position.x > orderedObjects[i + 1].m_position.x)
+					if (orderedObjects[i]->m_position.x > orderedObjects[i + 1]->m_position.x)
 					{
-						DisplayObject temp = orderedObjects[i];
+						DisplayObject* temp = orderedObjects[i];
 						orderedObjects[i] = orderedObjects[i + 1];
 						orderedObjects[i + 1] = temp;
 						reordered = true;
@@ -805,7 +1213,7 @@ void Game::focusOnItem()
 		//Now they have been get distance between max and min
 		//Calculate angle between the camera and the object
 		//Create a direction vector
-		Vector3 midPoint = (orderedObjects.back().m_position + orderedObjects.front().m_position)/2;
+		Vector3 midPoint = (orderedObjects.back()->m_position + orderedObjects.front()->m_position)/2;
 		//If you are multi selecting you will probably be in mid air so don't change this
 		midPoint.y = m_camPosition.y;
 		m_camPosition = midPoint + Vector3(-10, 0, 10);
@@ -832,11 +1240,9 @@ void Game::CreateNewObject(std::string texturespath, std::string modelspath)
 	}
 	CreateCommand* createCommand = new CreateCommand;
 	//This will need to deal with deletion of multiple deleted object
-	//createCommand->performAction(m_displayList,texturespaths.at(0),"database/data/placeholder.cmo",m_deviceResources,*m_fxFactory);
 	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
 	commandList.push_back(command);
-	//BuildDisplayList2(texturespaths.at(0), "database/data/placeholder.cmo");
 }
 
 std::vector<SceneObject> Game::getDisplayList()
@@ -922,6 +1328,84 @@ std::vector<SceneObject> Game::getDisplayList()
 
 
 	return objects;
+}
+
+void Game::pushBackNewSelectedObject(DisplayObject* newObject)
+{
+	newObject->m_selected = true;
+	newObject->m_wireframe = true;
+	selectedObjects.push_back(newObject);
+	//Now we need to spawn the selection arrows around the object in 6 places
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		DragArrow newArrow;
+		switch (i)
+		{
+		case 0:
+			//Up
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y + 1, newObject->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+			newArrow.up = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 1:
+			//Down
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y - 1, newObject->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.down = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 2:
+			//Left 
+			newArrow.setup(newObject->m_position.x - 1, newObject->m_position.y, newObject->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.left = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 3:
+			//Right
+			newArrow.setup(newObject->m_position.x + 1, newObject->m_position.y, newObject->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.right = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 4:
+			//back
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.back = true;
+			newArrow.attachedObject = newObject;
+			break;
+		case 5:
+			//forward
+			newArrow.setup(newObject->m_position.x, newObject->m_position.y, newObject->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
+			newArrow.forward = true;
+			newArrow.attachedObject = newObject;
+			break;
+		default:
+			break;
+		}
+		m_dragArrowList.push_back(newArrow);
+	}
+}
+
+void Game::eraseSelectedObject(DisplayObject* newObject)
+{
+	//Find the object in the selected object vector
+	for (int j = 0; j < selectedObjects.size(); j++)
+	{
+		if (newObject->m_ID == selectedObjects.at(j)->m_ID)
+		{
+			//Found object, remove, again function this so we can remove arrows
+			selectedObjects.erase(selectedObjects.begin() + j);
+		}
+	}
+	cleanupAllArrows();
+}
+
+void Game::cleanupAllArrows()
+{
+	//Now we need to clear the arrows around that object
+	for (int i = 0; i < m_dragArrowList.size(); i++)
+	{
+		m_dragArrowList[i].cleanUp();
+	}
+	m_dragArrowList.clear();
 }
 
 #ifdef DXTK_AUDIO
@@ -1018,6 +1502,30 @@ void Game::CreateWindowSizeDependentResources()
 	
 }
 
+
+void Game::OnDeviceLost()
+{
+    m_states.reset();
+    m_fxFactory.reset();
+    m_sprites.reset();
+    m_batch.reset();
+    m_batchEffect.reset();
+    m_font.reset();
+    m_shape.reset();
+    m_model.reset();
+    m_texture1.Reset();
+    m_texture2.Reset();
+    m_batchInputLayout.Reset();
+}
+
+void Game::OnDeviceRestored()
+{
+    CreateDeviceDependentResources();
+
+    CreateWindowSizeDependentResources();
+}
+#pragma endregion
+
 void Game::undoAction()
 {
 	if (commandList.size() <= 0)
@@ -1025,8 +1533,8 @@ void Game::undoAction()
 		return;
 	}
 
-	Commands* commandToUndo = commandList.front();
-	commandList.pop_front();
+	Commands* commandToUndo = commandList.back();
+	commandList.pop_back();
 	if (commandToUndo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1047,7 +1555,6 @@ void Game::undoAction()
 	else if (commandToUndo->getType() == Commands::CommandType::Delete)
 	{
 		CreateCommand* createCommand = new CreateCommand;
-		//This will need to deal with deletion of multiple deleted object
 		if (commandToUndo->getDeletedObjects().size() > 0)
 		{
 			createCommand->performAction(m_displayList, commandToUndo->getDeletedObjects(), m_fxFactory,false,true);
@@ -1057,6 +1564,60 @@ void Game::undoAction()
 			createCommand->performAction(m_displayList,commandToUndo->getDeletedObject(), m_fxFactory,false,true);
 		}
 		Commands* command = createCommand;
+		UndonecommandList.push_back(command);
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::UndoMove)
+	{
+		MoveCommand* moveCommand = new MoveCommand;
+		if (commandToUndo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+			moveCommand->setup(commandToUndo->getMovedObjectsIDs(), commandToUndo->getMovedObjectsOriginalPositions());
+			moveCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			moveCommand->setup(commandToUndo->getMovedObjectsID(), commandToUndo->getMovedObjectsOriginalPosition());
+			moveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = moveCommand;
+		UndonecommandList.push_back(command);
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::Move)
+	{
+		UndoMove* undoMoveCommand = new UndoMove;
+		if (commandToUndo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+			undoMoveCommand->setup(commandToUndo->getMovedObjectsIDs(), commandToUndo->getMovedObjectsOriginalPositions());
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Get the display object that was moved
+			int IDOfMovedObject = commandToUndo->getMovedObjectsID();
+			DisplayObject* movedObject;
+			for (unsigned int i = 0; i < m_displayList.size(); i++)
+			{
+				if (IDOfMovedObject == m_displayList[i].m_ID)
+				{
+					movedObject = &m_displayList.at(i);
+				}
+			}
+			undoMoveCommand->setup(IDOfMovedObject, commandToUndo->getMovedObjectsOriginalPosition());
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = undoMoveCommand;
 		UndonecommandList.push_back(command);
 	}
 
@@ -1069,8 +1630,8 @@ void Game::RedoAction()
 		return;
 	}
 
-	Commands* commandToDo = UndonecommandList.front();
-	UndonecommandList.pop_front();
+	Commands* commandToDo = UndonecommandList.back();
+	UndonecommandList.pop_back();
 	if (commandToDo->getType() == Commands::CommandType::Create)
 	{
 		DeleteCommand* deleteCommand = new DeleteCommand;
@@ -1101,32 +1662,64 @@ void Game::RedoAction()
 			createCommand->performAction(m_displayList, commandToDo->getDeletedObject(), m_fxFactory);
 		}
 		Commands* command = createCommand;
-		UndonecommandList.push_back(command);
+		commandList.push_back(command);
 	}
-}
+	else if (commandToDo->getType() == Commands::CommandType::UndoMove)
+	{
+		MoveCommand* moveCommand = new MoveCommand;
+		if (commandToDo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+			moveCommand->setup(commandToDo->getMovedObjectsIDs(), commandToDo->getMovedObjectsOriginalPositions());
+			moveCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			moveCommand->setup(commandToDo->getMovedObjectsID(), commandToDo->getMovedObjectsOriginalPosition());
+			moveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = moveCommand;
+		commandList.push_back(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::Move)
+	{
+		UndoMove* undoMoveCommand = new UndoMove;
+		if (commandToDo->getMovedObjectsIDs().empty() == false)
+		{
+			//Multi
+			undoMoveCommand->setup(commandToDo->getMovedObjectsIDs(), commandToDo->getMovedObjectsOriginalPositions());
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Get the display object that was moved
+			int IDOfMovedObject = commandToDo->getMovedObjectsID();
+			DisplayObject* movedObject;
+			for (unsigned int i = 0; i < m_displayList.size(); i++)
+			{
+				if (IDOfMovedObject == m_displayList[i].m_ID)
+				{
+					movedObject = &m_displayList.at(i);
+				}
+			}
+			undoMoveCommand->setup(IDOfMovedObject, commandToDo->getMovedObjectsOriginalPosition());
+			undoMoveCommand->performAction(&m_displayList);
+		}
+		//Update all drag arrows
+		for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+		{
+			m_dragArrowList[j].updateDragArrow();
+		}
+		Commands* command = undoMoveCommand;
+		commandList.push_back(command);
+	}
 
-void Game::OnDeviceLost()
-{
-    m_states.reset();
-    m_fxFactory.reset();
-    m_sprites.reset();
-    m_batch.reset();
-    m_batchEffect.reset();
-    m_font.reset();
-    m_shape.reset();
-    m_model.reset();
-    m_texture1.Reset();
-    m_texture2.Reset();
-    m_batchInputLayout.Reset();
 }
-
-void Game::OnDeviceRestored()
-{
-    CreateDeviceDependentResources();
-
-    CreateWindowSizeDependentResources();
-}
-#pragma endregion
 
 std::wstring StringToWCHART(std::string s)
 {
