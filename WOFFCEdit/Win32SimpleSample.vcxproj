@@ -168,6 +168,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChunkObject.cpp" />
     <ClCompile Include="Commands.cpp" />
     <ClCompile Include="CopyCommand.cpp" />
@@ -194,6 +195,7 @@
     <ClCompile Include="UndoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ChunkObject.h" />
     <ClInclude Include="Commands.h" />
     <ClInclude Include="CopyCommand.h" />

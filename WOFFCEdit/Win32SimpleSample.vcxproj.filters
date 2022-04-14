@@ -69,6 +69,7 @@
     <ClCompile Include="DragArrow.cpp" />
     <ClCompile Include="UndoMove.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -128,6 +129,7 @@
     <ClInclude Include="DragArrow.h" />
     <ClInclude Include="UndoMove.h" />
     <ClInclude Include="MoveCommand.h" />
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

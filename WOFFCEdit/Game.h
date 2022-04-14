@@ -17,6 +17,7 @@
 #include "UndoMove.h"
 #include "MoveCommand.h"
 #include "DragArrow.h"
+#include "Camera.h"
 #include <vector>
 #include <list>
 #include <limits>
@@ -127,12 +128,7 @@ private:
 	float								m_movespeed;
 
 	//camera
-	DirectX::SimpleMath::Vector3		m_camPosition;
-	DirectX::SimpleMath::Vector3		m_camOrientation;
-	DirectX::SimpleMath::Vector3		m_camLookAt;
-	DirectX::SimpleMath::Vector3		m_camLookDirection;
-	DirectX::SimpleMath::Vector3		m_camRight;
-	float m_camRotRate;
+	Camera								m_camera;
 
 	//control variables
 	bool m_grid;							//grid rendering on / off
