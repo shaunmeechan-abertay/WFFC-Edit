@@ -1090,7 +1090,6 @@ void Game::checkForDragArrow()
 			objectsOriginalPositionsX.push_back(selectedObjects[k]->m_position.x);
 			objectsOriginalPositionsY.push_back(selectedObjects[k]->m_position.y);
 			objectsOriginalPositionsZ.push_back(selectedObjects[k]->m_position.z);
-			//objectOriginalPositions.push_back(selectedObjects[k]->m_position);
 			objectIDs.push_back(selectedObjects[k]->m_ID);
 		}
 	}
@@ -1163,7 +1162,6 @@ void Game::pasteObject()
 
 void Game::focusOnItem()
 {
-	//For now focus on a single item
 	if (selectedObject == NULL)
 	{
 	}
