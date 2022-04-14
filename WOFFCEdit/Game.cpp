@@ -917,23 +917,6 @@ void Game::clickAndDrag()
 						//Now we need to move based on what direction that arrow is
 						if (selectedArrow->back == true)
 						{
-							//Move the object "back", this depends on how the camera is viewing it	
-							//1 in X is starting pos m_camLookDirection give us this
-							//We should never assume it will be a whole number, instead use a range
-							//We need to move the object away from the camera in the direction that is highest (e.g. X=1,Z=0 means push in X whereas X=0.2,Z=0.9 means push in Z)
-
-							//Diagram
-							//					pushInX = false
-							//					----------------
-							// 					|				|
-							//pushInX = False	|				| pushInX = true (less Z)
-							//					|				|
-							//					-----------------
-							//					pushInX = true (more X)
-							//	
-							//This shows, based on the camera direction, when pushInX is true or false
-							bool pushInX = false;
-
 							selectedObject->m_position.z = selectedObject->m_position.z - 0.1f;
 						}
 						if (selectedArrow->left == true)
@@ -967,7 +950,6 @@ void Game::clickAndDrag()
 					//Now we need to move based on what direction that arrow is
 					if (selectedArrow->back == true)
 					{
-						bool pushInX = false;
 						for (unsigned int k = 0; k < selectedObjects.size(); k++)
 						{
 							selectedObjects[k]->m_position.z = selectedObjects[k]->m_position.z - 0.1f;
@@ -1335,6 +1317,15 @@ std::vector<SceneObject> Game::getDisplayList()
 
 void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 {
+	//check to see if the object already exsist in the vector
+	for (unsigned int i = 0; i < selectedObjects.size(); i++)
+	{
+		if (newObject->m_ID == selectedObjects[i]->m_ID)
+		{
+			//Object is a duplicate, ignore
+			return;
+		}
+	}
 	newObject->m_selected = true;
 	newObject->m_wireframe = true;
 	selectedObjects.push_back(newObject);
