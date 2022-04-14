@@ -1077,6 +1077,10 @@ void Game::checkForDragArrow()
 	}
 	mouseYOnClick = m_InputCommands.mouse_Y;
 	mouseXOnClick = m_InputCommands.mouse_X;
+	objectIDs.clear();
+	objectsOriginalPositionsX.clear();
+	objectsOriginalPositionsY.clear();
+	objectsOriginalPositionsZ.clear();
 	if (selectedObjects.empty() == true)
 	{
 		objectsOriginalPositionX = selectedObject->m_position.x;
@@ -1117,7 +1121,6 @@ void Game::dragFinished()
 		Commands* command = UndoMoveCommand;
 		commandList.push_back(command);
 	}
-	//check multiple
 }
 void Game::setID(int newID)
 {
