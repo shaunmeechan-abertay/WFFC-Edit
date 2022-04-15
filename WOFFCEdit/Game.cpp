@@ -1123,7 +1123,8 @@ void Game::focusOnItem()
 	{
 		//Move camera to object position
 		shouldResetOrientation = true;
-		m_camera.setCameraPosition(selectedObject->m_position + Vector3(-5, 0, 5));
+		//m_camera.setCameraPosition(selectedObject->m_position + Vector3(-5, 0, 5));
+		m_camera.setCameraPosition(selectedObject->m_position + Vector3(0, 1, 7));
 
 		//Calculate angle between the camera and the object
 		//Create a direction vector
@@ -1171,7 +1172,7 @@ void Game::focusOnItem()
 		Vector3 midPoint = (orderedObjects.back()->m_position + orderedObjects.front()->m_position)/2;
 		//If you are multi selecting you will probably be in mid air so don't change this
 		midPoint.y = m_camera.getCameraPosition().y;
-		m_camera.setCameraPosition(midPoint + Vector3(-10, 0, 10));
+		m_camera.setCameraPosition(midPoint + Vector3(0, 0, midPoint.x));
 
 		Vector3 dir = midPoint - m_camera.getCameraPosition();
 		//Get arctan of the vector
