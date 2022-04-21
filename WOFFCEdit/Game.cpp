@@ -1223,6 +1223,13 @@ void Game::archballL()
 {
 	m_camera.rotateLeft();
 	m_camera.moveLeft();
+	//It's X & Z we are worried about here, we need to main tain a costant distance
+	//So it's going to be camera pos +- something
+	//Let's say we always want to be 7 units away from the object
+	//We can then get the distance between 7 units away and the actual object
+	//That distance is what we want to move the camera by
+	m_camera.setCameraPosition(selectedObject->m_position + Vector3(0, 0, 7));
+
 }
 
 void Game::archballR()
