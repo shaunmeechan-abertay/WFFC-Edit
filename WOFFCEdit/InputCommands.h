@@ -21,4 +21,5 @@ struct InputCommands
 	bool copy;
 	bool paste;
 	bool focusOnObject;
+	bool alt;
 };

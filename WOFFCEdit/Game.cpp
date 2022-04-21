@@ -114,7 +114,6 @@ void Game::Tick(InputCommands *Input)
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
-	//TODO  any more complex than this, and the camera should be abstracted out to somewhere else
 	//camera motion is on a plane, so kill the 7 component of the look direction
 	Vector3 planarMotionVector = m_camera.getCameraLookDirection();
 	planarMotionVector.y = 0.0;
@@ -141,18 +140,33 @@ void Game::Update(DX::StepTimer const& timer)
 	{	
 		m_camera.moveForward();
 	}
+
 	if (m_InputCommands.back)
 	{
 		m_camera.moveBack();
 	}
+
+	if (m_InputCommands.right && m_InputCommands.alt)
+	{
+		archballR();
+	}
+
 	if (m_InputCommands.right)
 	{
 		m_camera.moveRight();
 	}
+
+	if (m_InputCommands.left && m_InputCommands.alt)
+	{
+		archballL();
+	}
+
 	if (m_InputCommands.left)
 	{
 		m_camera.moveLeft();
 	}
+
+
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
@@ -408,6 +422,8 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
     m_deviceResources->PIXEndEvent();
 }
 
+#pragma endregion
+
 void Game::setSelectedObject(DisplayObject* newObject)
 {
 	if (selectedObject != NULL)
@@ -548,7 +564,6 @@ void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 			}
 		}
 }
-#pragma endregion
 
 #pragma region Message Handlers
 // Message handlers
@@ -688,6 +703,21 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 {
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
+
+#ifdef DXTK_AUDIO
+void Game::NewAudioDevice()
+{
+	if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
+	{
+		// Setup a retry in 1 second
+		m_audioTimerAcc = 1.f;
+		m_retryDefault = true;
+	}
+}
+#endif
+
+
+#pragma endregion
 
 int Game::MousePicking()
 {
@@ -1189,6 +1219,19 @@ void Game::focusOnItem()
 	}
 }
 
+void Game::archballL()
+{
+	m_camera.rotateLeft();
+	m_camera.moveLeft();
+}
+
+void Game::archballR()
+{
+	m_camera.rotateRight();
+	m_camera.moveRight();
+
+}
+
 void Game::CreateNewObject(std::string texturespath, std::string modelspath)
 {
 	if (m_displayList.empty() == true)
@@ -1374,20 +1417,6 @@ void Game::cleanupAllArrows()
 	m_dragArrowList.clear();
 }
 
-#ifdef DXTK_AUDIO
-void Game::NewAudioDevice()
-{
-    if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
-    {
-        // Setup a retry in 1 second
-        m_audioTimerAcc = 1.f;
-        m_retryDefault = true;
-    }
-}
-#endif
-
-
-#pragma endregion
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
