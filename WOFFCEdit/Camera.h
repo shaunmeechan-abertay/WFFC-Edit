@@ -26,6 +26,10 @@ public:
 	void moveRight();
 	void moveLeft();
 
+	//orbit funcs
+	void orbitRight();
+	void orbitLeft();
+
 	//Setters
 	void setCameraPosition(DirectX::SimpleMath::Vector3 newPosition);
 	void setCameraOrientation(DirectX::SimpleMath::Vector3 newOrientation);

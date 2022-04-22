@@ -150,8 +150,7 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		archballR();
 	}
-
-	if (m_InputCommands.right)
+	else if(m_InputCommands.right)
 	{
 		m_camera.moveRight();
 	}
@@ -160,8 +159,7 @@ void Game::Update(DX::StepTimer const& timer)
 	{
 		archballL();
 	}
-
-	if (m_InputCommands.left)
+	else if(m_InputCommands.left)
 	{
 		m_camera.moveLeft();
 	}
@@ -1221,16 +1219,16 @@ void Game::focusOnItem()
 
 void Game::archballL()
 {
-	m_camera.rotateLeft();
-	m_camera.moveLeft();
-	if (m_camera.getCameraPosition().z > selectedObject->m_position.z + 8)
-	{
-		m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z + 8));
-	}
-	else if (m_camera.getCameraPosition().z < selectedObject->m_position.z - 8)
-	{
-		m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z - 8));
-	}
+	m_camera.orbitLeft();
+
+	//if (m_camera.getCameraPosition().z > selectedObject->m_position.z + 8)
+	//{
+	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z + 8));
+	//}
+	//else if (m_camera.getCameraPosition().z < selectedObject->m_position.z - 8)
+	//{
+	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z - 8));
+	//}
 	//if (m_camera.getCameraPosition().z < selectedObject->m_position.z - 8)
 	//{
 	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z - 8));
@@ -1253,9 +1251,7 @@ void Game::archballL()
 
 void Game::archballR()
 {
-	m_camera.rotateRight();
-	m_camera.moveRight();
-
+	m_camera.orbitRight();
 }
 
 void Game::CreateNewObject(std::string texturespath, std::string modelspath)
