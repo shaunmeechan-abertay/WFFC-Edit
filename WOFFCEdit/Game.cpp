@@ -1151,7 +1151,6 @@ void Game::focusOnItem()
 	{
 		//Move camera to object position
 		shouldResetOrientation = true;
-		//m_camera.setCameraPosition(selectedObject->m_position + Vector3(-5, 0, 5));
 		m_camera.setCameraPosition(selectedObject->m_position + Vector3(0, 1, 7));
 
 		//Calculate angle between the camera and the object
@@ -1162,7 +1161,6 @@ void Game::focusOnItem()
 		//Convert the result into degress as above is in radians
 		angle = XMConvertToDegrees(angle);
 		m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
-		//m_camOrientation.y = angle;
 	}
 
 	if (selectedObjects.empty() == false)
@@ -1213,44 +1211,58 @@ void Game::focusOnItem()
 	}
 	else
 	{
+		//User has no objects selected
 		return;
 	}
 }
 
 void Game::archballL()
 {
+	//If the user has multiple object selected, don't allow rotation
+	if (selectedObjects.empty() == false)
+	{
+		return;
+	}
+
+	//User has no selected object
+	if (selectedObject == NULL)
+	{
+		return;
+	}
+
+	//Make sure the user is looking at the camera
+	Vector3 dir = selectedObject->m_position - m_camera.getCameraPosition();
+	//Get arctan of the vector
+	float angle = atan2f(dir.z, dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
+
 	m_camera.orbitLeft();
-
-	//if (m_camera.getCameraPosition().z > selectedObject->m_position.z + 8)
-	//{
-	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z + 8));
-	//}
-	//else if (m_camera.getCameraPosition().z < selectedObject->m_position.z - 8)
-	//{
-	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z - 8));
-	//}
-	//if (m_camera.getCameraPosition().z < selectedObject->m_position.z - 8)
-	//{
-	//	m_camera.setCameraPosition(Vector3(m_camera.getCameraPosition().x, selectedObject->m_position.y, selectedObject->m_position.z - 8));
-	//}
-	//if (m_camera.getCameraPosition().x > selectedObject->m_position.x + 5)
-	//{
-	//	m_camera.setCameraPosition(Vector3(selectedObject->m_position.x + 5, selectedObject->m_position.y, m_camera.getCameraPosition().x));
-	//}
-	//else if (m_camera.getCameraPosition().x < selectedObject->m_position.x - 5)
-	//{
-	//	m_camera.setCameraPosition(Vector3(selectedObject->m_position.x - 5, selectedObject->m_position.y, m_camera.getCameraPosition().x));
-	//}
-	//m_camera.setCameraPosition(Vector3(selectedObject->m_position.x, selectedObject->m_position.y, selectedObject->m_position.z));
-	//It's X & Z we are worried about here, we need to maintain a costant distance
-	//Let's say we always want to be 7 units away from the object
-	//We can then get the distance between 7 units away and the actual object
-	//m_camera.setCameraPosition(Vector3((selectedObject->m_position.x + 7) - selectedObject->m_position.x, selectedObject->m_position.y, (selectedObject->m_position.z + 7) - selectedObject->m_position.z));
-
 }
 
 void Game::archballR()
 {
+	//If the user has multiple object selected, don't allow rotation
+	if (selectedObjects.empty() == false)
+	{
+		return;
+	}
+
+	//User has no selected object
+	if (selectedObject == NULL)
+	{
+		return;
+	}
+
+	//Make sure the user is looking at the camera
+	Vector3 dir = selectedObject->m_position - m_camera.getCameraPosition();
+	//Get arctan of the vector
+	float angle = atan2f(dir.z, dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
+
 	m_camera.orbitRight();
 }
 
