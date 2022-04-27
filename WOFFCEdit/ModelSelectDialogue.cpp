@@ -42,7 +42,7 @@ void ModelSelectDialogue::PostNcDestroy()
 void ModelSelectDialogue::OnBnClickedOk()
 {
 	//Credit: https://www.programmerall.com/article/50391274688/ 
-	CFileDialog dlg(TRUE, _T("*.obj"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Model Files(*._obj)|*._obj|"), NULL);
+	CFileDialog dlg(TRUE, _T("*.obj"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("OBJ Model Files (*.obj)|*.obj|_OBJ Model Files (*._obj)|*_obj||"), NULL);
 	dlg.m_ofn.lpstrTitle = _T("Select Models");
 	CString filename;
 	if (dlg.DoModal() == IDOK)
