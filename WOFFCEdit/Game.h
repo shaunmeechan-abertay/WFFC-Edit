@@ -100,8 +100,11 @@ public:
 	void pushBackNewSelectedObject(DisplayObject* newObject);
 	void eraseSelectedObject(DisplayObject* newObject);
 
-	//Functions for dealing with drag arrows
+	//Function for dealing with drag arrows
 	void cleanupAllArrows();
+
+	//Function for handling camera movement with a mouse
+	void mouseCameraMovement();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

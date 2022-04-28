@@ -316,6 +316,12 @@ void ToolMain::Tick(MSG *msg)
 		//Call click and drag function
 		m_d3dRenderer.clickAndDrag();
 	}
+
+	if (m_toolInputCommands.mouse_RB_Down)
+	{
+		//User is trying to move camera using mouse
+		m_d3dRenderer.mouseCameraMovement();
+	}
 }
 
 void ToolMain::UpdateInput(MSG * msg)
@@ -355,6 +361,17 @@ void ToolMain::UpdateInput(MSG * msg)
 		m_d3dRenderer.dragFinished();
 		break;
 
+	case WM_RBUTTONDOWN:
+		//Right mouse button being else down
+		m_toolInputCommands.mouse_RB_Down = true;
+		m_toolInputCommands.mouse_RB_Up = false;
+		break;
+
+	case WM_RBUTTONUP:
+		//Right mouse button lifted
+		m_toolInputCommands.mouse_RB_Up = true;
+		m_toolInputCommands.mouse_RB_Down = false;
+		break;
 	}
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement

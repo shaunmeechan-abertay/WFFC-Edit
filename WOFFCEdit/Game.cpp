@@ -1451,6 +1451,45 @@ void Game::cleanupAllArrows()
 	m_dragArrowList.clear();
 }
 
+void Game::mouseCameraMovement()
+{
+	static float oldMouseX = 0.0f;
+	static float oldMouseY = 0.0f;
+
+	float newMouseX = m_InputCommands.mouse_X;
+	float newMouseY = m_InputCommands.mouse_Y;
+
+	if (newMouseX > oldMouseX)
+	{
+		//Mouse moved further left, rotate right
+		m_camera.rotateLeft();
+		oldMouseX = newMouseX;
+	}
+
+	if (newMouseX < oldMouseX)
+	{
+		//Mouse moved further right
+		m_camera.rotateRight();
+		oldMouseX = newMouseX;
+	}
+
+	if (newMouseY > oldMouseY)
+	{
+		//Mouse moved further up
+		m_camera.rotateUp();
+		oldMouseY = newMouseY;
+		return;
+	}
+
+	if (newMouseY < oldMouseY)
+	{
+		//Move moved further down
+		m_camera.rotateDown();
+		oldMouseY = newMouseY;
+		return;
+	}
+}
+
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
