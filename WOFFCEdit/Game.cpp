@@ -114,7 +114,6 @@ void Game::Tick(InputCommands *Input)
 // Updates the world.
 void Game::Update(DX::StepTimer const& timer)
 {
-	//TODO  any more complex than this, and the camera should be abstracted out to somewhere else
 	//camera motion is on a plane, so kill the 7 component of the look direction
 	Vector3 planarMotionVector = m_camera.getCameraLookDirection();
 	planarMotionVector.y = 0.0;
@@ -141,18 +140,31 @@ void Game::Update(DX::StepTimer const& timer)
 	{	
 		m_camera.moveForward();
 	}
+
 	if (m_InputCommands.back)
 	{
 		m_camera.moveBack();
 	}
-	if (m_InputCommands.right)
+
+	if (m_InputCommands.right && m_InputCommands.alt)
+	{
+		archballR();
+	}
+	else if(m_InputCommands.right)
 	{
 		m_camera.moveRight();
 	}
-	if (m_InputCommands.left)
+
+	if (m_InputCommands.left && m_InputCommands.alt)
+	{
+		archballL();
+	}
+	else if(m_InputCommands.left)
 	{
 		m_camera.moveLeft();
 	}
+
+
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
@@ -408,6 +420,8 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
     m_deviceResources->PIXEndEvent();
 }
 
+#pragma endregion
+
 void Game::setSelectedObject(DisplayObject* newObject)
 {
 	if (selectedObject != NULL)
@@ -548,7 +562,6 @@ void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 			}
 		}
 }
-#pragma endregion
 
 #pragma region Message Handlers
 // Message handlers
@@ -688,6 +701,21 @@ void Game::SaveDisplayChunk(ChunkObject * SceneChunk)
 {
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
+
+#ifdef DXTK_AUDIO
+void Game::NewAudioDevice()
+{
+	if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
+	{
+		// Setup a retry in 1 second
+		m_audioTimerAcc = 1.f;
+		m_retryDefault = true;
+	}
+}
+#endif
+
+
+#pragma endregion
 
 int Game::MousePicking()
 {
@@ -1123,7 +1151,6 @@ void Game::focusOnItem()
 	{
 		//Move camera to object position
 		shouldResetOrientation = true;
-		//m_camera.setCameraPosition(selectedObject->m_position + Vector3(-5, 0, 5));
 		m_camera.setCameraPosition(selectedObject->m_position + Vector3(0, 1, 7));
 
 		//Calculate angle between the camera and the object
@@ -1134,7 +1161,6 @@ void Game::focusOnItem()
 		//Convert the result into degress as above is in radians
 		angle = XMConvertToDegrees(angle);
 		m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
-		//m_camOrientation.y = angle;
 	}
 
 	if (selectedObjects.empty() == false)
@@ -1185,8 +1211,59 @@ void Game::focusOnItem()
 	}
 	else
 	{
+		//User has no objects selected
 		return;
 	}
+}
+
+void Game::archballL()
+{
+	//If the user has multiple object selected, don't allow rotation
+	if (selectedObjects.empty() == false)
+	{
+		return;
+	}
+
+	//User has no selected object
+	if (selectedObject == NULL)
+	{
+		return;
+	}
+
+	//Make sure the user is looking at the camera
+	Vector3 dir = selectedObject->m_position - m_camera.getCameraPosition();
+	//Get arctan of the vector
+	float angle = atan2f(dir.z, dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
+
+	m_camera.orbitLeft();
+}
+
+void Game::archballR()
+{
+	//If the user has multiple object selected, don't allow rotation
+	if (selectedObjects.empty() == false)
+	{
+		return;
+	}
+
+	//User has no selected object
+	if (selectedObject == NULL)
+	{
+		return;
+	}
+
+	//Make sure the user is looking at the camera
+	Vector3 dir = selectedObject->m_position - m_camera.getCameraPosition();
+	//Get arctan of the vector
+	float angle = atan2f(dir.z, dir.x);
+	//Convert the result into degress as above is in radians
+	angle = XMConvertToDegrees(angle);
+	m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
+
+	m_camera.orbitRight();
 }
 
 void Game::CreateNewObject(std::string texturespath, std::string modelspath)
@@ -1374,20 +1451,6 @@ void Game::cleanupAllArrows()
 	m_dragArrowList.clear();
 }
 
-#ifdef DXTK_AUDIO
-void Game::NewAudioDevice()
-{
-    if (m_audEngine && !m_audEngine->IsAudioDevicePresent())
-    {
-        // Setup a retry in 1 second
-        m_audioTimerAcc = 1.f;
-        m_retryDefault = true;
-    }
-}
-#endif
-
-
-#pragma endregion
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.

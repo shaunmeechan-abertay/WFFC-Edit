@@ -89,6 +89,8 @@ public:
 	void pasteObject();
 	//Focus function
 	void focusOnItem();
+	void archballL();
+	void archballR();
 	bool shouldResetOrientation = false;
 	
 	void CreateNewObject(std::string texturespath, std::string modelspath);

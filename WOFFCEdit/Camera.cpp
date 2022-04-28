@@ -126,7 +126,20 @@ void Camera::moveRight()
 
 void Camera::moveLeft()
 {
+
 	m_camPosition -= m_camRight * m_movespeed;
+}
+
+void Camera::orbitRight()
+{
+	rotateRight();
+	m_camPosition += m_camRight * 0.3;
+}
+
+void Camera::orbitLeft()
+{
+	rotateLeft();
+	m_camPosition -= m_camRight * 0.3;
 }
 
 void Camera::setCameraPosition(DirectX::SimpleMath::Vector3 newPosition)
