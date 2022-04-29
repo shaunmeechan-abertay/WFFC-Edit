@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "afxwin.h"
 #include "ToolMain.h"
+#include <stdlib.h>
 #include <vector>
 #include <string>
 
@@ -32,5 +33,15 @@ public:
 	afx_msg void OnBnClickedLoadTexture();
 	afx_msg void OnBnClickedLoadModel();
 	afx_msg void OnBnClickedCreated();
+
+	float XPos;
+	float YPos;
+	float ZPos;
+	float XScale;
+	float YScale;
+	float ZScale;
+	float XRot;
+	float YRot;
+	float ZRot;
 };
 

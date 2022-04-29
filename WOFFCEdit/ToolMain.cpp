@@ -630,7 +630,7 @@ void ToolMain::UpdateInput(MSG * msg)
 	}
 }
 
-void ToolMain::CreateNewGameObject(CString texture, CString models)
+void ToolMain::CreateNewGameObject(CString texture, CString models, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation)
 {
 	//Convert the CStrings to a strings
 	//This get's around a weird LINK2019 error that happens if this sends a CString and game takes that in
@@ -639,8 +639,7 @@ void ToolMain::CreateNewGameObject(CString texture, CString models)
 
 	CT2CA convertedTexturePath(texture);
 	std::string textureFile(convertedTexturePath);
-	m_d3dRenderer.CreateNewObject(textureFile,s);
-	//m_d3dRenderer.CreateNewObject();
+	m_d3dRenderer.CreateNewObject(textureFile,s, position,scale,rotation);
 
 }
 

@@ -93,7 +93,7 @@ public:
 	void archballR();
 	bool shouldResetOrientation = false;
 	
-	void CreateNewObject(std::string texturespath, std::string modelspath);
+	void CreateNewObject(std::string texturespath, std::string modelspath, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation);
 	std::vector<SceneObject> getDisplayList();
 
 	//Functions for selected objects vector

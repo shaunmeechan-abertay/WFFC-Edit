@@ -255,7 +255,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, int ID)
 }
 
 //Used to create a new object - called from MFC
-void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
+void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory)
 {
 	//create a temp display object that we will populate then append to the display list.
 	DisplayObject newDisplayObject;
@@ -307,19 +307,19 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 	newDisplayObject.m_modelPath = "database/data" + filename;
 
 	//set position
-	newDisplayObject.m_position.x = 0;
-	newDisplayObject.m_position.y = 10;
-	newDisplayObject.m_position.z = 0;
+	newDisplayObject.m_position.x = position.m128_f32[0];
+	newDisplayObject.m_position.y = position.m128_f32[1];
+	newDisplayObject.m_position.z = position.m128_f32[2];
 
 	//setorientation
-	newDisplayObject.m_orientation.x = 0;
-	newDisplayObject.m_orientation.y = 0;
-	newDisplayObject.m_orientation.z = 0;
+	newDisplayObject.m_orientation.x = rotation.m128_f32[0];
+	newDisplayObject.m_orientation.y = rotation.m128_f32[1];
+	newDisplayObject.m_orientation.z = rotation.m128_f32[2];
 
 	//set scale
-	newDisplayObject.m_scale.x = 1;
-	newDisplayObject.m_scale.y = 1;
-	newDisplayObject.m_scale.z = 1;
+	newDisplayObject.m_scale.x = scale.m128_f32[0];
+	newDisplayObject.m_scale.y = scale.m128_f32[1];
+	newDisplayObject.m_scale.z = scale.m128_f32[2];
 
 	//set wireframe / render flags
 	newDisplayObject.m_render = true;

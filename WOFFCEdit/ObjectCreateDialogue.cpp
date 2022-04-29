@@ -22,11 +22,26 @@ ObjectCreateDialogue::~ObjectCreateDialogue()
 
 void ObjectCreateDialogue::DoDataExchange(CDataExchange* pDX)
 {
+	//Credit: https://stackoverflow.com/questions/10477786/how-to-get-numeric-value-from-edit-control
+	CDialogEx::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT1_XPos, XPos);
+	DDX_Text(pDX, IDC_EDIT1_YPos, YPos);
+	DDX_Text(pDX, IDC_EDIT1_ZPos, ZPos);
+	DDX_Text(pDX, IDC_EDIT1_XScale, XScale);
+	DDX_Text(pDX, IDC_EDIT1_YScale, YScale);
+	DDX_Text(pDX, IDC_EDIT1_ZScale, ZScale);
+	DDX_Text(pDX, IDC_EDIT1_XRotation, XRot);
+	DDX_Text(pDX, IDC_EDIT1_YRotation, YRot);
+	DDX_Text(pDX, IDC_EDIT1_ZRotation, ZRot);
 }
 
 void ObjectCreateDialogue::End()
 {
-	m_ToolSystem->CreateNewGameObject(textureFile,modelFile);
+	UpdateData(true);
+	DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);
+	DirectX::XMVECTOR scale = DirectX::XMVectorSet(XScale, YScale, ZScale, 0);
+	DirectX::XMVECTOR rotation = DirectX::XMVectorSet(XRot, YRot, ZRot, 0);
+	m_ToolSystem->CreateNewGameObject(textureFile,modelFile, position,scale,rotation);
 	DestroyWindow();
 }
 
@@ -48,7 +63,6 @@ void ObjectCreateDialogue::setToolSystem(ToolMain* toolsystem)
 void ObjectCreateDialogue::OnBnClickedLoadTexture()
 {
 	//Credit: https://www.programmerall.com/article/50391274688/ 
-//Issue, this only deals with jpg but texture could be any image, should at least handle png
 	CFileDialog dlg(TRUE, _T("*.dds"), NULL, OFN_ALLOWMULTISELECT | OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Image Files(*.dds)|*.dds|"), NULL);
 	dlg.m_ofn.lpstrTitle = _T("Select Image");
 	CString filename;

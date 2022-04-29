@@ -1266,15 +1266,14 @@ void Game::archballR()
 	m_camera.orbitRight();
 }
 
-void Game::CreateNewObject(std::string texturespath, std::string modelspath)
+void Game::CreateNewObject(std::string texturespath, std::string modelspath, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation)
 {
 	if (m_displayList.empty() == true)
 	{
 		return;
 	}
 	CreateCommand* createCommand = new CreateCommand;
-	//This will need to deal with deletion of multiple deleted object
-	createCommand->performAction(m_displayList, texturespath,modelspath,m_deviceResources,*m_fxFactory);
+	createCommand->performAction(m_displayList, texturespath,modelspath,position,scale,rotation, m_deviceResources,*m_fxFactory);
 	Commands* command = createCommand;
 	commandList.push(command);
 }

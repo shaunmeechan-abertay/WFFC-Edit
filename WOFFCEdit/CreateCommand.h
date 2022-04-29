@@ -18,7 +18,7 @@ public:
 	//This will make a brand new object using just the display list, it will create an object at a specified ID, if one is not provided it uses the first one in the list
 	void performAction(std::vector<DisplayObject>&objects, int ID = 0);
 	//This will make a brand new object using a passed in texture file and model
-	void performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, std::shared_ptr<DX::DeviceResources>,DirectX::IEffectFactory& m_fxFactory);
+	void performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation, std::shared_ptr<DX::DeviceResources>,DirectX::IEffectFactory& m_fxFactory);
 	Commands::CommandType getType();
 	DisplayObject getCreatedObject();
 	std::vector<DisplayObject*> getCreatedObjects();
