@@ -208,15 +208,83 @@ void ToolMain::onActionSave()
 	int rc;
 	char *sqlCommand;
 	char *ErrMSG = 0;
+	int ErrCode = 0;
 	sqlite3_stmt *pResults;								//results of the query
 	
+	//Before we do anything below, create a copy of the table
+	sqlCommand = "CREATE TABLE backup AS SELECT * FROM Objects";
+	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+	ErrCode = sqlite3_step(pResults);
+
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		break;
+	case 101:
+		//All good
+		break;
+	case 100:
+		//All good
+		break;
+	case 21:
+		//Error here but it's cause the backup table already exists
+		//We just want to clear it and copy in the new data
+		sqlCommand = "DELETE FROM Objects";
+		rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+		ErrCode = sqlite3_step(pResults);
+		switch (ErrCode)
+		{
+		case 0:
+			//All good
+			copyObjectTableIntoBackup();
+			break;
+		case 101:
+			//All good
+			copyObjectTableIntoBackup();
+			break;
+		case 100:
+			//All good
+			copyObjectTableIntoBackup();
+			break;
+		default:
+			MessageBox(NULL, L"An error occured within the backup table. Please manually delete it.", L"Error", MB_OK);
+			return;
+			break;
+		}
+		break;
+	default:
+		//SOMETHING WENT WRONG ABORT!
+		MessageBox(NULL, L"An error occured creating the backup table!", L"Notification", MB_OK);
+		return;
+		break;
+	}
 
 	//OBJECTS IN THE WORLD Delete them all
 	//prepare SQL Text
 	//Maybe best to backup table before deleting the whole thing
 	sqlCommand = "DELETE FROM Objects";	 //will delete the whole object table.   Slightly risky but hey. (Could this be improved with an ACID test?)
 	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
-	sqlite3_step(pResults);
+	ErrCode = sqlite3_step(pResults);
+
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		break;
+	case 101:
+		//All good
+		break;
+	case 100:
+		//All good
+		break;
+	default:
+		//SOMETHING WENT WRONG ABORT!
+		MessageBox(NULL, L"An error occured!", L"Notification", MB_OK);
+		return;
+		break;
+	}
+
 
 	//Populate with our new objects
 	std::wstring sqlCommand2;
@@ -287,9 +355,97 @@ void ToolMain::onActionSave()
 			<< ")";
 		std::string sqlCommand2 = command.str();
 		rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand2.c_str(), -1, &pResults, 0);
-		sqlite3_step(pResults);	
+		ErrCode = sqlite3_step(pResults);
+
+		switch (ErrCode)
+		{
+		case 0:
+			//All good
+			break;
+		case 101:
+			//All good
+			break;
+		case 100:
+			//All good
+			break;
+		default:
+			//SOMETHING WENT WRONG, ATTEMPT FIX!
+			MessageBox(NULL, L"An error occured! Table will now be restored to previous version. SAVE FAILED", L"Notification", MB_OK);
+			sqlCommand = "DELETE FROM Objects";
+			rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+			ErrCode = sqlite3_step(pResults);
+			switch (ErrCode)
+			{
+			case 0:
+				//All good
+				MessageBox(NULL, L"Table succesfully cleared. Restoring data", L"Notification", MB_OK);
+				copyBackupTableIntoObjects();
+				break;
+			case 101:
+				//All good
+				MessageBox(NULL, L"Table succesfully cleared. Restoring data", L"Notification", MB_OK);
+				copyBackupTableIntoObjects();
+				break;
+			case 100:
+				//All good
+				MessageBox(NULL, L"Table succesfully cleared. Restoring data", L"Notification", MB_OK);
+				copyBackupTableIntoObjects();
+				break;
+			default:
+				//SOMETHING WENT VERY WRONG, DROP TABLE AND RESTORE FROM BACKUP (This is the nuclear option)!
+				MessageBox(NULL, L"Critical error! Unable to clear table. Table will now be deleted and re-made", L"Error", MB_OK);
+				sqlCommand = "DROP TABLE Objects";
+				rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+				ErrCode = sqlite3_step(pResults);
+				switch (ErrCode)
+				{
+				case 0:
+					//All good
+					remakeObjectTable();
+					break;
+				case 101:
+					//All good
+					remakeObjectTable();
+					break;
+				case 100:
+					//All good
+					remakeObjectTable();
+					break;
+				default:
+					//SOMETHING WENT WRONG ABORT!
+					MessageBox(NULL, L"Unrecoverable error encountered. Unable to re-create table. The database may be corrupted. Please attempt manual repairs.", L"Error", MB_OK);
+					return;
+					break;
+				}
+				break;
+			}
+			//Table will either be fixed here or unrecoverable
+			return;
+			break;
+		}
 	}
 	MessageBox(NULL, L"Objects Saved", L"Notification", MB_OK);
+	sqlCommand = "DROP TABLE backup";
+	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+	ErrCode = sqlite3_step(pResults);
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		break;
+	case 101:
+		//All good
+		break;
+	case 100:
+		//All good
+		break;
+	default:
+		//SOMETHING WENT WRONG ABORT!
+		MessageBox(NULL, L"ERROR: Unable to delete backup table. Please remove manually.", L"Notification", MB_OK);
+		return;
+		break;
+	}
+
 }
 
 void ToolMain::onActionSaveTerrain()
@@ -486,4 +642,101 @@ void ToolMain::CreateNewGameObject(CString texture, CString models)
 	m_d3dRenderer.CreateNewObject(textureFile,s);
 	//m_d3dRenderer.CreateNewObject();
 
+}
+
+void ToolMain::remakeObjectTable()
+{
+	int rc;
+	char* sqlCommand;
+	char* ErrMSG = 0;
+	int ErrCode = 0;
+	sqlite3_stmt* pResults;								//results of the query
+
+	//Before we do anything below, create a copy of the table
+	sqlCommand = "CREATE TABLE Objects AS SELECT * FROM backup";
+	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+	ErrCode = sqlite3_step(pResults);
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	case 101:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	case 100:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	default:
+		//If this fails we need the user to fix this manually
+		MessageBox(NULL, L"Unrecoverable error encountered. Unable to re-create table. The database may be corrupted. Please attempt manual repairs.", L"Error", MB_OK);
+		return;
+		break;
+	}
+}
+
+void ToolMain::copyBackupTableIntoObjects()
+{
+	int rc;
+	char* sqlCommand;
+	char* ErrMSG = 0;
+	int ErrCode = 0;
+	sqlite3_stmt* pResults;								//results of the query
+
+	sqlCommand = "INSERT INTO Objects SELECT * FROM backup";
+	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+	ErrCode = sqlite3_step(pResults);
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	case 101:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	case 100:
+		//All good
+		MessageBox(NULL, L"Success! Table was restored from backup.", L"Notification", MB_OK);
+		break;
+	default:
+		//SOMETHING WENT WRONG ABORT!
+		MessageBox(NULL, L"Unrecoverable error encountered. Unable to re-create table. The database may be corrupted. Please attempt manual repairs.", L"Error", MB_OK);
+		return;
+		break;
+	}
+}
+
+void ToolMain::copyObjectTableIntoBackup()
+{
+	int rc;
+	char* sqlCommand;
+	char* ErrMSG = 0;
+	int ErrCode = 0;
+	sqlite3_stmt* pResults;								//results of the query
+
+	sqlCommand = "INSERT INTO backup SELECT * FROM Objects";
+	rc = sqlite3_prepare_v2(m_databaseConnection, sqlCommand, -1, &pResults, 0);
+	ErrCode = sqlite3_step(pResults);
+	switch (ErrCode)
+	{
+	case 0:
+		//All good
+		break;
+	case 101:
+		//All good
+		break;
+	case 100:
+		//All good
+		break;
+	default:
+		//SOMETHING WENT WRONG ABORT!
+		MessageBox(NULL, L"Unrecoverable error encountered. Unable to copy into backup table. The table may be corrupted. Please manually delete it.", L"Error", MB_OK);
+		return;
+		break;
+	}
 }
