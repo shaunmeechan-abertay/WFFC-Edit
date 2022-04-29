@@ -1,5 +1,10 @@
 #include "Camera.h"
 
+//How to solve gimbal lock
+//1. Create a quaternion from yaw and pitch
+//2. Normalise
+//3. Convert quaternion to matrix
+
 void Camera::setup()
 {
 	//functional

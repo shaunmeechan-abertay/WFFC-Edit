@@ -9,6 +9,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_FILE_CONVERTMODEL, &MFCMain::MenuConvertModel)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
 	ON_COMMAND(ID_EDIT_CREATENEWOBJECT, &MFCMain::MenuEditCreate)
+	ON_COMMAND(ID_EDIT_OBJECTINSPECTOR, &MFCMain::MenuEditObjectInspector)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
@@ -127,6 +128,13 @@ void MFCMain::MenuEditCreate()
 	m_ToolObjectCreateDialogue.setToolSystem(&m_ToolSystem);
 	m_ToolObjectCreateDialogue.ShowWindow(SW_SHOW);
 	//m_ToolSystem.CreateNewGameObject();
+}
+
+void MFCMain::MenuEditObjectInspector()
+{
+	m_ToolObjectInspectorDialogue.Create(IDD_DIALOG5);
+	m_ToolObjectInspectorDialogue.setToolSystem(&m_ToolSystem);
+	m_ToolObjectInspectorDialogue.ShowWindow(SW_SHOW);
 }
 
 void MFCMain::ToolBarButton1()

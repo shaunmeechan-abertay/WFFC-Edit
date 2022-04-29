@@ -643,6 +643,21 @@ void ToolMain::CreateNewGameObject(CString texture, CString models, DirectX::XMV
 
 }
 
+DisplayObject* ToolMain::getSelectedGameObject()
+{
+	return m_d3dRenderer.getSelectedObject();
+}
+
+void ToolMain::updateAllDragArrows()
+{
+	m_d3dRenderer.updateAllArrowpositions();
+}
+
+std::shared_ptr<DX::DeviceResources> ToolMain::getD3DDevice()
+{
+	return m_d3dRenderer.getD3DDevices();
+}
+
 void ToolMain::remakeObjectTable()
 {
 	int rc;

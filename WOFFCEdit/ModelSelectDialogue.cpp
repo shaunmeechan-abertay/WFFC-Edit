@@ -89,5 +89,6 @@ void ModelSelectDialogue::OnBnClickedConvert()
 	//Conver the string to a char* as that is what system needs
 	const char* charCommand = stringCommand.c_str();
 	system(charCommand);
+	//This is what system will get roughly
 	//system("cmd.exe /k meshconvert cup._obj -cmo -flipz -y");
 }

@@ -975,10 +975,11 @@ void Game::clickAndDrag()
 						}
 					}
 				}
-						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
-						{
-							m_dragArrowList[j].updateDragArrow();
-						}
+				updateAllArrowpositions();
+						//for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+						//{
+						//	m_dragArrowList[j].updateDragArrow();
+						//}
 						//Old mouse code (try to get to work)
 						//Calculate the distance between where the mouse is and where the object is
 						//Get mouse Y (remember it's in screenspace so convert to world space)
@@ -1450,6 +1451,14 @@ void Game::cleanupAllArrows()
 	m_dragArrowList.clear();
 }
 
+void Game::updateAllArrowpositions()
+{
+	for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+	{
+		m_dragArrowList[j].updateDragArrow();
+	}
+}
+
 void Game::mouseCameraMovement()
 {
 	static float oldMouseX = 0.0f;
@@ -1487,6 +1496,16 @@ void Game::mouseCameraMovement()
 		oldMouseY = newMouseY;
 		return;
 	}
+}
+
+DisplayObject* Game::getSelectedObject()
+{
+	return selectedObject;
+}
+
+std::shared_ptr<DX::DeviceResources> Game::getD3DDevices()
+{
+	return m_deviceResources;
 }
 
 

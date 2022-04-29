@@ -70,6 +70,7 @@
     <ClCompile Include="UndoMove.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ObjectInspectorDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -130,6 +131,7 @@
     <ClInclude Include="UndoMove.h" />
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ObjectInspectorDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

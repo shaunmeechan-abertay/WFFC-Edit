@@ -103,8 +103,17 @@ public:
 	//Function for dealing with drag arrows
 	void cleanupAllArrows();
 
+	//Function that updates arrow positions
+	void updateAllArrowpositions();
+
 	//Function for handling camera movement with a mouse
 	void mouseCameraMovement();
+
+	//Selected object/objects getters
+	DisplayObject* getSelectedObject();
+
+	std::shared_ptr<DX::DeviceResources> getD3DDevices();
+
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

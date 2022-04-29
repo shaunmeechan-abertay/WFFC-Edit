@@ -22,9 +22,13 @@ public: //methods
 	afx_msg	void	onActionSave();											//save the current chunk
 	afx_msg void	onActionSaveTerrain();									//save chunk geometry
 
+	//Functions for interfacing with game
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
 	void	CreateNewGameObject(CString textures, CString models, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation);
+	DisplayObject* getSelectedGameObject();
+	void updateAllDragArrows();
+	std::shared_ptr<DX::DeviceResources> getD3DDevice();
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
