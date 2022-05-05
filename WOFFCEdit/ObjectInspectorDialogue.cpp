@@ -115,6 +115,12 @@ void ObjectInspectorDialogue::End()
 							lights->SetTexture(selectedObject->m_texture_diffuse);
 						}
 					});
+
+				//Set texture and model path
+				std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+				std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+				selectedObject->m_texturePath = "database/data" + filename;
+
 			}
 
 			if (modelFile != "")
@@ -128,6 +134,11 @@ void ObjectInspectorDialogue::End()
 				{
 					//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
 					selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+					std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+					std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+					filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+					relativePath = std::filesystem::relative(convertedString, "/database/data");
+					selectedObject->m_modelPath = "database/data" + filename;
 				}
 				catch (const std::exception& ex)
 				{
@@ -210,6 +221,11 @@ void ObjectInspectorDialogue::End()
 					lights->SetTexture(selectedObject->m_texture_diffuse);
 				}
 			});
+
+		//Set texture and model path
+		std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+		std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+		selectedObject->m_texturePath = "database/data" + filename;
 	}
 
 	if (modelFile != "")
@@ -223,6 +239,11 @@ void ObjectInspectorDialogue::End()
 		{
 			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
 			selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+			std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+			std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+			filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+			relativePath = std::filesystem::relative(convertedString, "/database/data");
+			selectedObject->m_modelPath = "database/data" + filename;
 		}
 		catch (const std::exception& ex)
 		{

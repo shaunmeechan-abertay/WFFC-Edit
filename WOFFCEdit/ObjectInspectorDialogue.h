@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <vector>
 #include <string>
+#include <filesystem>
+
 
 class ObjectInspectorDialogue : public CDialogEx
 {
