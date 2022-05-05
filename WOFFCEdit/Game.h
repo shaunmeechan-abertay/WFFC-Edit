@@ -113,6 +113,7 @@ public:
 	DisplayObject* getSelectedObject();
 
 	std::shared_ptr<DX::DeviceResources> getD3DDevices();
+	DirectX::IEffectFactory& getfxFactory();
 
 
 #ifdef DXTK_AUDIO

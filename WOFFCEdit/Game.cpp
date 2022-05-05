@@ -1508,6 +1508,11 @@ std::shared_ptr<DX::DeviceResources> Game::getD3DDevices()
 	return m_deviceResources;
 }
 
+DirectX::IEffectFactory& Game::getfxFactory()
+{
+	// TODO: insert return statement here
+	return *m_fxFactory;
+}
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.

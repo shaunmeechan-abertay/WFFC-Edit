@@ -658,6 +658,12 @@ std::shared_ptr<DX::DeviceResources> ToolMain::getD3DDevice()
 	return m_d3dRenderer.getD3DDevices();
 }
 
+DirectX::IEffectFactory& ToolMain::getFxFactory()
+{
+	// TODO: insert return statement here
+	return m_d3dRenderer.getfxFactory();
+}
+
 void ToolMain::remakeObjectTable()
 {
 	int rc;

@@ -29,6 +29,7 @@ public: //methods
 	DisplayObject* getSelectedGameObject();
 	void updateAllDragArrows();
 	std::shared_ptr<DX::DeviceResources> getD3DDevice();
+	DirectX::IEffectFactory& getFxFactory();
 
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk

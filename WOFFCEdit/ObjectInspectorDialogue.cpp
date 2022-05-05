@@ -36,10 +36,9 @@ void ObjectInspectorDialogue::DoDataExchange(CDataExchange* pDX)
 
 void ObjectInspectorDialogue::End()
 {
-	UpdateData(true);
-	DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);
-	DirectX::XMVECTOR scale = DirectX::XMVectorSet(XScale, YScale, ZScale, 0);
-	DirectX::XMVECTOR rotation = DirectX::XMVectorSet(XRot, YRot, ZRot, 0);
+	//NOTE: This only works for a single object.
+	//To fix this basically just loop all of this for all selected objects
+
 	//Here is where we get the selected object and work on it
 	DisplayObject* selectedObject = m_ToolSystem->getSelectedGameObject();
 	if (selectedObject == NULL)
@@ -47,6 +46,25 @@ void ObjectInspectorDialogue::End()
 		DestroyWindow();
 		return;
 	}
+	UpdateData(true);
+	DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);
+	//Scale can't be 0 so if it is default to what the obj has at the moment
+	if (XScale <= 0)
+	{
+		XScale = selectedObject->m_scale.x;
+	}
+	
+	if (YScale <= 0)
+	{
+		YScale = selectedObject->m_scale.y;
+	}
+
+	if (ZScale <= 0)
+	{
+		ZScale = selectedObject->m_scale.z;
+	}
+	DirectX::XMVECTOR scale = DirectX::XMVectorSet(XScale, YScale, ZScale, 0);
+	DirectX::XMVECTOR rotation = DirectX::XMVectorSet(XRot, YRot, ZRot, 0);
 
 	//set position
 	selectedObject->m_position.x = position.m128_f32[0];
@@ -81,6 +99,37 @@ void ObjectInspectorDialogue::End()
 			DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
 		}
 
+
+		//apply new texture to models effect
+		selectedObject->m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+			{
+				auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+				if (lights)
+				{
+					lights->SetTexture(selectedObject->m_texture_diffuse);
+				}
+			});
+	}
+
+	if (modelFile != "")
+	{
+		//load model
+		CT2A convertedCString(modelFile);
+		std::string convertedString(convertedCString);
+		std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
+
+		try
+		{
+			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+			selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+		}
+		catch (const std::exception& ex)
+		{
+			//SOMETHING WENT WRONG
+			std::printf(ex.what());
+			std::cout << ex.what() << std::endl;
+			return;
+		}
 	}
 
 	m_ToolSystem->updateAllDragArrows();
