@@ -27,6 +27,8 @@ public: //methods
 	void	UpdateInput(MSG *msg);
 	void	CreateNewGameObject(CString textures, CString models, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation);
 	DisplayObject* getSelectedGameObject();
+	std::vector<DisplayObject*> getSelectedObjects();
+
 	void updateAllDragArrows();
 	std::shared_ptr<DX::DeviceResources> getD3DDevice();
 	DirectX::IEffectFactory& getFxFactory();

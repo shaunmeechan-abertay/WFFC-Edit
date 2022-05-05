@@ -1503,6 +1503,11 @@ DisplayObject* Game::getSelectedObject()
 	return selectedObject;
 }
 
+std::vector<DisplayObject*> Game::getSelectedObjects()
+{
+	return selectedObjects;
+}
+
 std::shared_ptr<DX::DeviceResources> Game::getD3DDevices()
 {
 	return m_deviceResources;

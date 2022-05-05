@@ -48,6 +48,8 @@ void ObjectCreateDialogue::End()
 BOOL ObjectCreateDialogue::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	textureFile = "";
+	modelFile = "";
 	return TRUE;
 }
 

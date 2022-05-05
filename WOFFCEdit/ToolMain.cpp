@@ -648,6 +648,11 @@ DisplayObject* ToolMain::getSelectedGameObject()
 	return m_d3dRenderer.getSelectedObject();
 }
 
+std::vector<DisplayObject*> ToolMain::getSelectedObjects()
+{
+	return m_d3dRenderer.getSelectedObjects();
+}
+
 void ToolMain::updateAllDragArrows()
 {
 	m_d3dRenderer.updateAllArrowpositions();

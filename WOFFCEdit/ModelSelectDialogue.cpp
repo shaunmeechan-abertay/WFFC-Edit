@@ -32,6 +32,7 @@ void ModelSelectDialogue::End()
 BOOL ModelSelectDialogue::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	all_sel_files.clear();
 	return TRUE;
 }
 

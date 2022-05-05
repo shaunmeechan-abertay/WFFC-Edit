@@ -111,6 +111,7 @@ public:
 
 	//Selected object/objects getters
 	DisplayObject* getSelectedObject();
+	std::vector<DisplayObject*> getSelectedObjects();
 
 	std::shared_ptr<DX::DeviceResources> getD3DDevices();
 	DirectX::IEffectFactory& getfxFactory();

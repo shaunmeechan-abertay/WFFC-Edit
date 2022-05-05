@@ -38,6 +38,107 @@ void ObjectInspectorDialogue::End()
 {
 	//NOTE: This only works for a single object.
 	//To fix this basically just loop all of this for all selected objects
+	
+	std::vector<DisplayObject*> selectedObjects = m_ToolSystem->getSelectedObjects();
+
+	//Handle multiple objects
+	if (selectedObjects.empty() == false)
+	{
+		for (unsigned int i = 0; i < selectedObjects.size(); i++)
+		{
+			DisplayObject* selectedObject = selectedObjects.at(i);
+			if (selectedObject == NULL)
+			{
+				DestroyWindow();
+				return;
+			}
+			UpdateData(true);
+			DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);
+			//Scale can't be 0 so if it is default to what the obj has at the moment
+			if (XScale <= 0)
+			{
+				XScale = selectedObject->m_scale.x;
+			}
+
+			if (YScale <= 0)
+			{
+				YScale = selectedObject->m_scale.y;
+			}
+
+			if (ZScale <= 0)
+			{
+				ZScale = selectedObject->m_scale.z;
+			}
+			DirectX::XMVECTOR scale = DirectX::XMVectorSet(XScale, YScale, ZScale, 0);
+			DirectX::XMVECTOR rotation = DirectX::XMVectorSet(XRot, YRot, ZRot, 0);
+
+			//set position
+			selectedObject->m_position.x = position.m128_f32[0];
+			selectedObject->m_position.y = position.m128_f32[1];
+			selectedObject->m_position.z = position.m128_f32[2];
+
+			//setorientation
+			selectedObject->m_orientation.x = rotation.m128_f32[0];
+			selectedObject->m_orientation.y = rotation.m128_f32[1];
+			selectedObject->m_orientation.z = rotation.m128_f32[2];
+
+			//set scale
+			selectedObject->m_scale.x = scale.m128_f32[0];
+			selectedObject->m_scale.y = scale.m128_f32[1];
+			selectedObject->m_scale.z = scale.m128_f32[2];
+
+			//Check model and texture now
+			if (textureFile != "")
+			{
+				//There is a texture update
+				//Load Texture
+				HRESULT rs;
+				CT2A convertedCString(textureFile);
+				std::string convertedString(convertedCString);
+				std::wstring texturewstr = StringToWCHART(convertedString.c_str());								//convect string to Wchar
+				//This doesn't seem to work, I'm guessing pointer issue
+				rs = DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), texturewstr.c_str(), nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+
+				//if texture fails.  load error default
+				if (rs)
+				{
+					DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+				}
+
+
+				//apply new texture to models effect
+				selectedObject->m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+					{
+						auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
+						if (lights)
+						{
+							lights->SetTexture(selectedObject->m_texture_diffuse);
+						}
+					});
+			}
+
+			if (modelFile != "")
+			{
+				//load model
+				CT2A convertedCString(modelFile);
+				std::string convertedString(convertedCString);
+				std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
+
+				try
+				{
+					//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+					selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+				}
+				catch (const std::exception& ex)
+				{
+					//SOMETHING WENT WRONG
+					std::printf(ex.what());
+					std::cout << ex.what() << std::endl;
+					return;
+				}
+			}
+		}
+	}
 
 	//Here is where we get the selected object and work on it
 	DisplayObject* selectedObject = m_ToolSystem->getSelectedGameObject();
@@ -132,6 +233,8 @@ void ObjectInspectorDialogue::End()
 		}
 	}
 
+
+
 	m_ToolSystem->updateAllDragArrows();
 
 	DestroyWindow();
@@ -140,6 +243,8 @@ void ObjectInspectorDialogue::End()
 BOOL ObjectInspectorDialogue::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	textureFile = "";
+	modelFile = "";
 	return TRUE;
 }
 
