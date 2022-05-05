@@ -193,6 +193,7 @@
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TextureSelectDialogue.cpp" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="UndoManipulationCommand.cpp" />
     <ClCompile Include="UndoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +225,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="TextureSelectDialogue.h" />
     <ClInclude Include="ToolMain.h" />
+    <ClInclude Include="UndoManipulationCommand.h" />
     <ClInclude Include="UndoMove.h" />
   </ItemGroup>
   <ItemGroup>

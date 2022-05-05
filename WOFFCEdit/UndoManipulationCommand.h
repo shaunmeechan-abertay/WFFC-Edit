@@ -1,0 +1,22 @@
+#pragma once
+#include "Commands.h"
+class UndoManipulationCommand : public Commands
+{
+public:
+	UndoManipulationCommand();
+	//This copies in a display object (basically a copy command)
+	void setup(DisplayObject* object);
+	//This copies in a vector of display objects
+	void setup(std::vector<DisplayObject*>* objects);
+	//Perform action takes in the displayList
+	void performAction(std::vector<DisplayObject>* displayList);
+	DisplayObject getManipulatedObject();
+	std::vector<DisplayObject> getManipulatedObjects();
+
+private:
+	DisplayObject storedObject;
+	std::vector<DisplayObject> storedObjects;
+	DisplayObject manipulatedObject;
+	std::vector<DisplayObject> manipulatedObjects;
+};
+

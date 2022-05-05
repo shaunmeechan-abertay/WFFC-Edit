@@ -116,6 +116,8 @@ public:
 	std::shared_ptr<DX::DeviceResources> getD3DDevices();
 	DirectX::IEffectFactory& getfxFactory();
 
+	std::stack<Commands*> getCommandList();
+
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

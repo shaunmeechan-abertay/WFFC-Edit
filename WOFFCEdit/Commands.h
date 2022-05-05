@@ -14,7 +14,9 @@ public:
 		Copy,
 		Pase,
 		UndoMove,
-		Move
+		Move,
+		UndoManipulation,
+		RedoManipulation
 	};
 
 	CommandType type = CommandType::Default;

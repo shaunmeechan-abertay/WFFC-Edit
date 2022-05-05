@@ -340,13 +340,13 @@ void Game::Render()
 
     m_deviceResources->PIXEndEvent();
 
-	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-//	context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
+	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	m_displayChunk.RenderBatch(m_deviceResources);
 
     m_deviceResources->Present();
@@ -1517,6 +1517,11 @@ DirectX::IEffectFactory& Game::getfxFactory()
 {
 	// TODO: insert return statement here
 	return *m_fxFactory;
+}
+
+std::stack<Commands*> Game::getCommandList()
+{
+	return commandList;
 }
 
 #pragma region Direct3D Resources

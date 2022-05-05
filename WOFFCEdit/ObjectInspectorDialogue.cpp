@@ -38,12 +38,16 @@ void ObjectInspectorDialogue::End()
 {
 	//NOTE: This only works for a single object.
 	//To fix this basically just loop all of this for all selected objects
-	
+	gameSystem = m_ToolSystem->getGameSystem();
+
 	std::vector<DisplayObject*> selectedObjects = m_ToolSystem->getSelectedObjects();
 
 	//Handle multiple objects
 	if (selectedObjects.empty() == false)
 	{
+		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
+		undoManipulationCommand->setup(&selectedObjects);
+
 		for (unsigned int i = 0; i < selectedObjects.size(); i++)
 		{
 			DisplayObject* selectedObject = selectedObjects.at(i);
@@ -149,6 +153,9 @@ void ObjectInspectorDialogue::End()
 				}
 			}
 		}
+		DestroyWindow();
+		gameSystem->updateAllArrowpositions();
+		return;
 	}
 
 	//Here is where we get the selected object and work on it
@@ -158,6 +165,12 @@ void ObjectInspectorDialogue::End()
 		DestroyWindow();
 		return;
 	}
+	//Command stuff
+	UndoManipulationCommand* undoManipulationComand = new UndoManipulationCommand;
+	undoManipulationComand->setup(selectedObject);
+	Commands* command = undoManipulationComand;
+	gameSystem->getCommandList().push(command);
+
 	UpdateData(true);
 	DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);
 	//Scale can't be 0 so if it is default to what the obj has at the moment

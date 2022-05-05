@@ -3,6 +3,7 @@
 #include "afxwin.h"
 #include "ToolMain.h"
 #include "Game.h"
+#include "UndoManipulationCommand.h"
 #include <stdlib.h>
 #include <vector>
 #include <string>
