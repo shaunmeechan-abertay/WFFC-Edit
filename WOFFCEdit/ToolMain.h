@@ -26,13 +26,9 @@ public: //methods
 	void	Tick(MSG *msg);
 	void	UpdateInput(MSG *msg);
 	void	CreateNewGameObject(CString textures, CString models, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation);
-	DisplayObject* getSelectedGameObject();
+	Game* getGameSystem();
 	std::vector<DisplayObject*> getSelectedObjects();
-
-	void updateAllDragArrows();
-	std::shared_ptr<DX::DeviceResources> getD3DDevice();
-	DirectX::IEffectFactory& getFxFactory();
-
+	DisplayObject* getSelectedGameObject();
 public:	//variables
 	std::vector<SceneObject>    m_sceneGraph;	//our scenegraph storing all the objects in the current chunk
 	ChunkObject					m_chunk;		//our landscape chunk

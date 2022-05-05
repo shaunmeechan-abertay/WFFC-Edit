@@ -97,12 +97,12 @@ void ObjectInspectorDialogue::End()
 				std::string convertedString(convertedCString);
 				std::wstring texturewstr = StringToWCHART(convertedString.c_str());								//convect string to Wchar
 				//This doesn't seem to work, I'm guessing pointer issue
-				rs = DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), texturewstr.c_str(), nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+				rs = DirectX::CreateDDSTextureFromFile(gameSystem->getD3DDevices().get()->GetD3DDevice(),texturewstr.c_str(), nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
 
 				//if texture fails.  load error default
 				if (rs)
 				{
-					DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+					DirectX::CreateDDSTextureFromFile(gameSystem->getD3DDevices().get()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
 				}
 
 
@@ -133,7 +133,7 @@ void ObjectInspectorDialogue::End()
 				try
 				{
 					//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
-					selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+					selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(),gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
 					std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
 					std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
 					filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
@@ -203,12 +203,12 @@ void ObjectInspectorDialogue::End()
 		std::string convertedString(convertedCString);
 		std::wstring texturewstr = StringToWCHART(convertedString.c_str());								//convect string to Wchar
 		//This doesn't seem to work, I'm guessing pointer issue
-		rs = DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), texturewstr.c_str(), nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+		rs = DirectX::CreateDDSTextureFromFile(gameSystem->getD3DDevices().get()->GetD3DDevice(), texturewstr.c_str(), nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
 
 		//if texture fails.  load error default
 		if (rs)
 		{
-			DirectX::CreateDDSTextureFromFile(m_ToolSystem->getD3DDevice()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
+			DirectX::CreateDDSTextureFromFile(gameSystem->getD3DDevices().get()->GetD3DDevice(), L"database/data/Error.dds", nullptr, &selectedObject->m_texture_diffuse);	//load tex into Shader resource
 		}
 
 
@@ -238,7 +238,7 @@ void ObjectInspectorDialogue::End()
 		try
 		{
 			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
-			selectedObject->m_model = DirectX::Model::CreateFromCMO(m_ToolSystem->getD3DDevice()->GetD3DDevice(), modelwstr.c_str(), m_ToolSystem->getFxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+			selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(), gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
 			std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
 			std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
 			filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
@@ -254,9 +254,7 @@ void ObjectInspectorDialogue::End()
 		}
 	}
 
-
-
-	m_ToolSystem->updateAllDragArrows();
+	gameSystem->updateAllArrowpositions();
 
 	DestroyWindow();
 }
@@ -266,6 +264,7 @@ BOOL ObjectInspectorDialogue::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	textureFile = "";
 	modelFile = "";
+	gameSystem = m_ToolSystem->getGameSystem();
 	return TRUE;
 }
 

@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "afxwin.h"
 #include "ToolMain.h"
+#include "Game.h"
 #include <stdlib.h>
 #include <vector>
 #include <string>
@@ -17,7 +18,7 @@ public:
 
 	//Dialog Data
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_DIALOG4 };
+	enum { IDD = IDD_DIALOG5 };
 #endif
 
 protected:
@@ -27,6 +28,7 @@ protected:
 	CString textureFile;
 	CString modelFile;
 	ToolMain* m_ToolSystem;	//Instance of Tool System that we interface to. 
+	Game* gameSystem;
 	DECLARE_MESSAGE_MAP()
 public:
 	virtual BOOL OnInitDialog() override;

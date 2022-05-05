@@ -643,9 +643,9 @@ void ToolMain::CreateNewGameObject(CString texture, CString models, DirectX::XMV
 
 }
 
-DisplayObject* ToolMain::getSelectedGameObject()
+Game* ToolMain::getGameSystem()
 {
-	return m_d3dRenderer.getSelectedObject();
+	return &m_d3dRenderer;
 }
 
 std::vector<DisplayObject*> ToolMain::getSelectedObjects()
@@ -653,20 +653,9 @@ std::vector<DisplayObject*> ToolMain::getSelectedObjects()
 	return m_d3dRenderer.getSelectedObjects();
 }
 
-void ToolMain::updateAllDragArrows()
+DisplayObject* ToolMain::getSelectedGameObject()
 {
-	m_d3dRenderer.updateAllArrowpositions();
-}
-
-std::shared_ptr<DX::DeviceResources> ToolMain::getD3DDevice()
-{
-	return m_d3dRenderer.getD3DDevices();
-}
-
-DirectX::IEffectFactory& ToolMain::getFxFactory()
-{
-	// TODO: insert return statement here
-	return m_d3dRenderer.getfxFactory();
+	return m_d3dRenderer.getSelectedObject();
 }
 
 void ToolMain::remakeObjectTable()
