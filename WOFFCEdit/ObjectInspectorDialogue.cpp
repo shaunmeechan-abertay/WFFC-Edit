@@ -46,7 +46,7 @@ void ObjectInspectorDialogue::End()
 	if (selectedObjects.empty() == false)
 	{
 		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
-		undoManipulationCommand->setup(&selectedObjects);
+		undoManipulationCommand->setup(selectedObjects);
 
 		for (unsigned int i = 0; i < selectedObjects.size(); i++)
 		{

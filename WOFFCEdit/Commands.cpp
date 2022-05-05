@@ -50,6 +50,16 @@ std::vector<DirectX::XMVECTOR> Commands::getMovedObjectsOriginalPositions()
 	return std::vector<DirectX::XMVECTOR>();
 }
 
+DisplayObject* Commands::getStoredObject()
+{
+	return new DisplayObject();
+}
+
+std::vector<DisplayObject*> Commands::getStoredObjects()
+{
+	return std::vector<DisplayObject*>();
+}
+
 Commands::CommandType Commands::getType()
 {
 	return type;

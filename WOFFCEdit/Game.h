@@ -16,6 +16,8 @@
 #include "CopyCommand.h"
 #include "UndoMove.h"
 #include "MoveCommand.h"
+#include "UndoManipulationCommand.h"
+#include "RedoManipulationCommand.h"
 #include "DragArrow.h"
 #include "Camera.h"
 #include <vector>

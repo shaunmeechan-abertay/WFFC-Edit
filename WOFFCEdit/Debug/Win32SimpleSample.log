@@ -1,4 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  ObjectInspectorDialogue.cpp
-  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  UndoManipulationCommand.cpp
+M:\GitHub\WFFC-Edit\WOFFCEdit\UndoManipulationCommand.cpp(111,20): warning C4018: '<': signed/unsigned mismatch
   Win32SimpleSample.vcxproj -> M:\GitHub\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

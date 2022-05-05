@@ -1358,9 +1358,6 @@ std::vector<SceneObject> Game::getDisplayList()
 		//send completed object to scenegraph
 		objects.push_back(newSceneObject);
 	}
-
-
-
 	return objects;
 }
 
@@ -1721,7 +1718,43 @@ void Game::undoAction()
 		Commands* command = undoMoveCommand;
 		UndonecommandList.push(command);
 	}
-
+	else if (commandToUndo->getType() == Commands::CommandType::UndoManipulation)
+	{
+		//Redo manipulation
+		RedoManipulationCommand* redoManipulationCommand = new RedoManipulationCommand;
+		if (commandToUndo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			redoManipulationCommand->setup(commandToUndo->getStoredObjects());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			redoManipulationCommand->setup(commandToUndo->getStoredObject());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = redoManipulationCommand;
+		UndonecommandList.push(command);
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::RedoManipulation)
+	{
+		//Undo manipulation
+		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
+		if (commandToUndo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			undoManipulationCommand->setup(commandToUndo->getStoredObjects());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Single
+			undoManipulationCommand->setup(commandToUndo->getStoredObject());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = undoManipulationCommand;
+		UndonecommandList.push(command);
+	}
 }
 
 void Game::RedoAction()
