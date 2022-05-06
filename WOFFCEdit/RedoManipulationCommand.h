@@ -1,5 +1,6 @@
 #pragma once
 #include "Commands.h"
+#include <vector>
 class RedoManipulationCommand : public Commands
 {
 public:
@@ -16,6 +17,7 @@ public:
 private:
 	DisplayObject* storedObject;
 	DisplayObject tempObject;
+	std::vector<DisplayObject> tempObjects;
 	std::vector<DisplayObject*> storedObjects;
 
 };

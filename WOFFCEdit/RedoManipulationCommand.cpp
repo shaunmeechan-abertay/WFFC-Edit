@@ -67,63 +67,64 @@ void RedoManipulationCommand::setup(std::vector<DisplayObject*> objects)
 {
 	for (int i = 0; i < objects.size(); i++)
 	{
-		DisplayObject newObject;
+		DisplayObject* newObject = new DisplayObject;
 
 		//load model
-		newObject.m_model = objects.at(i)->m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
+		newObject->m_model = objects.at(i)->m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 		//Load Texture
-		newObject.m_texture_diffuse = objects.at(i)->m_texture_diffuse;
+		newObject->m_texture_diffuse = objects.at(i)->m_texture_diffuse;
 
 		//apply new texture to models effect
-		newObject.m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		newObject->m_model->UpdateEffects([&](DirectX::IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 			{
 				auto lights = dynamic_cast<DirectX::BasicEffect*>(effect);
 				if (lights)
 				{
-					lights->SetTexture(newObject.m_texture_diffuse);
+					lights->SetTexture(newObject->m_texture_diffuse);
 				}
 			});
 
 		//Set texture and model paths
-		newObject.m_texturePath = objects.at(i)->m_texturePath;
-		newObject.m_modelPath = objects.at(i)->m_modelPath;
+		newObject->m_texturePath = objects.at(i)->m_texturePath;
+		newObject->m_modelPath = objects.at(i)->m_modelPath;
 
 		//set position
-		newObject.m_position.x = objects.at(i)->m_position.x;
-		newObject.m_position.y = objects.at(i)->m_position.y + 5;
-		newObject.m_position.z = objects.at(i)->m_position.z;
+		newObject->m_position.x = objects.at(i)->m_position.x;
+		newObject->m_position.y = objects.at(i)->m_position.y;
+		newObject->m_position.z = objects.at(i)->m_position.z;
 
 		//setorientation
-		newObject.m_orientation.x = objects.at(i)->m_orientation.x;
-		newObject.m_orientation.y = objects.at(i)->m_orientation.y;
-		newObject.m_orientation.z = objects.at(i)->m_orientation.z;
+		newObject->m_orientation.x = objects.at(i)->m_orientation.x;
+		newObject->m_orientation.y = objects.at(i)->m_orientation.y;
+		newObject->m_orientation.z = objects.at(i)->m_orientation.z;
 
 		//set scale
-		newObject.m_scale.x = objects.at(i)->m_scale.x;
-		newObject.m_scale.y = objects.at(i)->m_scale.y;
-		newObject.m_scale.z = objects.at(i)->m_scale.z;
+		newObject->m_scale.x = objects.at(i)->m_scale.x;
+		newObject->m_scale.y = objects.at(i)->m_scale.y;
+		newObject->m_scale.z = objects.at(i)->m_scale.z;
 
 		//set wireframe / render flags
-		newObject.m_render = objects.at(i)->m_render;
-		newObject.m_wireframe = false;
+		newObject->m_render = objects.at(i)->m_render;
+		newObject->m_wireframe = false;
 
-		newObject.m_light_type = objects.at(i)->m_light_type;
-		newObject.m_light_diffuse_r = objects.at(i)->m_light_diffuse_r;
-		newObject.m_light_diffuse_g = objects.at(i)->m_light_diffuse_g;
-		newObject.m_light_diffuse_b = objects.at(i)->m_light_diffuse_b;
-		newObject.m_light_specular_r = objects.at(i)->m_light_specular_r;
-		newObject.m_light_specular_g = objects.at(i)->m_light_specular_g;
-		newObject.m_light_specular_b = objects.at(i)->m_light_specular_b;
-		newObject.m_light_spot_cutoff = objects.at(i)->m_light_spot_cutoff;
-		newObject.m_light_constant = objects.at(i)->m_light_constant;
-		newObject.m_light_linear = objects.at(i)->m_light_linear;
-		newObject.m_light_quadratic = objects.at(i)->m_light_quadratic;
+		newObject->m_light_type = objects.at(i)->m_light_type;
+		newObject->m_light_diffuse_r = objects.at(i)->m_light_diffuse_r;
+		newObject->m_light_diffuse_g = objects.at(i)->m_light_diffuse_g;
+		newObject->m_light_diffuse_b = objects.at(i)->m_light_diffuse_b;
+		newObject->m_light_specular_r = objects.at(i)->m_light_specular_r;
+		newObject->m_light_specular_g = objects.at(i)->m_light_specular_g;
+		newObject->m_light_specular_b = objects.at(i)->m_light_specular_b;
+		newObject->m_light_spot_cutoff = objects.at(i)->m_light_spot_cutoff;
+		newObject->m_light_constant = objects.at(i)->m_light_constant;
+		newObject->m_light_linear = objects.at(i)->m_light_linear;
+		newObject->m_light_quadratic = objects.at(i)->m_light_quadratic;
 		//Assign ID
-		newObject.m_ID = objects.at(i)->m_ID;
+		newObject->m_ID = objects.at(i)->m_ID;
 
-		storedObjects.push_back(&newObject);
+		storedObjects.push_back(newObject);
 	}
+	tempObjects.reserve(storedObjects.size());
 }
 
 void RedoManipulationCommand::performAction(std::vector<DisplayObject>* displayList)
@@ -149,9 +150,9 @@ void RedoManipulationCommand::performAction(std::vector<DisplayObject>* displayL
 			{
 				if (storedObjects[i]->m_ID == displayList->at(j).m_ID)
 				{
-					tempObject = displayList->at(i);
+					tempObjects.push_back(displayList->at(j));
 					displayList->at(j) = *storedObjects[i];
-					storedObjects.at(i) = &tempObject;
+					storedObjects.at(i) = &tempObjects.at(i);
 					break;
 				}
 			}
