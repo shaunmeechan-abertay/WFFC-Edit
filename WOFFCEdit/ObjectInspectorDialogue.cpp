@@ -96,6 +96,33 @@ void ObjectInspectorDialogue::End()
 			selectedObject->m_scale.z = scale.m128_f32[2];
 
 			//Check model and texture now
+			if (modelFile != "")
+			{
+				//load model
+				CT2A convertedCString(modelFile);
+				std::string convertedString(convertedCString);
+				std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
+
+				try
+				{
+					//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+					selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(), gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+					std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+					std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+					filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+					relativePath = std::filesystem::relative(convertedString, "/database/data");
+					selectedObject->m_modelPath = "database/data" + filename;
+
+				}
+				catch (const std::exception& ex)
+				{
+					//SOMETHING WENT WRONG
+					std::printf(ex.what());
+					std::cout << ex.what() << std::endl;
+					return;
+				}
+			}
+
 			if (textureFile != "")
 			{
 				//There is a texture update
@@ -129,33 +156,6 @@ void ObjectInspectorDialogue::End()
 				std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
 				selectedObject->m_texturePath = "database/data" + filename;
 
-			}
-
-			if (modelFile != "")
-			{
-				//load model
-				CT2A convertedCString(modelFile);
-				std::string convertedString(convertedCString);
-				std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
-
-				try
-				{
-					//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
-					selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(),gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
-					std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
-					std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
-					filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
-					relativePath = std::filesystem::relative(convertedString, "/database/data");
-					selectedObject->m_modelPath = "database/data" + filename;
-
-				}
-				catch (const std::exception& ex)
-				{
-					//SOMETHING WENT WRONG
-					std::printf(ex.what());
-					std::cout << ex.what() << std::endl;
-					return;
-				}
 			}
 		}
 		DestroyWindow();
@@ -213,6 +213,33 @@ void ObjectInspectorDialogue::End()
 	selectedObject->m_scale.z = scale.m128_f32[2];
 
 	//Check model and texture now
+	if (modelFile != "")
+	{
+		//load model
+		CT2A convertedCString(modelFile);
+		std::string convertedString(convertedCString);
+		std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
+
+		try
+		{
+			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
+			selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(), gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+			std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+			std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
+			filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
+			relativePath = std::filesystem::relative(convertedString, "/database/data");
+			selectedObject->m_modelPath = "database/data" + filename;
+		}
+		catch (const std::exception& ex)
+		{
+			//SOMETHING WENT WRONG
+			std::printf(ex.what());
+			std::cout << ex.what() << std::endl;
+			return;
+		}
+	}
+
+
 	if (textureFile != "")
 	{
 		//There is a texture update
@@ -245,32 +272,6 @@ void ObjectInspectorDialogue::End()
 		std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
 		std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
 		selectedObject->m_texturePath = "database/data" + filename;
-	}
-
-	if (modelFile != "")
-	{
-		//load model
-		CT2A convertedCString(modelFile);
-		std::string convertedString(convertedCString);
-		std::wstring modelwstr = StringToWCHART(convertedString);					//convect string to Wchar
-
-		try
-		{
-			//This is very strange as it expects a dds with the same name as the model even if the dds isn't used
-			selectedObject->m_model = DirectX::Model::CreateFromCMO(gameSystem->getD3DDevices().get()->GetD3DDevice(), modelwstr.c_str(), gameSystem->getfxFactory(), true);	//get DXSDK to load model "False" for LH coordinate system (maya)
-			std::string filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
-			std::filesystem::path relativePath = std::filesystem::relative(convertedString, "/database/data");
-			filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
-			relativePath = std::filesystem::relative(convertedString, "/database/data");
-			selectedObject->m_modelPath = "database/data" + filename;
-		}
-		catch (const std::exception& ex)
-		{
-			//SOMETHING WENT WRONG
-			std::printf(ex.what());
-			std::cout << ex.what() << std::endl;
-			return;
-		}
 	}
 
 	gameSystem->updateAllArrowpositions();
