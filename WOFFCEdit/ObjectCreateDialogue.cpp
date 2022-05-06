@@ -48,6 +48,8 @@ void ObjectCreateDialogue::End()
 BOOL ObjectCreateDialogue::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	textureFile = "";
+	modelFile = "";
 	return TRUE;
 }
 
@@ -78,7 +80,6 @@ void ObjectCreateDialogue::OnBnClickedLoadTexture()
 void ObjectCreateDialogue::OnBnClickedLoadModel()
 {
 	//Credit: https://www.programmerall.com/article/50391274688/ 
-//Issue, this only deals with jpg but texture could be any image, should at least handle png
 	CFileDialog dlg(TRUE, _T("*.cmo"), NULL, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST, _T("Model(*.cmo)|*.cmo|"), NULL);
 	dlg.m_ofn.lpstrTitle = _T("Select Model");
 	CString filename;

@@ -1,12 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  CreateCommand.cpp
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(83,24): warning C4018: '>': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(98,20): warning C4018: '<': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(100,23): warning C4018: '>': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(106,20): warning C4018: '<': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(247,23): warning C4018: '>': signed/unsigned mismatch
-D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\CreateCommand.cpp(343,23): warning C4018: '>': signed/unsigned mismatch
-  ObjectCreateDialogue.cpp
+  ObjectInspectorDialogue.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-  Generating Code...
   Win32SimpleSample.vcxproj -> D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

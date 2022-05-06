@@ -185,13 +185,16 @@
     <ClCompile Include="ModelSelectDialogue.cpp" />
     <ClCompile Include="MoveCommand.cpp" />
     <ClCompile Include="ObjectCreateDialogue.cpp" />
+    <ClCompile Include="ObjectInspectorDialogue.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
+    <ClCompile Include="RedoManipulationCommand.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="TextureSelectDialogue.cpp" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="UndoManipulationCommand.cpp" />
     <ClCompile Include="UndoMove.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -212,7 +215,9 @@
     <ClInclude Include="ModelSelectDialogue.h" />
     <ClInclude Include="MoveCommand.h" />
     <ClInclude Include="ObjectCreateDialogue.h" />
+    <ClInclude Include="ObjectInspectorDialogue.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RedoManipulationCommand.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />
@@ -222,6 +227,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="TextureSelectDialogue.h" />
     <ClInclude Include="ToolMain.h" />
+    <ClInclude Include="UndoManipulationCommand.h" />
     <ClInclude Include="UndoMove.h" />
   </ItemGroup>
   <ItemGroup>

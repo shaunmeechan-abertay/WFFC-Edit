@@ -12,6 +12,7 @@
 #include "TextureSelectDialogue.h"
 #include "ModelSelectDialogue.h"
 #include "ObjectCreateDialogue.h"
+#include "ObjectInspectorDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -32,6 +33,7 @@ private:
 	TextureSelectDialogue m_ToolTextureSelectDialogue;
 	ModelSelectDialogue m_ToolModelSelectDialogue;
 	ObjectCreateDialogue m_ToolObjectCreateDialogue;
+	ObjectInspectorDialogue m_ToolObjectInspectorDialogue;
 
 	Game m_GameSystem; //Instance of game System that we interface to.
 	int m_width;		
@@ -44,6 +46,7 @@ private:
 	afx_msg void MenuConvertModel();
 	afx_msg void MenuEditSelect();
 	afx_msg void MenuEditCreate();
+	afx_msg void MenuEditObjectInspector();
 	afx_msg	void ToolBarButton1();
 
 

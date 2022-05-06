@@ -643,6 +643,21 @@ void ToolMain::CreateNewGameObject(CString texture, CString models, DirectX::XMV
 
 }
 
+Game* ToolMain::getGameSystem()
+{
+	return &m_d3dRenderer;
+}
+
+std::vector<DisplayObject*> ToolMain::getSelectedObjects()
+{
+	return m_d3dRenderer.getSelectedObjects();
+}
+
+DisplayObject* ToolMain::getSelectedGameObject()
+{
+	return m_d3dRenderer.getSelectedObject();
+}
+
 void ToolMain::remakeObjectTable()
 {
 	int rc;

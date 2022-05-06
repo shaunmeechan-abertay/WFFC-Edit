@@ -173,10 +173,11 @@ void Game::Update(DX::StepTimer const& timer)
 			DeleteCommand* deleteCommand =  new DeleteCommand;
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
+			cleanupAllArrows();
 			Commands* command = deleteCommand;
 			commandList.push(command);
 		}
-		if (selectedObject != NULL)
+		else if (selectedObject != NULL)
 		{
 			DeleteCommand* deleteCommand = new DeleteCommand;
 			cleanupAllArrows();
@@ -340,13 +341,13 @@ void Game::Render()
 
     m_deviceResources->PIXEndEvent();
 
-	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
 	context->RSSetState(m_states->CullNone());
-//	context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
+	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	m_displayChunk.RenderBatch(m_deviceResources);
 
     m_deviceResources->Present();
@@ -975,10 +976,12 @@ void Game::clickAndDrag()
 						}
 					}
 				}
-						for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
-						{
-							m_dragArrowList[j].updateDragArrow();
-						}
+				updateAllArrowpositions();
+				m_DragStarted = true;
+						//for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+						//{
+						//	m_dragArrowList[j].updateDragArrow();
+						//}
 						//Old mouse code (try to get to work)
 						//Calculate the distance between where the mouse is and where the object is
 						//Get mouse Y (remember it's in screenspace so convert to world space)
@@ -1073,6 +1076,18 @@ void Game::checkForDragArrow()
 }
 void Game::dragFinished()
 {
+	//BUG!: This is called even when an MFC window is open, this floods the command list with bad moves
+	//To fix: Try to detect when MFC is open and ignore these clicks
+
+	if (m_DragStarted != true)
+	{
+		return;
+	}
+	else
+	{
+		m_DragStarted = false;
+	}
+
 	if (selectedObjects.empty() == true)
 	{
 		if (selectedObject != NULL)
@@ -1357,9 +1372,6 @@ std::vector<SceneObject> Game::getDisplayList()
 		//send completed object to scenegraph
 		objects.push_back(newSceneObject);
 	}
-
-
-
 	return objects;
 }
 
@@ -1450,6 +1462,14 @@ void Game::cleanupAllArrows()
 	m_dragArrowList.clear();
 }
 
+void Game::updateAllArrowpositions()
+{
+	for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
+	{
+		m_dragArrowList[j].updateDragArrow();
+	}
+}
+
 void Game::mouseCameraMovement()
 {
 	static float oldMouseX = 0.0f;
@@ -1489,6 +1509,31 @@ void Game::mouseCameraMovement()
 	}
 }
 
+DisplayObject* Game::getSelectedObject()
+{
+	return selectedObject;
+}
+
+std::vector<DisplayObject*> Game::getSelectedObjects()
+{
+	return selectedObjects;
+}
+
+std::shared_ptr<DX::DeviceResources> Game::getD3DDevices()
+{
+	return m_deviceResources;
+}
+
+DirectX::IEffectFactory& Game::getfxFactory()
+{
+	// TODO: insert return statement here
+	return *m_fxFactory;
+}
+
+std::stack<Commands*>* Game::getCommandList()
+{
+	return &commandList;
+}
 
 #pragma region Direct3D Resources
 // These are the resources that depend on the device.
@@ -1687,7 +1732,45 @@ void Game::undoAction()
 		Commands* command = undoMoveCommand;
 		UndonecommandList.push(command);
 	}
-
+	else if (commandToUndo->getType() == Commands::CommandType::UndoManipulation)
+	{
+		//Redo manipulation
+		RedoManipulationCommand* redoManipulationCommand = new RedoManipulationCommand;
+		if (commandToUndo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			redoManipulationCommand->setup(commandToUndo->getStoredObjects());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			redoManipulationCommand->setup(commandToUndo->getStoredObject());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = redoManipulationCommand;
+		UndonecommandList.push(command);
+		updateAllArrowpositions();
+	}
+	else if (commandToUndo->getType() == Commands::CommandType::RedoManipulation)
+	{
+		//Undo manipulation
+		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
+		if (commandToUndo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			undoManipulationCommand->setup(commandToUndo->getStoredObjects());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Single
+			undoManipulationCommand->setup(commandToUndo->getStoredObject());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = undoManipulationCommand;
+		UndonecommandList.push(command);
+		updateAllArrowpositions();
+	}
 }
 
 void Game::RedoAction()
@@ -1784,6 +1867,45 @@ void Game::RedoAction()
 		}
 		Commands* command = undoMoveCommand;
 		commandList.push(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::UndoManipulation)
+	{
+		//Redo manipulation
+		RedoManipulationCommand* redoManipulationCommand = new RedoManipulationCommand;
+		if (commandToDo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			redoManipulationCommand->setup(commandToDo->getStoredObjects());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			redoManipulationCommand->setup(commandToDo->getStoredObject());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = redoManipulationCommand;
+		commandList.push(command);
+		updateAllArrowpositions();
+	}
+	else if (commandToDo->getType() == Commands::CommandType::RedoManipulation)
+	{
+		//Undo manipulation
+		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
+		if (commandToDo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			undoManipulationCommand->setup(commandToDo->getStoredObjects());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Single
+			undoManipulationCommand->setup(commandToDo->getStoredObject());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = undoManipulationCommand;
+		commandList.push(command);
+		updateAllArrowpositions();
 	}
 
 }

@@ -16,6 +16,8 @@
 #include "CopyCommand.h"
 #include "UndoMove.h"
 #include "MoveCommand.h"
+#include "UndoManipulationCommand.h"
+#include "RedoManipulationCommand.h"
 #include "DragArrow.h"
 #include "Camera.h"
 #include <vector>
@@ -103,8 +105,21 @@ public:
 	//Function for dealing with drag arrows
 	void cleanupAllArrows();
 
+	//Function that updates arrow positions
+	void updateAllArrowpositions();
+
 	//Function for handling camera movement with a mouse
 	void mouseCameraMovement();
+
+	//Selected object/objects getters
+	DisplayObject* getSelectedObject();
+	std::vector<DisplayObject*> getSelectedObjects();
+
+	std::shared_ptr<DX::DeviceResources> getD3DDevices();
+	DirectX::IEffectFactory& getfxFactory();
+
+	std::stack<Commands*>* getCommandList();
+
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -131,6 +146,7 @@ private:
 	RECT								m_ScreenDimensions;
 	//functionality
 	float								m_movespeed;
+	bool								m_DragStarted;
 
 	//camera
 	Camera								m_camera;

@@ -14,7 +14,9 @@ public:
 		Copy,
 		Pase,
 		UndoMove,
-		Move
+		Move,
+		UndoManipulation,
+		RedoManipulation
 	};
 
 	CommandType type = CommandType::Default;
@@ -33,6 +35,9 @@ public:
 	virtual std::vector<int> getMovedObjectsIDs();
 	virtual DirectX::XMVECTOR getMovedObjectsOriginalPosition();
 	virtual std::vector<DirectX::XMVECTOR> getMovedObjectsOriginalPositions();
+	//These are used for object manipulation
+	virtual DisplayObject* getStoredObject();
+	virtual std::vector<DisplayObject*> getStoredObjects();
 	//Used in all
 	virtual CommandType getType();
 };
