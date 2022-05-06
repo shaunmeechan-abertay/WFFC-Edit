@@ -173,10 +173,11 @@ void Game::Update(DX::StepTimer const& timer)
 			DeleteCommand* deleteCommand =  new DeleteCommand;
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
+			cleanupAllArrows();
 			Commands* command = deleteCommand;
 			commandList.push(command);
 		}
-		if (selectedObject != NULL)
+		else if (selectedObject != NULL)
 		{
 			DeleteCommand* deleteCommand = new DeleteCommand;
 			cleanupAllArrows();

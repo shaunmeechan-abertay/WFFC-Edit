@@ -24,18 +24,28 @@ void DeleteCommand::performAction(std::vector<DisplayObject> &objects, int ID)
 	}
 }
 
-void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject*>& ObjectsToDelete)
+void DeleteCommand::performAction(std::vector<DisplayObject>&objects, std::vector<DisplayObject*> ObjectsToDelete)
 {
+	//This is broken...
+	//This is because the elements in selected object are stored as pointers
+	//So when data is deleted from the display list the selcted object adapts
+	//So what we need to do is take out the objects in ObjectToDelete (really only the IDs)
+	std::vector<int> IDs;
+	for (unsigned int i = 0; i < ObjectsToDelete.size(); i++)
+	{
+		IDs.push_back(ObjectsToDelete.at(i)->m_ID);
+	}
 
-	for (unsigned int  i = 0; i < (unsigned)ObjectsToDelete.size(); i++)
+	for (unsigned int  i = 0; i < (unsigned)IDs.size(); i++)
 	{
 		for (unsigned int j = 0; j < (unsigned)objects.size(); j++)
 		{
-			if (objects[j].m_ID == ObjectsToDelete.at(i)->m_ID)
+			if (objects.at(j).m_ID == IDs.at(i))
 			{
 				objects.at(j).m_wireframe = false;
 				deletedObjects.push_back(objects.at(j));
 				objects.erase(objects.begin() + j);
+				//objects.at(j).m_position.y = 10;
 				break;
 			}
 		}
