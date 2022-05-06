@@ -976,6 +976,7 @@ void Game::clickAndDrag()
 					}
 				}
 				updateAllArrowpositions();
+				m_DragStarted = true;
 						//for (unsigned int j = 0; j < m_dragArrowList.size(); j++)
 						//{
 						//	m_dragArrowList[j].updateDragArrow();
@@ -1076,6 +1077,16 @@ void Game::dragFinished()
 {
 	//BUG!: This is called even when an MFC window is open, this floods the command list with bad moves
 	//To fix: Try to detect when MFC is open and ignore these clicks
+
+	if (m_DragStarted != true)
+	{
+		return;
+	}
+	else
+	{
+		m_DragStarted = false;
+	}
+
 	if (selectedObjects.empty() == true)
 	{
 		if (selectedObject != NULL)
@@ -1737,6 +1748,7 @@ void Game::undoAction()
 		}
 		Commands* command = redoManipulationCommand;
 		UndonecommandList.push(command);
+		updateAllArrowpositions();
 	}
 	else if (commandToUndo->getType() == Commands::CommandType::RedoManipulation)
 	{
@@ -1756,6 +1768,7 @@ void Game::undoAction()
 		}
 		Commands* command = undoManipulationCommand;
 		UndonecommandList.push(command);
+		updateAllArrowpositions();
 	}
 }
 
@@ -1871,6 +1884,7 @@ void Game::RedoAction()
 		}
 		Commands* command = redoManipulationCommand;
 		commandList.push(command);
+		updateAllArrowpositions();
 	}
 	else if (commandToDo->getType() == Commands::CommandType::RedoManipulation)
 	{
@@ -1890,6 +1904,7 @@ void Game::RedoAction()
 		}
 		Commands* command = undoManipulationCommand;
 		commandList.push(command);
+		updateAllArrowpositions();
 	}
 
 }

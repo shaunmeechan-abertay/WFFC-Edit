@@ -146,6 +146,7 @@ private:
 	RECT								m_ScreenDimensions;
 	//functionality
 	float								m_movespeed;
+	bool								m_DragStarted;
 
 	//camera
 	Camera								m_camera;

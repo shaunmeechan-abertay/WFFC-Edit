@@ -31,7 +31,7 @@ void RedoManipulationCommand::setup(DisplayObject* object)
 
 	//set position
 	storedObject->m_position.x = object->m_position.x;
-	storedObject->m_position.y = object->m_position.y + 5;
+	storedObject->m_position.y = object->m_position.y;
 	storedObject->m_position.z = object->m_position.z;
 
 	//setorientation
@@ -135,9 +135,9 @@ void RedoManipulationCommand::performAction(std::vector<DisplayObject>* displayL
 		{
 			if (storedObject->m_ID == displayList->at(i).m_ID)
 			{
-				DisplayObject* temp = &displayList->at(i);
+				tempObject = displayList->at(i);
 				displayList->at(i) = *storedObject;
-				storedObject = temp;
+				storedObject = &tempObject;
 			}
 		}
 	}
@@ -149,9 +149,9 @@ void RedoManipulationCommand::performAction(std::vector<DisplayObject>* displayL
 			{
 				if (storedObjects[i]->m_ID == displayList->at(j).m_ID)
 				{
-					DisplayObject* temp = &displayList->at(i);
+					tempObject = displayList->at(i);
 					displayList->at(j) = *storedObjects[i];
-					storedObjects.at(i) = temp;
+					storedObjects.at(i) = &tempObject;
 					break;
 				}
 			}

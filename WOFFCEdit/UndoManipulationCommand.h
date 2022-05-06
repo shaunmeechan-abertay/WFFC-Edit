@@ -15,6 +15,7 @@ public:
 
 private:
 	DisplayObject* storedObject;
+	DisplayObject tempObject;
 	std::vector<DisplayObject*> storedObjects;
 
 };
