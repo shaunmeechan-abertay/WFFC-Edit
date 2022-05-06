@@ -47,6 +47,10 @@ void ObjectInspectorDialogue::End()
 	{
 		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
 		undoManipulationCommand->setup(selectedObjects);
+		//Push command to stack
+		Commands* command = undoManipulationCommand;
+		gameSystem->getCommandList()->push(command);
+
 
 		for (unsigned int i = 0; i < selectedObjects.size(); i++)
 		{
@@ -143,6 +147,7 @@ void ObjectInspectorDialogue::End()
 					filename = convertedString.substr(convertedString.rfind("\\"), convertedString.length());
 					relativePath = std::filesystem::relative(convertedString, "/database/data");
 					selectedObject->m_modelPath = "database/data" + filename;
+
 				}
 				catch (const std::exception& ex)
 				{
@@ -166,10 +171,11 @@ void ObjectInspectorDialogue::End()
 		return;
 	}
 	//Command stuff
-	UndoManipulationCommand* undoManipulationComand = new UndoManipulationCommand;
-	undoManipulationComand->setup(selectedObject);
-	Commands* command = undoManipulationComand;
-	gameSystem->getCommandList().push(command);
+	UndoManipulationCommand* singleUndoManipulationComand = new UndoManipulationCommand;
+	singleUndoManipulationComand->setup(selectedObject);
+	Commands* command = singleUndoManipulationComand;
+	gameSystem->getCommandList()->push(command);
+	gameSystem->getCommandList();
 
 	UpdateData(true);
 	DirectX::XMVECTOR position = DirectX::XMVectorSet(XPos, YPos, ZPos, 0);

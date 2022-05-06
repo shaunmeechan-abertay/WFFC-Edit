@@ -1074,6 +1074,8 @@ void Game::checkForDragArrow()
 }
 void Game::dragFinished()
 {
+	//BUG!: This is called even when an MFC window is open, this floods the command list with bad moves
+	//To fix: Try to detect when MFC is open and ignore these clicks
 	if (selectedObjects.empty() == true)
 	{
 		if (selectedObject != NULL)
@@ -1516,9 +1518,9 @@ DirectX::IEffectFactory& Game::getfxFactory()
 	return *m_fxFactory;
 }
 
-std::stack<Commands*> Game::getCommandList()
+std::stack<Commands*>* Game::getCommandList()
 {
-	return commandList;
+	return &commandList;
 }
 
 #pragma region Direct3D Resources
@@ -1850,6 +1852,43 @@ void Game::RedoAction()
 			m_dragArrowList[j].updateDragArrow();
 		}
 		Commands* command = undoMoveCommand;
+		commandList.push(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::UndoManipulation)
+	{
+		//Redo manipulation
+		RedoManipulationCommand* redoManipulationCommand = new RedoManipulationCommand;
+		if (commandToDo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			redoManipulationCommand->setup(commandToDo->getStoredObjects());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			redoManipulationCommand->setup(commandToDo->getStoredObject());
+			redoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = redoManipulationCommand;
+		commandList.push(command);
+	}
+	else if (commandToDo->getType() == Commands::CommandType::RedoManipulation)
+	{
+		//Undo manipulation
+		UndoManipulationCommand* undoManipulationCommand = new UndoManipulationCommand;
+		if (commandToDo->getStoredObjects().empty() == false)
+		{
+			//Multi
+			undoManipulationCommand->setup(commandToDo->getStoredObjects());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		else
+		{
+			//Single
+			undoManipulationCommand->setup(commandToDo->getStoredObject());
+			undoManipulationCommand->performAction(&m_displayList);
+		}
+		Commands* command = undoManipulationCommand;
 		commandList.push(command);
 	}
 

@@ -7,6 +7,7 @@ RedoManipulationCommand::RedoManipulationCommand()
 
 void RedoManipulationCommand::setup(DisplayObject* object)
 {
+	storedObject = new DisplayObject;
 	//load model
 	storedObject->m_model = object->m_model;	//get DXSDK to load model "False" for LH coordinate system (maya)
 
