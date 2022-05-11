@@ -167,6 +167,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
+		m_displayChunk.FlattenTerrain();
 		inputDown = true;
 		if (selectedObjects.empty() == false)
 		{
