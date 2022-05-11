@@ -167,7 +167,6 @@ void Game::Update(DX::StepTimer const& timer)
 
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
-		m_displayChunk.FlattenTerrain();
 		inputDown = true;
 		if (selectedObjects.empty() == false)
 		{
@@ -373,6 +372,11 @@ void Game::Clear()
     context->RSSetViewports(1, &viewport);
 
     m_deviceResources->PIXEndEvent();
+}
+
+void Game::flattenTerrain()
+{
+	m_displayChunk.FlattenTerrain();
 }
 
 void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)

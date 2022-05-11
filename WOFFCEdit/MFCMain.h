@@ -47,6 +47,7 @@ private:
 	afx_msg void MenuEditSelect();
 	afx_msg void MenuEditCreate();
 	afx_msg void MenuEditObjectInspector();
+	afx_msg void MenuEditFlattenTerrain();
 	afx_msg	void ToolBarButton1();
 
 

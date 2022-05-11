@@ -32,13 +32,14 @@
 #define ID_FILE_CONVERTMODEL            40007
 #define ID_EDIT_CREATENEWOBJECT         40008
 #define ID_EDIT_OBJECTINSPECTOR         40009
+#define ID_EDIT_FLATTENTERRAIN          40010
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        118
-#define _APS_NEXT_COMMAND_VALUE         40010
+#define _APS_NEXT_COMMAND_VALUE         40011
 #define _APS_NEXT_CONTROL_VALUE         1006
 #define _APS_NEXT_SYMED_VALUE           102
 #endif

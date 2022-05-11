@@ -11,6 +11,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_EDIT_CREATENEWOBJECT, &MFCMain::MenuEditCreate)
 	ON_COMMAND(ID_EDIT_OBJECTINSPECTOR, &MFCMain::MenuEditObjectInspector)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
+	ON_COMMAND(ID_EDIT_FLATTENTERRAIN,	&MFCMain::MenuEditFlattenTerrain)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -137,9 +138,13 @@ void MFCMain::MenuEditObjectInspector()
 	m_ToolObjectInspectorDialogue.ShowWindow(SW_SHOW);
 }
 
+void MFCMain::MenuEditFlattenTerrain()
+{
+	m_ToolSystem.getGameSystem()->flattenTerrain();
+}
+
 void MFCMain::ToolBarButton1()
 {
-	
 	m_ToolSystem.onActionSave();
 }
 
