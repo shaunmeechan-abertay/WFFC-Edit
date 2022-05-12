@@ -13,6 +13,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
 	ON_COMMAND(ID_BUTTON40011,	&MFCMain::ToolBarSaveTerrain)
 	ON_COMMAND(ID_EDIT_FLATTENTERRAIN,	&MFCMain::MenuEditFlattenTerrain)
+	ON_COMMAND(ID_EDIT_GENERATENEWTERRAIN,	&MFCMain::MenuEditGenerateNewTerrain)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -142,6 +143,11 @@ void MFCMain::MenuEditObjectInspector()
 void MFCMain::MenuEditFlattenTerrain()
 {
 	m_ToolSystem.getGameSystem()->flattenTerrain();
+}
+
+void MFCMain::MenuEditGenerateNewTerrain()
+{
+	m_ToolSystem.getGameSystem()->generateNewTerrain();
 }
 
 void MFCMain::ToolBarButton1()

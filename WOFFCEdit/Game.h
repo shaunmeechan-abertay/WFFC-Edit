@@ -123,6 +123,7 @@ public:
 	//Terrain functions (called from MFC)
 	void flattenTerrain();
 	void saveTerrain();
+	void generateNewTerrain();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

@@ -193,8 +193,6 @@ void DisplayChunk::UpdateTerrain()
 
 void DisplayChunk::FlattenTerrain()
 {
-	GenerateHeightmap();
-	return;
 	//all this is doing is transferring the height from the heigtmap into the terrain geometry.
 	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
 	{

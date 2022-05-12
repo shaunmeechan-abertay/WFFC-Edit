@@ -384,6 +384,11 @@ void Game::saveTerrain()
 	m_displayChunk.SaveHeightMap();
 }
 
+void Game::generateNewTerrain()
+{
+	m_displayChunk.GenerateHeightmap();
+}
+
 void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)
 {
     m_deviceResources->PIXBeginEvent(L"Draw grid");
