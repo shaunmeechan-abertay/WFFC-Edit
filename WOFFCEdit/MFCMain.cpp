@@ -11,6 +11,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_EDIT_CREATENEWOBJECT, &MFCMain::MenuEditCreate)
 	ON_COMMAND(ID_EDIT_OBJECTINSPECTOR, &MFCMain::MenuEditObjectInspector)
 	ON_COMMAND(ID_BUTTON40001,	&MFCMain::ToolBarButton1)
+	ON_COMMAND(ID_BUTTON40011,	&MFCMain::ToolBarSaveTerrain)
 	ON_COMMAND(ID_EDIT_FLATTENTERRAIN,	&MFCMain::MenuEditFlattenTerrain)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
@@ -146,6 +147,12 @@ void MFCMain::MenuEditFlattenTerrain()
 void MFCMain::ToolBarButton1()
 {
 	m_ToolSystem.onActionSave();
+}
+
+void MFCMain::ToolBarSaveTerrain()
+{
+	m_ToolSystem.getGameSystem()->saveTerrain();
+	MessageBox(NULL, L"Terrain saved!", L"Success", MB_OK | MB_ICONINFORMATION);
 }
 
 

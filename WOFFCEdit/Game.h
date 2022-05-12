@@ -120,8 +120,9 @@ public:
 
 	std::stack<Commands*>* getCommandList();
 
-	//Terrain functions
+	//Terrain functions (called from MFC)
 	void flattenTerrain();
+	void saveTerrain();
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
