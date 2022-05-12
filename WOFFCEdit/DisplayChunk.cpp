@@ -204,11 +204,11 @@ void DisplayChunk::FlattenTerrain()
 	CalculateTerrainNormals();
 }
 
-void DisplayChunk::GenerateHeightmap()
+void DisplayChunk::GenerateHeightmap(int maxHeight, int maxWidth)
 {
 	unsigned int counter = 0;
-	unsigned int newHeight = rand() % 20 + 1;
-	unsigned int randomWidth = rand() % 2000 + 1;
+	unsigned int newHeight = rand() % maxHeight + 1;
+	unsigned int randomWidth = rand() % maxWidth + 1;
 	//insert how YOU want to update the heigtmap here! :D
 	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
 	{
@@ -221,9 +221,9 @@ void DisplayChunk::GenerateHeightmap()
 			}
 			else
 			{
-				newHeight = rand() % 20 + 1;
+				newHeight = rand() % maxHeight + 1;
 				m_terrainGeometry[i][j].position.y = newHeight;
-				randomWidth = rand() % 2000 + 1;
+				randomWidth = rand() % maxWidth + 1;
 				counter = 0;
 			}
 		}

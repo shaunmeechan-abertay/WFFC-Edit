@@ -147,7 +147,10 @@ void MFCMain::MenuEditFlattenTerrain()
 
 void MFCMain::MenuEditGenerateNewTerrain()
 {
-	m_ToolSystem.getGameSystem()->generateNewTerrain();
+	//m_ToolSystem.getGameSystem()->generateNewTerrain();
+	m_ToolObjectGenerateTerrainDialogue.Create(IDD_DIALOG6);
+	m_ToolObjectGenerateTerrainDialogue.setToolSystem(&m_ToolSystem);
+	m_ToolObjectGenerateTerrainDialogue.ShowWindow(SW_SHOW);
 }
 
 void MFCMain::ToolBarButton1()

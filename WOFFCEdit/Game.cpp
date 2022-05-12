@@ -384,9 +384,9 @@ void Game::saveTerrain()
 	m_displayChunk.SaveHeightMap();
 }
 
-void Game::generateNewTerrain()
+void Game::generateNewTerrain(int maxHeight, int maxWidth)
 {
-	m_displayChunk.GenerateHeightmap();
+	m_displayChunk.GenerateHeightmap(maxHeight, maxWidth);
 }
 
 void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)

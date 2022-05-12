@@ -36,8 +36,6 @@ void ObjectInspectorDialogue::DoDataExchange(CDataExchange* pDX)
 
 void ObjectInspectorDialogue::End()
 {
-	//NOTE: This only works for a single object.
-	//To fix this basically just loop all of this for all selected objects
 	gameSystem = m_ToolSystem->getGameSystem();
 
 	std::vector<DisplayObject*> selectedObjects = m_ToolSystem->getSelectedObjects();

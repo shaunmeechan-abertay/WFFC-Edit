@@ -13,6 +13,7 @@
 #include "ModelSelectDialogue.h"
 #include "ObjectCreateDialogue.h"
 #include "ObjectInspectorDialogue.h"
+#include "GenerateTerrainDialogue.h"
 
 
 class MFCMain : public CWinApp 
@@ -34,6 +35,7 @@ private:
 	ModelSelectDialogue m_ToolModelSelectDialogue;
 	ObjectCreateDialogue m_ToolObjectCreateDialogue;
 	ObjectInspectorDialogue m_ToolObjectInspectorDialogue;
+	GenerateTerrainDialogue m_ToolObjectGenerateTerrainDialogue;
 
 	Game m_GameSystem; //Instance of game System that we interface to.
 	int m_width;		
