@@ -193,8 +193,8 @@ void DisplayChunk::UpdateTerrain()
 
 void DisplayChunk::FlattenTerrain()
 {
-	//GenerateHeightmap();
-	//return;
+	GenerateHeightmap();
+	return;
 	//all this is doing is transferring the height from the heigtmap into the terrain geometry.
 	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
 	{
@@ -209,23 +209,23 @@ void DisplayChunk::FlattenTerrain()
 void DisplayChunk::GenerateHeightmap()
 {
 	unsigned int counter = 0;
-	unsigned int newHeight = rand() % 255 + 1;
-	unsigned int randomWidth = rand() % 1000 + 1;
+	unsigned int newHeight = rand() % 20 + 1;
+	unsigned int randomWidth = rand() % 2000 + 1;
 	//insert how YOU want to update the heigtmap here! :D
 	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
 	{
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			counter++;
-			if (randomWidth < 500)
-			{
+			if (counter <= randomWidth)
+			{ 
 				m_terrainGeometry[i][j].position.y = newHeight;
 			}
 			else
 			{
-				newHeight = rand() % 255 + 1;
+				newHeight = rand() % 20 + 1;
 				m_terrainGeometry[i][j].position.y = newHeight;
-				randomWidth = rand() % 1000 + 1;
+				randomWidth = rand() % 2000 + 1;
 				counter = 0;
 			}
 		}
