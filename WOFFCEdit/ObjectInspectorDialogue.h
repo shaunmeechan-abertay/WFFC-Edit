@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	afx_msg void End();		//kill the dialogue
+	afx_msg void Cancel();
 
 	CString textureFile;
 	CString modelFile;

@@ -8,6 +8,7 @@ IMPLEMENT_DYNAMIC(TextureSelectDialogue, CDialogEx)
 
 //Message map.  Just like MFCMAIN.cpp.  This is where we catch button presses etc and point them to a handy dandy method.
 BEGIN_MESSAGE_MAP(TextureSelectDialogue, CDialogEx)
+	ON_COMMAND(IDCANCEL, &TextureSelectDialogue::Cancel)
 	ON_COMMAND(IDOK, &TextureSelectDialogue::End)					//ok button
 	ON_BN_CLICKED(IDOK, &TextureSelectDialogue::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_BUTTON1, &TextureSelectDialogue::OnBnClickedOk)
@@ -29,6 +30,12 @@ void TextureSelectDialogue::DoDataExchange(CDataExchange* pDX)
 void TextureSelectDialogue::End()
 {
 	DestroyWindow();
+}
+
+void TextureSelectDialogue::Cancel()
+{
+	DestroyWindow();
+	return;
 }
 
 BOOL TextureSelectDialogue::OnInitDialog()

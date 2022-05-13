@@ -152,7 +152,7 @@ void DisplayChunk::SaveHeightMap()
 		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
 		{
 			index = (TERRAINRESOLUTION * i) + j;
-			//m_terrainGeometry[i][j].position = Vector3(j * m_terrainPositionScalingFactor - (0.5 * m_terrainSize), (float)(m_heightMap[index]) * m_terrainHeightScale, i * m_terrainPositionScalingFactor - (0.5 * m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
+			//Do the opposite of loading
 			m_heightMap[index] = m_terrainGeometry[i][j].position.y / m_terrainHeightScale;
 		}
 	}
@@ -166,7 +166,7 @@ void DisplayChunk::SaveHeightMap()
 	if (pFile == NULL)
 	{
 		// Display Error Message And Stop The Function
-		MessageBox(NULL, L"Can't Find The Height Map!", L"Error", MB_OK);
+		MessageBox(NULL, L"Can't Find The Height Map!", L"Error", MB_OK | MB_ICONERROR);
 		return;
 	}
 

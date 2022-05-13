@@ -6,6 +6,7 @@ IMPLEMENT_DYNAMIC(ModelSelectDialogue, CDialogEx)
 
 //Message map.  Just like MFCMAIN.cpp.  This is where we catch button presses etc and point them to a handy dandy method.
 BEGIN_MESSAGE_MAP(ModelSelectDialogue, CDialogEx)
+	ON_COMMAND(IDCANCEL, &ModelSelectDialogue::Cancel)
 	ON_COMMAND(IDOK, &ModelSelectDialogue::End)					//ok button
 	ON_BN_CLICKED(IDCANCEL, &ModelSelectDialogue::End)
 	ON_BN_CLICKED(IDC_BUTTON1, &ModelSelectDialogue::OnBnClickedOk)
@@ -27,6 +28,12 @@ void ModelSelectDialogue::DoDataExchange(CDataExchange* pDX)
 void ModelSelectDialogue::End()
 {
 	DestroyWindow();
+}
+
+void ModelSelectDialogue::Cancel()
+{
+	DestroyWindow();
+	return;
 }
 
 BOOL ModelSelectDialogue::OnInitDialog()

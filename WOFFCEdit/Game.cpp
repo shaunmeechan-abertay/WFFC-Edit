@@ -146,7 +146,7 @@ void Game::Update(DX::StepTimer const& timer)
 		m_camera.moveBack();
 	}
 
-	if (m_InputCommands.right && m_InputCommands.alt)
+	if (m_InputCommands.right && m_InputCommands.CTRL)
 	{
 		archballR();
 	}
@@ -155,7 +155,7 @@ void Game::Update(DX::StepTimer const& timer)
 		m_camera.moveRight();
 	}
 
-	if (m_InputCommands.left && m_InputCommands.alt)
+	if (m_InputCommands.left && m_InputCommands.CTRL)
 	{
 		archballL();
 	}
@@ -168,8 +168,18 @@ void Game::Update(DX::StepTimer const& timer)
 	if (m_InputCommands.deleteObject && inputDown == false)
 	{
 		inputDown = true;
+		if (m_displayList.size() == 1)
+		{
+			return;
+		}
+
 		if (selectedObjects.empty() == false)
 		{
+			if (selectedObjects.size() == m_displayList.size())
+			{
+				return;
+			}
+
 			DeleteCommand* deleteCommand =  new DeleteCommand;
 			deleteCommand->performAction(m_displayList, selectedObjects);
 			selectedObjects.clear();
@@ -218,12 +228,13 @@ void Game::Update(DX::StepTimer const& timer)
 		focusOnItem();
 	}
 
-	//This might not work long term (this really is getting bad now)
+	//Resets inputDown var if no command is in use
 	if (m_InputCommands.UndoCommand == false && m_InputCommands.deleteObject == false && m_InputCommands.RedoCommand == false && m_InputCommands.copy == false && m_InputCommands.paste == false && m_InputCommands.focusOnObject == false)
 	{
 		inputDown = false;
 	}
 
+	//Fix for camera issue with focus
 	m_camera.update(shouldResetOrientation);
 	if (shouldResetOrientation == true)
 	{
@@ -231,7 +242,6 @@ void Game::Update(DX::StepTimer const& timer)
 	}
 
 	//apply camera vectors
-    //m_view = Matrix::CreateLookAt(m_camera.getCameraPosition(), m_camera.getCameraLookAt(), Vector3::UnitY);
 	m_view = m_camera.getViewMatrix();;
 
     m_batchEffect->SetView(m_view);
@@ -290,15 +300,7 @@ void Game::Render()
 		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
-	//CAMERA POSITION ON HUD - DON'T MOVE THIS! WHILE IT IS BROKEN (RENDER BEHIND EVERYTHING) MOVINING IT JUST CAUSES CHAOS
-	//SOME OBJECTS WON'T RENDER OTHER WILL, THE TERRAIN HAS NO TEXTURE - JUST BAD!
-	//TODO: This is probably fixable so try fix this if theres time.
 
-	m_sprites->Begin();
-	WCHAR   Buffer[256];
-	std::wstring var = L"Cam X: " + std::to_wstring(m_camera.getCameraPosition().x) + L"Cam Z: " + std::to_wstring(m_camera.getCameraPosition().z);
-	m_font->DrawString(m_sprites.get(), var.c_str() , XMFLOAT2(100, 10), Colors::Yellow);
-	m_sprites->End();
 
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
@@ -320,6 +322,7 @@ void Game::Render()
 		m_deviceResources->PIXEndEvent();
 	}
 
+	//Render the widgets, we are just reusing numRenderObjects but this could get it's own var if we wannted (saves a tiny bit of memory)
 	numRenderObjects = m_dragArrowList.size();
 	for(int i = 0; i < numRenderObjects; i++)
 	{
@@ -339,7 +342,7 @@ void Game::Render()
 		m_deviceResources->PIXEndEvent();
 	}
 
-    m_deviceResources->PIXEndEvent();
+   m_deviceResources->PIXEndEvent();
 
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(),0);
@@ -347,8 +350,13 @@ void Game::Render()
 	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
-	//RENDER TERRAIN - To fix the issue of the terrain texture dissaperaing, just hid a box in the world? Player never sees it so can't delete it! (Thanks Matt!)
 	m_displayChunk.RenderBatch(m_deviceResources);
+
+	m_sprites->Begin();
+	WCHAR   Buffer[256];
+	std::wstring var = L"Cam X: " + std::to_wstring(m_camera.getCameraPosition().x) + L"Cam Z: " + std::to_wstring(m_camera.getCameraPosition().z);
+	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
+	m_sprites->End();
 
     m_deviceResources->Present();
 }
@@ -374,20 +382,6 @@ void Game::Clear()
     m_deviceResources->PIXEndEvent();
 }
 
-void Game::flattenTerrain()
-{
-	m_displayChunk.FlattenTerrain();
-}
-
-void Game::saveTerrain()
-{
-	m_displayChunk.SaveHeightMap();
-}
-
-void Game::generateNewTerrain(int maxHeight, int maxWidth)
-{
-	m_displayChunk.GenerateHeightmap(maxHeight, maxWidth);
-}
 
 void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)
 {
@@ -437,6 +431,21 @@ void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR orig
 }
 
 #pragma endregion
+
+void Game::flattenTerrain()
+{
+	m_displayChunk.FlattenTerrain();
+}
+
+void Game::saveTerrain()
+{
+	m_displayChunk.SaveHeightMap();
+}
+
+void Game::generateNewTerrain(int maxHeight, int maxWidth)
+{
+	m_displayChunk.GenerateHeightmap(maxHeight, maxWidth);
+}
 
 void Game::setSelectedObject(DisplayObject* newObject)
 {
@@ -499,6 +508,7 @@ void Game::setSelectedObject(DisplayObject* newObject)
 		m_dragArrowList.push_back(newArrow);
 	}
 }
+
 void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 {
 	if (newObjects.empty() == true)
@@ -542,32 +552,31 @@ void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 					newArrow.up = true;
 					break;
 				case 1:
-					//Down (should also rotate this to face down once actual model is in)
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.down = true;
 					break;
 				case 2:
 					//Left 
-					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.left = true;
 					break;
 				case 3:
 					//Right
-					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.right = true;
 					break;
 				case 4:
 					//back
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.back = true;
 					break;
 				case 5:
 					//forward
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[0].m_model, m_dragArrowList[0].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.forward = true;
 					break;
@@ -698,9 +707,6 @@ void Game::BuildDisplayList(std::vector<SceneObject> * SceneGraph)
 		m_displayList.push_back(newDisplayObject);
 		
 	}
-		
-		
-		
 }
 
 void Game::BuildDisplayChunk(ChunkObject * SceneChunk)
@@ -775,7 +781,6 @@ int Game::MousePicking()
 			//Checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
 			{
-				//m_displayList[i].m_wireframe = true;
 
 				if (m_InputCommands.multipick && m_displayList[i].m_selected == false)
 				{
@@ -783,26 +788,14 @@ int Game::MousePicking()
 					if (selectedObject != NULL)
 					{
 						//Since we are adding in click and drag we should move this into a function so we can add the arrows easily
-						//selectedObjects.push_back(*selectedObject);
 						pushBackNewSelectedObject(selectedObject);
 					}
 					pushBackNewSelectedObject(&m_displayList[i]);
-					//selectedObjects.push_back(m_displayList[i]);
 				}
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
 				{
 					m_displayList[i].m_selected = false;
 					eraseSelectedObject(&m_displayList[i]);
-					//Got to find object in selected objects list
-					//for (int j = 0; j < selectedObjects.size(); j++)
-					//{
-					//	if (m_displayList[i].m_ID == selectedObjects.at(j).m_ID)
-					//	{
-					//		//Found object, remove, again function this so we can remove arrows
-					//		selectedObjects.erase(selectedObjects.begin() + j);
-					//		break;
-					//	}
-					//}
 					m_displayList[i].m_wireframe = false;
 				}
 				//Single object pick
@@ -844,10 +837,9 @@ int Game::MousePicking()
 void Game::clickAndDrag()
 {
 	int selectedID = -1;
+	//We don't actually care about this but need it for the intersect test
 	float pickedDistance = 0;
-	//Set the float to the max possible distance as we will reduce this to the closes object
-	//Could have used a random high number but this number is massive (3.40282e+38) so nothing with ever be further than it (or shouldn't!)
-	float closestDistance = std::numeric_limits<float>::max();
+	//We don't need to do a distance check since either there are only 1 set of arrows or multiple arrows in which case all selected objects move in uniform anyways
 
 	//setup near and far planes of frustum with mouse X and mouse Y passed
 	//down from Toolmain.
@@ -886,7 +878,7 @@ void Game::clickAndDrag()
 		//It should move at the same rate as the mouse to make it look like it's attached
 		for (unsigned int y = 0; y < m_dragArrowList[i].m_model.get()->meshes.size(); y++)
 		{
-			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance) && pickedDistance < closestDistance)
+			if (m_dragArrowList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
 			{
 				if (selectedArrow == NULL)
 				{
@@ -929,7 +921,6 @@ void Game::clickAndDrag()
 						}
 						if (selectedArrow->forward == true)
 						{
-							//Calculate the distance between where the mouse is and where the object is
 							selectedObject->m_position.z = selectedObject->m_position.z + 0.1f;
 						}
 						if (selectedArrow->up == true)
@@ -1059,6 +1050,8 @@ void Game::checkForDragArrow()
 			}
 		}
 	}
+
+	//User didn't hit an arrow, user stopped moving object so log it's position data
 	mouseYOnClick = m_InputCommands.mouse_Y;
 	mouseXOnClick = m_InputCommands.mouse_X;
 	objectIDs.clear();
@@ -1091,9 +1084,7 @@ void Game::checkForDragArrow()
 }
 void Game::dragFinished()
 {
-	//BUG!: This is called even when an MFC window is open, this floods the command list with bad moves
-	//To fix: Try to detect when MFC is open and ignore these clicks
-
+	//This stops this function being called before a drag has actually started
 	if (m_DragStarted != true)
 	{
 		return;
@@ -1236,8 +1227,6 @@ void Game::focusOnItem()
 		//Convert the result into degress as above is in radians
 		angle = XMConvertToDegrees(angle);
 		m_camera.setCameraOrientation(Vector3(m_camera.getCameraOrientation().x, angle, m_camera.getCameraOrientation().z));
-		//m_camOrientation.y = angle;
-
 	}
 	else
 	{

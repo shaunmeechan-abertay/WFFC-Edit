@@ -53,7 +53,6 @@ void DragArrow::cleanUp()
 void DragArrow::setup(float xPos, float yPos, float zPos, float xRot, float yRot, float zRot, std::shared_ptr<DX::DeviceResources> device, DirectX::IEffectFactory& m_fxFactory, std::shared_ptr<DirectX::Model> model, ID3D11ShaderResourceView* texture)
 {
 	//Set texture and model path
-	//Change these later
 	m_texturePath = "database/data/Arrow5Albedo.dds";
 	m_modelPath = "database/data/Arrow5.cmo";
 

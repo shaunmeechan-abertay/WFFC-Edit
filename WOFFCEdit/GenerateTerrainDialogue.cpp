@@ -5,6 +5,7 @@ IMPLEMENT_DYNAMIC(GenerateTerrainDialogue, CDialogEx)
 
 //Message map.  Just like MFCMAIN.cpp.  This is where we catch button presses etc and point them to a handy dandy method.
 BEGIN_MESSAGE_MAP(GenerateTerrainDialogue, CDialogEx)
+	ON_COMMAND(IDCANCEL, &GenerateTerrainDialogue::Cancel)
 	ON_COMMAND(IDOK, &GenerateTerrainDialogue::End)					//ok button
 END_MESSAGE_MAP()
 
@@ -31,6 +32,12 @@ void GenerateTerrainDialogue::End()
 	UpdateData(true);
 	gameSystem->generateNewTerrain(maxHeight, maxWidth);
 	DestroyWindow();
+}
+
+void GenerateTerrainDialogue::Cancel()
+{
+	DestroyWindow();
+	return;
 }
 
 BOOL GenerateTerrainDialogue::OnInitDialog()

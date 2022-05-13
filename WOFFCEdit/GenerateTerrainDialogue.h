@@ -19,6 +19,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	afx_msg void End();
+	afx_msg void Cancel();
 
 	ToolMain* m_ToolSystem;
 	Game* gameSystem;

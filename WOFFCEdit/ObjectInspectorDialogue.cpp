@@ -5,6 +5,7 @@ IMPLEMENT_DYNAMIC(ObjectInspectorDialogue, CDialogEx)
 
 //Message map.  Just like MFCMAIN.cpp.  This is where we catch button presses etc and point them to a handy dandy method.
 BEGIN_MESSAGE_MAP(ObjectInspectorDialogue, CDialogEx)
+	ON_COMMAND(IDCANCEL, &ObjectInspectorDialogue::Cancel)
 	ON_COMMAND(IDOK, &ObjectInspectorDialogue::End)					//ok button
 	ON_BN_CLICKED(IDC_BUTTON1, &ObjectInspectorDialogue::OnBnClickedLoadTexture)
 	ON_BN_CLICKED(IDC_BUTTON2, &ObjectInspectorDialogue::OnBnClickedLoadModel)
@@ -275,6 +276,12 @@ void ObjectInspectorDialogue::End()
 	gameSystem->updateAllArrowpositions();
 
 	DestroyWindow();
+}
+
+void ObjectInspectorDialogue::Cancel()
+{
+	DestroyWindow();
+	return;
 }
 
 BOOL ObjectInspectorDialogue::OnInitDialog()

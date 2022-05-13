@@ -33,7 +33,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.copy = false;
 	m_toolInputCommands.paste = false;
 	m_toolInputCommands.focusOnObject = false;
-	m_toolInputCommands.alt = false;
+	m_toolInputCommands.CTRL = false;
 	
 }
 
@@ -622,11 +622,11 @@ void ToolMain::UpdateInput(MSG * msg)
 	//Alt
 	if (m_keyArray[VK_CONTROL])
 	{
-		m_toolInputCommands.alt = true;
+		m_toolInputCommands.CTRL = true;
 	}
 	else
 	{
-		m_toolInputCommands.alt = false;
+		m_toolInputCommands.CTRL = false;
 	}
 }
 

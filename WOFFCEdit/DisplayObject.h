@@ -18,6 +18,7 @@ public:
 	bool									m_render;
 	bool									m_wireframe;
 	bool									m_selected;
+	//Used by objects the user has created through MFC
 	std::string								m_texturePath;
 	std::string								m_modelPath;
 

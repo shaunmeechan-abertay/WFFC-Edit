@@ -6,6 +6,7 @@ IMPLEMENT_DYNAMIC(ObjectCreateDialogue, CDialogEx)
 
 //Message map.  Just like MFCMAIN.cpp.  This is where we catch button presses etc and point them to a handy dandy method.
 BEGIN_MESSAGE_MAP(ObjectCreateDialogue, CDialogEx)
+	ON_COMMAND(IDCANCEL, &ObjectCreateDialogue::Cancel)
 	ON_COMMAND(IDOK, &ObjectCreateDialogue::End)					//ok button
 	ON_BN_CLICKED(IDC_BUTTON1, &ObjectCreateDialogue::OnBnClickedLoadTexture)
 	ON_BN_CLICKED(IDC_BUTTON2, &ObjectCreateDialogue::OnBnClickedLoadModel)
@@ -43,6 +44,12 @@ void ObjectCreateDialogue::End()
 	DirectX::XMVECTOR rotation = DirectX::XMVectorSet(XRot, YRot, ZRot, 0);
 	m_ToolSystem->CreateNewGameObject(textureFile,modelFile, position,scale,rotation);
 	DestroyWindow();
+}
+
+void ObjectCreateDialogue::Cancel()
+{
+	DestroyWindow();
+	return;
 }
 
 BOOL ObjectCreateDialogue::OnInitDialog()

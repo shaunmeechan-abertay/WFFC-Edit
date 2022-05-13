@@ -93,13 +93,16 @@ public:
 	void focusOnItem();
 	void archballL();
 	void archballR();
+	//Used to fix camera rotation issue in Focus function
 	bool shouldResetOrientation = false;
 	
+	//Used by MFC to create a new object
 	void CreateNewObject(std::string texturespath, std::string modelspath, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation);
 	std::vector<SceneObject> getDisplayList();
 
 	//Functions for selected objects vector
 	void pushBackNewSelectedObject(DisplayObject* newObject);
+	//This removes an object from the selectedObjects vector
 	void eraseSelectedObject(DisplayObject* newObject);
 
 	//Function for dealing with drag arrows

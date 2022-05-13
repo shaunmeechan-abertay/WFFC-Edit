@@ -1,6 +1,16 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  GenerateTerrainDialogue.cpp
+  MFCMain.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\GenerateTerrainDialogue.cpp(32,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\GenerateTerrainDialogue.cpp(32,33): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Main.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  ModelSelectDialogue.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  ObjectCreateDialogue.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  ObjectInspectorDialogue.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  TextureSelectDialogue.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\TextureSelectDialogue.cpp(72,29): warning C4129: 'd': unrecognized character escape sequence
+  Generating Code...
   Win32SimpleSample.vcxproj -> \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
