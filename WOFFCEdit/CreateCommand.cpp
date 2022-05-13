@@ -271,6 +271,7 @@ void CreateCommand::performAction(std::vector<DisplayObject>& objects, std::stri
 	{
 		//SOMETHING WENT WRONG
 		std::printf(ex.what());
+		MessageBox(NULL, (LPCWSTR)L"An error while loading the model", (LPCWSTR)L"Error", MB_OK | MB_ICONERROR);
 		return;
 	}
 

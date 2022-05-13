@@ -1,4 +1,6 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  ObjectInspectorDialogue.cpp
+  GenerateTerrainDialogue.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-  Win32SimpleSample.vcxproj -> D:\LocalWorkDir\1801006\Github\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\GenerateTerrainDialogue.cpp(32,44): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+\\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\GenerateTerrainDialogue.cpp(32,33): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Win32SimpleSample.vcxproj -> \\StuHomeEven\HomeDrive6$\1801006\GitHub\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

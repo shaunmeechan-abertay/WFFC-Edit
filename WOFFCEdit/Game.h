@@ -120,6 +120,10 @@ public:
 
 	std::stack<Commands*>* getCommandList();
 
+	//Terrain functions (called from MFC)
+	void flattenTerrain();
+	void saveTerrain();
+	void generateNewTerrain(int maxHeight = 20, int maxWidth = 500);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();

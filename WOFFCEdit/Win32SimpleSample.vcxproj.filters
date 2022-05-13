@@ -73,6 +73,7 @@
     <ClCompile Include="ObjectInspectorDialogue.cpp" />
     <ClCompile Include="UndoManipulationCommand.cpp" />
     <ClCompile Include="RedoManipulationCommand.cpp" />
+    <ClCompile Include="GenerateTerrainDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -136,6 +137,7 @@
     <ClInclude Include="ObjectInspectorDialogue.h" />
     <ClInclude Include="UndoManipulationCommand.h" />
     <ClInclude Include="RedoManipulationCommand.h" />
+    <ClInclude Include="GenerateTerrainDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -147,6 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="toolbar1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\My Pictures\save.bmp">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

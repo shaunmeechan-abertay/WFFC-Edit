@@ -374,6 +374,21 @@ void Game::Clear()
     m_deviceResources->PIXEndEvent();
 }
 
+void Game::flattenTerrain()
+{
+	m_displayChunk.FlattenTerrain();
+}
+
+void Game::saveTerrain()
+{
+	m_displayChunk.SaveHeightMap();
+}
+
+void Game::generateNewTerrain(int maxHeight, int maxWidth)
+{
+	m_displayChunk.GenerateHeightmap(maxHeight, maxWidth);
+}
+
 void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)
 {
     m_deviceResources->PIXBeginEvent(L"Draw grid");

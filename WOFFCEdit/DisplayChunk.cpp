@@ -145,6 +145,18 @@ void DisplayChunk::SaveHeightMap()
 	{
 		m_heightMap[i] = 0;
 	}*/
+	int index;
+
+	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
+	{
+		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
+		{
+			index = (TERRAINRESOLUTION * i) + j;
+			//m_terrainGeometry[i][j].position = Vector3(j * m_terrainPositionScalingFactor - (0.5 * m_terrainSize), (float)(m_heightMap[index]) * m_terrainHeightScale, i * m_terrainPositionScalingFactor - (0.5 * m_terrainSize));	//This will create a terrain going from -64->64.  rather than 0->128.  So the center of the terrain is on the origin
+			m_heightMap[index] = m_terrainGeometry[i][j].position.y / m_terrainHeightScale;
+		}
+	}
+
 
 	FILE *pFile = NULL;
 
@@ -179,9 +191,44 @@ void DisplayChunk::UpdateTerrain()
 
 }
 
-void DisplayChunk::GenerateHeightmap()
+void DisplayChunk::FlattenTerrain()
 {
+	//all this is doing is transferring the height from the heigtmap into the terrain geometry.
+	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
+	{
+		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
+		{
+			m_terrainGeometry[i][j].position.y = 0.0f;
+		}
+	}
+	CalculateTerrainNormals();
+}
+
+void DisplayChunk::GenerateHeightmap(int maxHeight, int maxWidth)
+{
+	unsigned int counter = 0;
+	unsigned int newHeight = rand() % maxHeight + 1;
+	unsigned int randomWidth = rand() % maxWidth + 1;
 	//insert how YOU want to update the heigtmap here! :D
+	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
+	{
+		for (size_t j = 0; j < TERRAINRESOLUTION; j++)
+		{
+			counter++;
+			if (counter <= randomWidth)
+			{ 
+				m_terrainGeometry[i][j].position.y = newHeight;
+			}
+			else
+			{
+				newHeight = rand() % maxHeight + 1;
+				m_terrainGeometry[i][j].position.y = newHeight;
+				randomWidth = rand() % maxWidth + 1;
+				counter = 0;
+			}
+		}
+	}
+	CalculateTerrainNormals();
 }
 
 void DisplayChunk::CalculateTerrainNormals()

@@ -17,7 +17,8 @@ public:
 	void LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResources);
 	void SaveHeightMap();			//saves the heigtmap back to file.
 	void UpdateTerrain();			//updates the geometry based on the heigtmap
-	void GenerateHeightmap();		//creates or alters the heightmap
+	void FlattenTerrain();			//updates the geometry height to be 0
+	void GenerateHeightmap(int maxHeight = 20, int maxWidth = 1000);		//creates or alters the heightmap
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
 	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
 
