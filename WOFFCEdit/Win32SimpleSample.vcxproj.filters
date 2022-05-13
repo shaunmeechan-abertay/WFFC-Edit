@@ -74,6 +74,7 @@
     <ClCompile Include="UndoManipulationCommand.cpp" />
     <ClCompile Include="RedoManipulationCommand.cpp" />
     <ClCompile Include="GenerateTerrainDialogue.cpp" />
+    <ClCompile Include="HeightmapSelectDialogue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -138,6 +139,7 @@
     <ClInclude Include="UndoManipulationCommand.h" />
     <ClInclude Include="RedoManipulationCommand.h" />
     <ClInclude Include="GenerateTerrainDialogue.h" />
+    <ClInclude Include="HeightmapSelectDialogue.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

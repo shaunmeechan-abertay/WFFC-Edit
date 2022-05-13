@@ -14,7 +14,7 @@
 #include "ObjectCreateDialogue.h"
 #include "ObjectInspectorDialogue.h"
 #include "GenerateTerrainDialogue.h"
-
+#include "HeightmapSelectDialogue.h"
 
 class MFCMain : public CWinApp 
 {
@@ -36,6 +36,7 @@ private:
 	ObjectCreateDialogue m_ToolObjectCreateDialogue;
 	ObjectInspectorDialogue m_ToolObjectInspectorDialogue;
 	GenerateTerrainDialogue m_ToolObjectGenerateTerrainDialogue;
+	HeightmapSelectDialogue m_ToolObjectLoadNewHeightmapDialogue;
 
 	Game m_GameSystem; //Instance of game System that we interface to.
 	int m_width;		
@@ -51,6 +52,7 @@ private:
 	afx_msg void MenuEditObjectInspector();
 	afx_msg void MenuEditFlattenTerrain();
 	afx_msg void MenuEditGenerateNewTerrain();
+	afx_msg void MenuEditLoadNewHeightmap();
 	afx_msg	void ToolBarButton1();
 	afx_msg	void ToolBarSaveTerrain();
 

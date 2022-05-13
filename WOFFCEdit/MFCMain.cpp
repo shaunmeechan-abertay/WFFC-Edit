@@ -14,6 +14,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_BUTTON40011,	&MFCMain::ToolBarSaveTerrain)
 	ON_COMMAND(ID_EDIT_FLATTENTERRAIN,	&MFCMain::MenuEditFlattenTerrain)
 	ON_COMMAND(ID_EDIT_GENERATENEWTERRAIN,	&MFCMain::MenuEditGenerateNewTerrain)
+	ON_COMMAND(ID_EDIT_LOADNEWHEIGHTMAP,	&MFCMain::MenuEditLoadNewHeightmap)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
 END_MESSAGE_MAP()
 
@@ -151,6 +152,13 @@ void MFCMain::MenuEditGenerateNewTerrain()
 	m_ToolObjectGenerateTerrainDialogue.Create(IDD_DIALOG6);
 	m_ToolObjectGenerateTerrainDialogue.setToolSystem(&m_ToolSystem);
 	m_ToolObjectGenerateTerrainDialogue.ShowWindow(SW_SHOW);
+}
+
+void MFCMain::MenuEditLoadNewHeightmap()
+{
+	m_ToolObjectLoadNewHeightmapDialogue.Create(IDD_DIALOG7);
+	m_ToolObjectLoadNewHeightmapDialogue.setToolSystem(&m_ToolSystem);
+	m_ToolObjectLoadNewHeightmapDialogue.ShowWindow(SW_SHOW);
 }
 
 void MFCMain::ToolBarButton1()

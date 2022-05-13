@@ -141,10 +141,6 @@ void DisplayChunk::LoadHeightMap(std::shared_ptr<DX::DeviceResources>  DevResour
 
 void DisplayChunk::SaveHeightMap()
 {
-/*	for (size_t i = 0; i < TERRAINRESOLUTION*TERRAINRESOLUTION; i++)
-	{
-		m_heightMap[i] = 0;
-	}*/
 	int index;
 
 	for (size_t i = 0; i < TERRAINRESOLUTION; i++)
@@ -229,6 +225,19 @@ void DisplayChunk::GenerateHeightmap(int maxHeight, int maxWidth)
 		}
 	}
 	CalculateTerrainNormals();
+}
+
+void DisplayChunk::loadNewHeightmap(std::string newPath, std::shared_ptr<DX::DeviceResources>  DevResources)
+{
+	//Set texture and model path
+	std::string filename = newPath.substr(newPath.rfind("\\"), newPath.length());
+	std::filesystem::path relativePath = std::filesystem::relative(newPath, "/database/data");
+
+	newPath = "database/data" + filename;
+
+	m_heightmap_path = newPath;
+	LoadHeightMap(DevResources);
+	UpdateTerrain();
 }
 
 void DisplayChunk::CalculateTerrainNormals()

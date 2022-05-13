@@ -13,6 +13,7 @@
 #define IDD_DIALOG5                     117
 #define IDB_BITMAP1                     118
 #define IDD_DIALOG6                     118
+#define IDD_DIALOG7                     119
 #define IDC_LIST1                       1001
 #define IDC_BUTTON1                     1003
 #define IDC_BUTTON2                     1004
@@ -39,13 +40,14 @@
 #define ID_EDIT_FLATTENTERRAIN          40010
 #define ID_BUTTON40011                  40011
 #define ID_EDIT_GENERATENEWTERRAIN      40012
+#define ID_EDIT_LOADNEWHEIGHTMAP        40013
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        119
-#define _APS_NEXT_COMMAND_VALUE         40013
+#define _APS_NEXT_COMMAND_VALUE         40014
 #define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           102
 #endif

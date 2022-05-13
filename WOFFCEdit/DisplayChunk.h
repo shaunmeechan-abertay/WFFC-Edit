@@ -19,6 +19,7 @@ public:
 	void UpdateTerrain();			//updates the geometry based on the heigtmap
 	void FlattenTerrain();			//updates the geometry height to be 0
 	void GenerateHeightmap(int maxHeight = 20, int maxWidth = 1000);		//creates or alters the heightmap
+	void loadNewHeightmap(std::string newPath, std::shared_ptr<DX::DeviceResources>  DevResources);		//Loads in a new heightmap
 	std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionNormalTexture>>  m_batch;
 	std::unique_ptr<DirectX::BasicEffect>       m_terrainEffect;
 

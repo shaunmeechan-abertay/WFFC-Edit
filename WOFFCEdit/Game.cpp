@@ -447,6 +447,12 @@ void Game::generateNewTerrain(int maxHeight, int maxWidth)
 	m_displayChunk.GenerateHeightmap(maxHeight, maxWidth);
 }
 
+void Game::loadNewHeightmap(std::string newPath)
+{
+	m_displayChunk.loadNewHeightmap(newPath, m_deviceResources);
+	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
+}
+
 void Game::setSelectedObject(DisplayObject* newObject)
 {
 	if (selectedObject != NULL)

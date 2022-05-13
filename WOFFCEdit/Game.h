@@ -127,6 +127,7 @@ public:
 	void flattenTerrain();
 	void saveTerrain();
 	void generateNewTerrain(int maxHeight = 20, int maxWidth = 500);
+	void loadNewHeightmap(std::string newPath);
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
