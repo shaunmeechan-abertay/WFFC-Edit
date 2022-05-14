@@ -1159,7 +1159,7 @@ void Game::pasteObject()
 	if (copyCommand.getCopiedObjects().empty() == false)
 	{
 		createCommand->performAction(m_displayList, copyCommand.getCopiedObjects(), m_fxFactory, true);
-		setSelectedObjects(createCommand->getCreatedObjects());
+		setSelectedObjects(createCommand->getCreatedObjectsAsPointers());
 	}
 	else
 	{
@@ -1674,7 +1674,7 @@ void Game::undoAction()
 		//This actually needs to be the ID of the object created
 		if (commandToUndo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObjects());
+			deleteCommand->performAction(m_displayList, commandToUndo->getCreatedObjectsAsPointers());
 		}
 		else
 		{
@@ -1809,7 +1809,7 @@ void Game::RedoAction()
 		//This actually needs to be the ID of the object created
 		if (commandToDo->getCreatedObjects().empty() == false)
 		{
-			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObjects());
+			deleteCommand->performAction(m_displayList, commandToDo->getCreatedObjectsAsPointers());
 		}
 		else
 		{

@@ -21,10 +21,11 @@ public:
 	void performAction(std::vector<DisplayObject>& objects, std::string textureFile, std::string modelFile, DirectX::XMVECTOR position, DirectX::XMVECTOR scale, DirectX::XMVECTOR rotation, std::shared_ptr<DX::DeviceResources>,DirectX::IEffectFactory& m_fxFactory);
 	Commands::CommandType getType();
 	DisplayObject getCreatedObject();
-	std::vector<DisplayObject*> getCreatedObjects();
+	std::vector<DisplayObject> getCreatedObjects();
+	std::vector<DisplayObject*> getCreatedObjectsAsPointers();
 private:
 	std::wstring StringToWCHART(std::string s);
 	DisplayObject createdObject;
-	std::vector<DisplayObject*> createdObjects;
+	std::vector<DisplayObject> createdObjects;
 };
 

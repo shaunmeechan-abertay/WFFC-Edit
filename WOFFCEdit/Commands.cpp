@@ -25,7 +25,12 @@ DisplayObject Commands::getCreatedObject()
 	return DisplayObject();
 }
 
-std::vector<DisplayObject*> Commands::getCreatedObjects()
+std::vector<DisplayObject> Commands::getCreatedObjects()
+{
+	return std::vector<DisplayObject>();
+}
+
+std::vector<DisplayObject*> Commands::getCreatedObjectsAsPointers()
 {
 	return std::vector<DisplayObject*>();
 }
