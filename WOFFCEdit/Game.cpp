@@ -798,6 +798,7 @@ int Game::MousePicking()
 					}
 					pushBackNewSelectedObject(&m_displayList[i]);
 				}
+				//If the object was already selected - unselect it
 				else if (m_InputCommands.multipick && m_displayList[i].m_selected == true)
 				{
 					m_displayList[i].m_selected = false;
@@ -1457,9 +1458,14 @@ void Game::eraseSelectedObject(DisplayObject* newObject)
 		{
 			//Found object, remove, again function this so we can remove arrows
 			selectedObjects.erase(selectedObjects.begin() + j);
+			for (unsigned int i = j * 6; i < m_dragArrowList.size(); i++)
+			{
+				m_dragArrowList[i].cleanUp();
+			}
+			m_dragArrowList.erase(m_dragArrowList.begin() + j * 6, (m_dragArrowList.begin() + j * 6) + 6);
 		}
 	}
-	cleanupAllArrows();
+	//cleanupAllArrows();
 }
 
 void Game::cleanupAllArrows()
