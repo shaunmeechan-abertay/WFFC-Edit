@@ -1401,6 +1401,11 @@ void Game::pushBackNewSelectedObject(DisplayObject* newObject)
 	newObject->m_wireframe = true;
 	selectedObjects.push_back(newObject);
 	//Now we need to spawn the selection arrows around the object in 6 places
+
+	if (newObject == selectedObject)
+	{
+		return;
+	}
 	for (unsigned int i = 0; i < 6; i++)
 	{
 		DragArrow newArrow;
