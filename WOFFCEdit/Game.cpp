@@ -552,43 +552,43 @@ void Game::setSelectedObjects(std::vector<DisplayObject*> newObjects)
 			//Instance stuff
 			int newIndex = m_dragArrowList.size();
 			//Now we need to spawn the selection arrows around the object in 6 places
-			for (unsigned int i = 0; i < 6; i++)
+			for (unsigned int j = 0; j < 6; j++)
 			{
 				DragArrow newArrow;
-				switch (i)
+				switch (j)
 				{
 				case 0:
 					//Up
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y + 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y + 1, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.up = true;
 					break;
 				case 1:
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y - 1, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.down = true;
 					break;
 				case 2:
 					//Left 
-					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 90, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
+					newArrow.setup(newObjects[i]->m_position.x - 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, -180, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.left = true;
 					break;
 				case 3:
 					//Right
-					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, -90, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
+					newArrow.setup(newObjects[i]->m_position.x + 1, newObjects[i]->m_position.y, newObjects[i]->m_position.z, 0, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.right = true;
 					break;
 				case 4:
 					//back
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, -90, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z - 1, 0, 90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.back = true;
 					break;
 				case 5:
 					//forward
-					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 90, 0, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
+					newArrow.setup(newObjects[i]->m_position.x, newObjects[i]->m_position.y, newObjects[i]->m_position.z + 1, 0, -90, 0, m_deviceResources, *m_fxFactory, m_dragArrowList[newIndex].m_model, m_dragArrowList[newIndex].m_texture_diffuse);
 					newArrow.attachedObject = newObjects[i];
 					newArrow.forward = true;
 					break;
